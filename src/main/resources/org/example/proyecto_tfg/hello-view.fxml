@@ -5,12 +5,15 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.proyecto_tfg.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
-
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<VBox alignment="CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.proyecto_tfg.HelloController" styleClass="vboxLogin" fx:id="vboxPrincipal" fillWidth="false">
+    <Label fx:id="lblUsuario" text="Usuario"/>
+    <TextField fx:id="txtUsuario" promptText="Ingrese su nombre de usuario" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <Label fx:id="lblContrasenia" text="Contraseña"/>
+    <PasswordField fx:id="txtContrasenia" promptText="Ingrese su contraseña" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <Label fx:id="ErrorLogin"/>
+    <Button fx:id="btnIniciarSesion" text="Iniciar Sesión" onAction="#validarCredenciales"/>
+    <Button fx:id="btnRegistrarse" text="Registrarse" onAction="#onRegisterButtonClick"/>
 </VBox>
