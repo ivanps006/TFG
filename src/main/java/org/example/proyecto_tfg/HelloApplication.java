@@ -15,8 +15,8 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 500, 500);
         stage.setTitle("Hello!");
 
-        // Ruta correcta dentro del classpath: /css/style.css
-        URL cssUrl = getClass().getResource("/css/style.css");
+        // Ruta correcta dentro del classpath: /css/stylePrincipalPage.css
+        URL cssUrl = getClass().getResource("/css/stylePrincipalPage.css");
         if (cssUrl != null) {
             scene.getStylesheets().add(cssUrl.toExternalForm());
         }

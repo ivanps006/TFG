@@ -1,0 +1,39 @@
+VBox {
+    -fx-background-color: #010101;
+}
+
+Label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+Button {
+    -fx-background-color: linear-gradient(
+            to right,
+            #25F4EE,
+            #FE2C55
+    );
+    -fx-text-fill: #010101;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #25F4EE, 10, 0.3, 0, 0);
+}
+
+Button:hover {
+    -fx-opacity: 0.9;
+}
+TextField, PasswordField {
+    -fx-background-color: #121212;
+    -fx-text-fill: white;
+    -fx-border-color: #25F4EE;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+TextField:focused, PasswordField:focused {
+    -fx-border-color: #FE2C55;
+}

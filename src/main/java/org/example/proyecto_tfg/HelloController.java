@@ -15,6 +15,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class HelloController {
     @FXML
@@ -41,14 +42,17 @@ public class HelloController {
     private void onRegisterButtonClick(ActionEvent event) {
         try {
             //Cargamos la nueva ventana
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("register-view.fxml"));
-            Parent root = loader.load();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("register-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 500, 500);
             Stage stage = new Stage();
-            //Le añadimos este titulo a la ventana
-            stage.setTitle("Registrarse");
-            //bloquea la ventana padre
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root, 400, 300));
+            stage.setTitle("Hello!");
+
+            // Ruta correcta dentro del classpath: /css/stylePrincipalPage.css
+            URL cssUrl = getClass().getResource("/css/styleRegisterPage.css");
+            if (cssUrl != null) {
+                scene.getStylesheets().add(cssUrl.toExternalForm());
+            }
+            stage.setScene(scene);
             stage.show();
 
         } catch (IOException e) {
