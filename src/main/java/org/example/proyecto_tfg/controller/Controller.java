@@ -1,23 +1,20 @@
-package org.example.proyecto_tfg;
+package org.example.proyecto_tfg.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.proyecto_tfg.HelloApplication;
 
 import java.io.IOException;
 import java.net.URL;
 
-public class HelloController {
+public class Controller {
     @FXML
     private TextField txtUsuario;
 
@@ -42,13 +39,13 @@ public class HelloController {
     private void onRegisterButtonClick(ActionEvent event) {
         try {
             //Cargamos la nueva ventana
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("register-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/register-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 500, 500);
             Stage stage = new Stage();
             stage.setTitle("Hello!");
 
             // Ruta correcta dentro del classpath: /css/stylePrincipalPage.css
-            URL cssUrl = getClass().getResource("/css/styleRegisterPage.css");
+            URL cssUrl = getClass().getResource("/view/css/styleRegisterPage.css");
             if (cssUrl != null) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
