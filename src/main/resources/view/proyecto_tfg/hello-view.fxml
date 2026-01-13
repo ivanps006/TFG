@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <VBox alignment="CENTER" spacing="10.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.proyecto_tfg.HelloController" styleClass="vboxLogin" fx:id="vboxPrincipal" fillWidth="false">
+      fx:controller="org.example.proyecto_tfg.controller.Controller" styleClass="vboxLogin" fx:id="vboxPrincipal" fillWidth="false">
     <Label fx:id="lblUsuario" text="Usuario"/>
     <TextField fx:id="txtUsuario" promptText="Ingrese su nombre de usuario" prefWidth="300" minWidth="300" maxWidth="300"/>
     <Label fx:id="lblContrasenia" text="Contraseña"/>

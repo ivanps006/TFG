@@ -1,39 +1,71 @@
 VBox {
-    -fx-background-color: #010101;
+    -fx-background-color: linear-gradient(
+            to bottom right,
+            #000000,
+            #141414,
+            #1f1f1f
+    );
 }
 
+/* Etiquetas: blanco limpio tipo Netflix */
 Label {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", "Arial";
 }
 
+/* Botones generales */
 Button {
-    -fx-background-color: linear-gradient(
-            to right,
-            #25F4EE,
-            #FE2C55
-    );
-    -fx-text-fill: #010101;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-background-radius: 20;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, #25F4EE, 10, 0.3, 0, 0);
+    -fx-font-family: "Segoe UI", "Arial";
 }
 
-Button:hover {
-    -fx-opacity: 0.9;
+/* Botón principal (Iniciar Sesión) – rojo Netflix */
+#btnIniciarSesion {
+    -fx-background-color: #e50914;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
 }
+
+/* Hover botón principal */
+#btnIniciarSesion:hover {
+    -fx-background-color: #f6121d;
+    -fx-effect: dropshadow(gaussian, rgba(229,9,20,0.6), 12, 0.3, 0, 2);
+}
+
+/* Botón secundario (Registrarse) – borde rojo, fondo oscuro */
+#btnRegistrarse {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e50914;
+    -fx-border-color: #e50914;
+    -fx-border-width: 2;
+}
+
+/* Hover botón secundario */
+#btnRegistrarse:hover {
+    -fx-background-color: rgba(229, 9, 20, 0.1);
+    -fx-effect: dropshadow(gaussian, rgba(229,9,20,0.5), 10, 0.3, 0, 2);
+}
+
+/* Campos de texto: gris oscuro con borde sutil */
 TextField, PasswordField {
-    -fx-background-color: #121212;
-    -fx-text-fill: white;
-    -fx-border-color: #25F4EE;
-    -fx-border-radius: 8;
+    -fx-background-color: #333333;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+    -fx-border-width: 1;
     -fx-background-radius: 8;
     -fx-padding: 8;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-font-family: "Segoe UI", "Arial";
 }
 
+/* Focus en campos: borde rojo Netflix */
 TextField:focused, PasswordField:focused {
-    -fx-border-color: #FE2C55;
+    -fx-background-color: #404040;
+    -fx-border-color: #e50914;
+    -fx-effect: dropshadow(gaussian, rgba(229,9,20,0.6), 8, 0.3, 0, 0);
 }

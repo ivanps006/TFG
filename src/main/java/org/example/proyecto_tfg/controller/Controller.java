@@ -10,11 +10,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.example.proyecto_tfg.HelloApplication;
+import org.example.proyecto_tfg.model.Mecanico;
+import org.example.proyecto_tfg.service.loginService;
 
 import java.io.IOException;
 import java.net.URL;
 
 public class Controller {
+
+    private final loginService loginService = new loginService();
+
     @FXML
     private TextField txtUsuario;
 
@@ -24,14 +29,44 @@ public class Controller {
     @FXML
     private Label ErrorLogin;
 
+    @FXML
+    private TextField tfUsuario;
+
+    @FXML
+    private PasswordField pfContrasenia;
+
+    @FXML
+    private TextField tfNombre;
+
+    @FXML
+    private TextField tfApellido;
+
+    @FXML
+    private TextField tfDni;
+
+    @FXML
+    private TextField tfTelefono;
+
+    @FXML
+    private TextField tfDireccion;
+
+    @FXML
+    private Label lblMensajeRegistro;
+
 
     public void validarCredenciales(){
-        if (txtUsuario.getText().equals("admin") && txtContrasenia.getText().equals("admin1234")){
-           ErrorLogin.setText("Acceso concedido. ¡Bienvenido!");
-           ErrorLogin.setStyle("-fx-text-fill: green;");
+        if (txtUsuario.getText().isEmpty() || txtContrasenia.getText().isEmpty()) {
+            ErrorLogin.setText("Por favor, complete todos los campos.");
         } else {
-            ErrorLogin.setText("Credenciales incorrectas. Inténtalo de nuevo.");
-            ErrorLogin.setStyle("-fx-text-fill: red;");
+            // Simulación de validación
+            if (loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText())) {
+                ErrorLogin.setText("Inicio de sesión exitoso.");
+                ErrorLogin.setStyle("-fx-text-fill: green;");
+                // Lógica para abrir la siguiente ventana o funcionalidad
+            } else {
+                ErrorLogin.setText("Credenciales incorrectas. Inténtelo de nuevo.");
+                ErrorLogin.setStyle("-fx-text-fill: red;");
+            }
         }
     }
 
@@ -52,6 +87,9 @@ public class Controller {
             stage.setScene(scene);
             stage.show();
 
+            stage.centerOnScreen();
+            stage.setResizable(false);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,5 +99,22 @@ public class Controller {
     private void onClose(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
+    }
+
+    @FXML
+    private void registrarUsuario(ActionEvent event) {
+        // Lógica para registrar un nuevo usuario
+        loginService.añadirMecanico(new Mecanico(
+                pfContrasenia.getText(),
+                tfNombre.getText(),
+                tfApellido.getText(),
+                tfDni.getText(),
+                tfTelefono.getText(),
+                tfDireccion.getText(),
+                tfUsuario.getText()
+
+        ));
+        lblMensajeRegistro.setText("Registro exitoso.");
+        lblMensajeRegistro.setStyle("-fx-text-fill: green;");
     }
 }

@@ -3,11 +3,18 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" >
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" alignment="CENTER"
+      fx:controller="org.example.proyecto_tfg.controller.Controller">
     <Label text="Formulario de registro"/>
-    <TextField promptText="Usuario"/>
-    <PasswordField promptText="Contraseña"/>
-    <Button fx:id="btnConfirmar" text="Confirmar"/>
-    <Button fx:id="btnCerrar" text="Cerrar" />
+    <TextField promptText="Usuario" fx:id="tfUsuario" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <PasswordField promptText="Contraseña" fx:id="pfContrasenia" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <TextField promptText="Nombre" fx:id="tfNombre" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <TextField promptText="Apellido" fx:id="tfApellido" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <TextField promptText="DNI" fx:id="tfDni" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <TextField promptText="Teléfono" fx:id="tfTelefono" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <TextField promptText="Direccion" fx:id="tfDireccion" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <Button fx:id="btnConfirmar" text="Confirmar" onAction="#registrarUsuario" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <Button fx:id="btnCerrar" text="Cerrar" onAction="#onClose" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <Label fx:id="lblMensajeRegistro"/>
 </VBox>
 
