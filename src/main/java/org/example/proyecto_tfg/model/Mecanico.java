@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "mecanico")
-public class Mecanico implements Serializable {
+public class Mecanico  {
 
     @Id
     private String contrasena;

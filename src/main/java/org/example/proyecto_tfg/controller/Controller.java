@@ -54,18 +54,32 @@ public class Controller {
     private Label lblMensajeRegistro;
 
 
-    public void validarCredenciales(){
+    public void validarCredenciales() throws IOException {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getText().isEmpty()) {
             ErrorLogin.setText("Por favor, complete todos los campos.");
+            ErrorLogin.setStyle("-fx-text-fill: red;");
         } else {
             // Simulación de validación
             if (loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText())) {
                 ErrorLogin.setText("Inicio de sesión exitoso.");
                 ErrorLogin.setStyle("-fx-text-fill: green;");
+                limpiarCamposLogin();
                 // Lógica para abrir la siguiente ventana o funcionalidad
+
+                //Cargamos la nueva ventana
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), 500, 500);
+                Stage stage = new Stage();
+                stage.setTitle("Hello!");
+                stage.setScene(scene);
+                stage.show();
+
+                stage.centerOnScreen();
+                stage.setResizable(false);
             } else {
                 ErrorLogin.setText("Credenciales incorrectas. Inténtelo de nuevo.");
                 ErrorLogin.setStyle("-fx-text-fill: red;");
+                limpiarCamposLogin();
             }
         }
     }
@@ -116,5 +130,31 @@ public class Controller {
         ));
         lblMensajeRegistro.setText("Registro exitoso.");
         lblMensajeRegistro.setStyle("-fx-text-fill: green;");
+
+        limpiarCamposRegistro();
+    }
+
+    private void limpiarCamposRegistro() {
+        tfUsuario.clear();
+        pfContrasenia.clear();
+        tfNombre.clear();
+        tfApellido.clear();
+        tfDni.clear();
+        tfTelefono.clear();
+        tfDireccion.clear();
+    }
+
+    private void limpiarCamposLogin() {
+        txtUsuario.clear();
+        txtContrasenia.clear();
+    }
+
+    @FXML
+    private void onLoginButtonClick(ActionEvent event){
+        try{
+            onClose(event);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
