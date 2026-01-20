@@ -1,19 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.proyecto_tfg.controller.Controller"
-      prefHeight="400.0" prefWidth="600.0">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.skin.TabPaneSkin.TabContentRegion?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefHeight="400.0" prefWidth="600.0"
+            stylesheets="@../css/stylePrincipalPage.css">
 
-    <children>
-        <Label text="Ventana Principal" />
-        <Button text="Ir a Login" onAction="#onLoginButtonClick"/>
-    </children>
+    <!-- ===== CABECERA ===== -->
+    <top>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="header">
+            <Label text="Gestión de Bicicletas" styleClass="title"/>
+        </HBox>
+    </top>
 
-</VBox>
+    <!-- ===== CENTRO ===== -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Bicicletas pendientes de reparación" styleClass="subtitle"/>
+
+            <TableView fx:id="tablaBicicletas" prefHeight="500">
+                <columns>
+                    <TableColumn text="Referencia" fx:id="colRef" prefWidth="120"/>
+                    <TableColumn text="Marca" fx:id="colMarca" prefWidth="150"/>
+                    <TableColumn text="Modelo" fx:id="colModelo" prefWidth="150"/>
+                    <TableColumn text="Frenos" fx:id="colFrenos" prefWidth="150"/>
+                    <TableColumn text="Suspension D" fx:id="colSuspDelantera" prefWidth="150"/>
+                    <TableColumn text="Suspension T" fx:id="colSuspTrasera" prefWidth="150"/>
+                    <TableColumn text="Transmisión" fx:id="colTransmision" prefWidth="150"/>
+                    <TableColumn text="Ruedas" fx:id="colRuedas" prefWidth="150"/>
+                    <TableColumn text="Cliente" fx:id="colCliente" prefWidth="150"/>
+                    <TableColumn text="Estado" fx:id="colEstado" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <!-- ===== BOTONES ===== -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Button text="Añadir Bicicleta" fx:id="btnAddBicicleta" styleClass="btn-Añadir"/>
+
+            <Button text="Marcar como Reparada" fx:id="btnReparada" styleClass="btn-MarcarArreglada"/>
+
+            <Button text="Salir" fx:id="btnSalir" styleClass="btn-salir" onAction="#volverLogin"/>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,57 +1,95 @@
 package org.example.proyecto_tfg.controller;
 
+import jakarta.persistence.EntityManager;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.proyecto_tfg.HelloApplication;
+import org.example.proyecto_tfg.model.Bicicleta;
+import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.model.Mecanico;
+import org.example.proyecto_tfg.service.HomeService;
 import org.example.proyecto_tfg.service.loginService;
+import org.example.proyecto_tfg.utils.Utils;
 
 import java.io.IOException;
-import java.net.URL;
+import java.util.List;
 
 public class Controller {
 
     private final loginService loginService = new loginService();
+    private final HomeService homeService = new HomeService();
+
+    @FXML private TextField txtUsuario;
+    @FXML private PasswordField txtContrasenia;
+    @FXML private Label ErrorLogin;
+
+    @FXML private TextField tfUsuario;
+    @FXML private PasswordField pfContrasenia;
+    @FXML private TextField tfNombre;
+    @FXML private TextField tfApellido;
+    @FXML private TextField tfDni;
+    @FXML private TextField tfTelefono;
+    @FXML private TextField tfDireccion;
+    @FXML private Label lblMensajeRegistro;
+
+    // Tipado y columnas con tipos
+    @FXML private TableView<Bicicleta> tablaBicicletas;
+    @FXML private TableColumn<Bicicleta, Long> colRef;
+    @FXML private TableColumn<Bicicleta, String> colMarca;
+    @FXML private TableColumn<Bicicleta, String> colModelo;
+    @FXML private TableColumn<Bicicleta, String> colFrenos;
+    @FXML private TableColumn<Bicicleta, String> colSuspDelantera;
+    @FXML private TableColumn<Bicicleta, String> colSuspTrasera;
+    @FXML private TableColumn<Bicicleta, String> colTransmision;
+    @FXML private TableColumn<Bicicleta, String> colRuedas;
+    @FXML private TableColumn<Bicicleta, String> colCliente;
+    @FXML private TableColumn<Bicicleta, String> colEstado;
+
+    private ObservableList<Bicicleta> bicicletas;
 
     @FXML
-    private TextField txtUsuario;
+    public void initialize() {
+        Platform.runLater(() -> {
+            if (tablaBicicletas != null) {
+                tablaBicicletas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-    @FXML
-    private PasswordField txtContrasenia;
+                // Inicializar lista
+                bicicletas = FXCollections.observableArrayList();
+                tablaBicicletas.setItems(bicicletas);
 
-    @FXML
-    private Label ErrorLogin;
+                // Configurar cell value factories usando getters
+                colRef.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getId_referencia()));
+                colMarca.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getMarca()));
+                colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getModelo()));
+                colFrenos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFrenos()));
+                colSuspDelantera.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_delantera()));
+                colSuspTrasera.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_trasera()));
+                colTransmision.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTransmision()));
+                colRuedas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRuedas()));
+                // Mostrar el dni del cliente (verificar null)
+                colCliente.setCellValueFactory(cell -> {
+                    Cliente c = cell.getValue().getId_cliente();
+                    return new SimpleStringProperty(c != null ? c.getDni() : "");
+                });
+                // Si no hay campo estado en modelo, mostrar vacío o adaptar
+                colEstado.setCellValueFactory(cell -> new SimpleStringProperty(""));
 
-    @FXML
-    private TextField tfUsuario;
-
-    @FXML
-    private PasswordField pfContrasenia;
-
-    @FXML
-    private TextField tfNombre;
-
-    @FXML
-    private TextField tfApellido;
-
-    @FXML
-    private TextField tfDni;
-
-    @FXML
-    private TextField tfTelefono;
-
-    @FXML
-    private TextField tfDireccion;
-
-    @FXML
-    private Label lblMensajeRegistro;
+                // Cargar datos desde HomeService
+                bicicletas = homeService.cargarBicicletasDesdeBD();
+                tablaBicicletas.setItems(bicicletas);
+            }
+        });
+    }
 
 
     public void validarCredenciales() throws IOException {
@@ -68,7 +106,7 @@ public class Controller {
 
                 //Cargamos la nueva ventana
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), 500, 500);
+                Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
                 Stage stage = new Stage();
                 stage.setTitle("Hello!");
                 stage.setScene(scene);
@@ -92,12 +130,6 @@ public class Controller {
             Scene scene = new Scene(fxmlLoader.load(), 500, 500);
             Stage stage = new Stage();
             stage.setTitle("Hello!");
-
-            // Ruta correcta dentro del classpath: /css/stylePrincipalPage.css
-            URL cssUrl = getClass().getResource("/view/css/styleRegisterPage.css");
-            if (cssUrl != null) {
-                scene.getStylesheets().add(cssUrl.toExternalForm());
-            }
             stage.setScene(scene);
             stage.show();
 
@@ -133,7 +165,6 @@ public class Controller {
 
         limpiarCamposRegistro();
     }
-
     private void limpiarCamposRegistro() {
         tfUsuario.clear();
         pfContrasenia.clear();
@@ -150,7 +181,7 @@ public class Controller {
     }
 
     @FXML
-    private void onLoginButtonClick(ActionEvent event){
+    private void volverLogin(ActionEvent event){
         try{
             onClose(event);
         } catch (Exception e) {

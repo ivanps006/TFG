@@ -1,0 +1,136 @@
+/* ===============================
+   FONDO GENERAL
+   =============================== */
+BorderPane {
+    -fx-background-color: linear-gradient(
+            to bottom right,
+            #000000,
+            #141414,
+            #1f1f1f
+    );
+}
+
+/* ===============================
+   CABECERA
+   =============================== */
+.header {
+    -fx-background-color: #0f0f0f;
+    -fx-padding: 15 20 15 20;
+    -fx-border-color: #1f1f1f;
+    -fx-border-width: 0 0 1 0;
+}
+
+.title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+/* ===============================
+   TEXTOS
+   =============================== */
+Label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.subtitle {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+}
+
+/* ===============================
+   TABLA
+   =============================== */
+TableView {
+    -fx-background-color: #141414;
+    -fx-border-color: #2a2a2a;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* Cabecera de la tabla */
+.table-view .column-header-background {
+    -fx-background-color: #0f0f0f;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: #0f0f0f;
+    -fx-border-color: #1f1f1f;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+/* Filas */
+.table-row-cell {
+    -fx-background-color: #141414;
+    -fx-text-fill: #ffffff;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #1b1b1b;
+    -fx-text-fill: #ffffff;
+}
+
+/* Fila seleccionada */
+.table-row-cell:selected {
+    -fx-background-color: rgba(229, 9, 20, 0.3);
+}
+
+/* ===============================
+   BOTONES GENERALES
+   =============================== */
+Button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", "Arial";
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-padding: 8 18 8 18;
+}
+
+/* ===============================
+   BOTÓN PRINCIPAL
+   =============================== */
+.btn-Añadir {
+    -fx-background-color: #e50914;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.btn-Añadir:hover {
+    -fx-background-color: #f6121d;
+    -fx-effect: dropshadow(gaussian, rgba(229, 9, 20, 0.6), 12, 0.3, 0, 2);
+}
+
+/* ===============================
+   BOTÓN SECUNDARIO
+   =============================== */
+.btn-MarcarArreglada {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e50914;
+    -fx-border-color: #e50914;
+    -fx-border-width: 2;
+}
+
+.btn-MarcarArreglada:hover {
+    -fx-background-color: rgba(229, 9, 20, 0.1);
+    -fx-effect: dropshadow(gaussian, rgba(229, 9, 20, 0.5), 10, 0.3, 0, 2);
+}
+
+/* ===============================
+   BOTÓN DE SALIR
+   =============================== */
+
+.btn-salir {
+    -fx-background-color: #333333;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
