@@ -49,7 +49,7 @@
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <Button text="Añadir Bicicleta" fx:id="btnAddBicicleta" styleClass="btn-Añadir"/>
+            <Button text="Añadir Bicicleta" fx:id="btnAddBicicleta" styleClass="btn-Añadir" onAction="#añadirBicicleta"/>
 
             <Button text="Marcar como Reparada" fx:id="btnReparada" styleClass="btn-MarcarArreglada"/>
 

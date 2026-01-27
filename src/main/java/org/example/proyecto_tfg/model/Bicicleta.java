@@ -6,24 +6,33 @@ import jakarta.persistence.*;
 @Entity
 @Table (name = "bicicleta")
 public class Bicicleta {
-    @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_referencia;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_ref")
+    private String id_referencia;
+    @Column(name = "marca")
     private String marca;
+    @Column(name = "modelo")
     private String modelo;
+    @Column(name = "frenos")
     private String frenos;
+    @Column(name = "susp_delantera")
     private String susp_delantera;
+    @Column(name = "susp_trasera")
     private String susp_trasera;
+    @Column(name = "transmision")
     private String transmision;
+    @Column(name = "ruedas")
     private String ruedas;
-    @ManyToOne
-    @JoinColumn(name = "id_cliente", referencedColumnName = "dni")
-    private Cliente id_cliente; // ahora ManyToOne hacia Cliente
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cliente", referencedColumnName = "dni", nullable = true)
+    private Cliente id_cliente;
 
 
     public Bicicleta() {
     }
 
-    public Bicicleta(Long id_referencia, String marca, String modelo, String frenos, String susp_delantera, String suspe_trasera, String transmision, String ruedas, Cliente id_cliente) {
+    public Bicicleta(String id_referencia, String marca, String modelo, String frenos, String susp_delantera, String suspe_trasera, String transmision, String ruedas, Cliente id_cliente) {
         this.id_referencia = id_referencia;
         this.marca = marca;
         this.modelo = modelo;
@@ -35,11 +44,11 @@ public class Bicicleta {
         this.id_cliente = id_cliente;
     }
 
-    public Long getId_referencia() {
+    public String getId_referencia() {
         return id_referencia;
     }
 
-    public void setId_referencia(Long id_referencia) {
+    public void setId_referencia(String id_referencia) {
         this.id_referencia = id_referencia;
     }
 

@@ -29,6 +29,8 @@ public class Controller {
     private final loginService loginService = new loginService();
     private final HomeService homeService = new HomeService();
 
+    @FXML private Button btnAddBicicleta;
+
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtContrasenia;
     @FXML private Label ErrorLogin;
@@ -44,7 +46,7 @@ public class Controller {
 
     // Tipado y columnas con tipos
     @FXML private TableView<Bicicleta> tablaBicicletas;
-    @FXML private TableColumn<Bicicleta, Long> colRef;
+    @FXML private TableColumn<Bicicleta, String> colRef;
     @FXML private TableColumn<Bicicleta, String> colMarca;
     @FXML private TableColumn<Bicicleta, String> colModelo;
     @FXML private TableColumn<Bicicleta, String> colFrenos;
@@ -68,7 +70,7 @@ public class Controller {
                 tablaBicicletas.setItems(bicicletas);
 
                 // Configurar cell value factories usando getters
-                colRef.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getId_referencia()));
+                colRef.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_referencia()));
                 colMarca.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getMarca()));
                 colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getModelo()));
                 colFrenos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFrenos()));
@@ -186,6 +188,25 @@ public class Controller {
             onClose(event);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    private void añadirBicicleta(ActionEvent event){
+        try {
+            //Cargamos la nueva ventana
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirBicicleta-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 500, 500);
+            Stage stage = new Stage();
+            stage.setTitle("Hello!");
+            stage.setScene(scene);
+            stage.show();
+
+            stage.centerOnScreen();
+            stage.setResizable(false);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

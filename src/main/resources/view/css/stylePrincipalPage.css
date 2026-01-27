@@ -52,6 +52,28 @@ TableView {
     -fx-background-radius: 8;
 }
 
+/* Forzar texto blanco en todas las celdas de la tabla (incluyendo selección y foco) */
+.table-view .table-cell,
+.table-view .table-row-cell {
+    -fx-text-fill: #ffffff;
+}
+
+/* Asegurar que cuando una fila o celda está seleccionada o en foco siga siendo blanca */
+.table-view .table-row-cell:selected,
+.table-view .table-cell:selected,
+.table-view .table-row-cell:focused,
+.table-view .table-cell:focused,
+.table-view .table-row-cell:filled:selected,
+.table-view .table-cell:filled:selected {
+    -fx-text-fill: #ffffff;
+}
+
+/* Si usas celdas con gráficos o labels internos */
+.table-view .table-cell .label,
+.table-view .table-cell .text {
+    -fx-text-fill: #ffffff;
+}
+
 /* Cabecera de la tabla */
 .table-view .column-header-background {
     -fx-background-color: #0f0f0f;
@@ -83,6 +105,8 @@ TableView {
 .table-row-cell:selected {
     -fx-background-color: rgba(229, 9, 20, 0.3);
 }
+
+
 
 /* ===============================
    BOTONES GENERALES

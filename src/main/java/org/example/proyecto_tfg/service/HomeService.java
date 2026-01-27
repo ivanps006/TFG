@@ -15,6 +15,8 @@ public class HomeService {
         try {
             List<Bicicleta> lista = em.createQuery("SELECT b FROM Bicicleta b", Bicicleta.class)
                     .getResultList();
+            System.out.println("Cargando bicicletas desde la base de datos: " + lista.size() + " bicicletas encontradas.");
+            System.out.println("\n"+lista);
             return FXCollections.observableArrayList(lista);
         } catch (Exception e) {
             e.printStackTrace();
