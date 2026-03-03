@@ -1,0 +1,121 @@
+/* ===============================
+   FONDO GENERAL
+   =============================== */
+VBox {
+    -fx-background-color: linear-gradient(
+            to bottom right,
+            #000000,
+            #141414,
+            #1f1f1f
+    );
+}
+
+/* ===============================
+   CABECERA
+   =============================== */
+.header {
+    -fx-background-color: #0f0f0f;
+    -fx-padding: 15 20 15 20;
+    -fx-border-color: #1f1f1f;
+    -fx-border-width: 0 0 1 0;
+}
+
+.title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+/* ===============================
+   TEXTOS GENERALES
+   =============================== */
+Label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+/* ===============================
+   CAMPOS DE TEXTO
+   =============================== */
+TextField {
+    -fx-background-color: #333333;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+    -fx-border-width: 1;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.4);
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+/* Efecto al enfocar un campo */
+TextField:focused {
+    -fx-background-color: #404040;
+    -fx-border-color: #e50914;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(229,9,20,0.6),
+            8,
+            0.3,
+            0,
+            0
+    );
+}
+
+/* ===============================
+   BOTONES GENERALES
+   =============================== */
+Button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Segoe UI", "Arial";
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-padding: 8 18 8 18;
+}
+
+/* ===============================
+   BOTÓN PRINCIPAL – Guardar
+   =============================== */
+.btn-primary {
+    -fx-background-color: #e50914;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #f6121d;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(229, 9, 20, 0.6),
+            12,
+            0.3,
+            0,
+            2
+    );
+}
+
+/* ===============================
+   BOTÓN SECUNDARIO – Cancelar
+   =============================== */
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: #e50914;
+    -fx-border-color: #e50914;
+    -fx-border-width: 2;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(229, 9, 20, 0.1);
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(229, 9, 20, 0.5),
+            10,
+            0.3,
+            0,
+            2
+    );
+}

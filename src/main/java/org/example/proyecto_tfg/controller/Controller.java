@@ -1,33 +1,37 @@
 package org.example.proyecto_tfg.controller;
 
-import jakarta.persistence.EntityManager;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
+
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.example.proyecto_tfg.HelloApplication;
 import org.example.proyecto_tfg.model.Bicicleta;
 import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.model.Mecanico;
+import org.example.proyecto_tfg.service.AddService;
 import org.example.proyecto_tfg.service.HomeService;
+import org.example.proyecto_tfg.service.NavigationService;
 import org.example.proyecto_tfg.service.loginService;
-import org.example.proyecto_tfg.utils.Utils;
 
 import java.io.IOException;
-import java.util.List;
 
 public class Controller {
 
     private final loginService loginService = new loginService();
     private final HomeService homeService = new HomeService();
+    private final AddService addService = new AddService();
+
+    @FXML private BorderPane root; // root principal del FXML `principalWindows-view.fxml`
+    private Node previousCenter;    // para volver a la vista anterior
 
     @FXML private Button btnAddBicicleta;
 
@@ -44,7 +48,22 @@ public class Controller {
     @FXML private TextField tfDireccion;
     @FXML private Label lblMensajeRegistro;
 
-    // Tipado y columnas con tipos
+    @FXML private TextField txtReferencia;
+    @FXML private TextField txtMarca;
+    @FXML private TextField txtModelo;
+    @FXML private TextField txtFrenos;
+    @FXML private TextField txtSuspDel;
+    @FXML private TextField txtSuspTras;
+    @FXML private TextField txtTransmision;
+    @FXML private TextField txtRuedas;
+    @FXML private TextField txtClienteDni;
+
+    @FXML private TextField txtDni;
+    @FXML private TextField txtNombre;
+    @FXML private TextField txtApellidos;
+    @FXML private TextField txtTelefono;
+    @FXML private TextField txtDireccion;
+
     @FXML private TableView<Bicicleta> tablaBicicletas;
     @FXML private TableColumn<Bicicleta, String> colRef;
     @FXML private TableColumn<Bicicleta, String> colMarca;
@@ -61,52 +80,52 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        Platform.runLater(() -> {
-            if (tablaBicicletas != null) {
-                tablaBicicletas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        // Asegurar política de redimensionado
+        if (tablaBicicletas != null) {
+            tablaBicicletas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        }
 
-                // Inicializar lista
-                bicicletas = FXCollections.observableArrayList();
-                tablaBicicletas.setItems(bicicletas);
+        // Configurar factories de columnas
+        if (colRef != null) {
+            colRef.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_referencia()));
+        }
+        if (colMarca != null) {
+            colMarca.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getMarca()));
+        }
+        if (colModelo != null) {
+            colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getModelo()));
+        }
 
-                // Configurar cell value factories usando getters
-                colRef.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_referencia()));
-                colMarca.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getMarca()));
-                colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getModelo()));
-                colFrenos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFrenos()));
-                colSuspDelantera.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_delantera()));
-                colSuspTrasera.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_trasera()));
-                colTransmision.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTransmision()));
-                colRuedas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRuedas()));
-                // Mostrar el dni del cliente (verificar null)
-                colCliente.setCellValueFactory(cell -> {
-                    Cliente c = cell.getValue().getId_cliente();
-                    return new SimpleStringProperty(c != null ? c.getDni() : "");
-                });
-                // Si no hay campo estado en modelo, mostrar vacío o adaptar
-                colEstado.setCellValueFactory(cell -> new SimpleStringProperty(""));
+        if (colCliente != null) {
+            colCliente.setCellValueFactory(cell -> {
+                Cliente c = cell.getValue().getId_cliente();
+                return new SimpleStringProperty(c != null ? c.getDni() : "");
+            });
+        }
+        if (colEstado != null) {
+            colEstado.setCellValueFactory(cell -> new SimpleStringProperty("")); // ajustar si hay estado real
+        }
 
-                // Cargar datos desde HomeService
-                bicicletas = homeService.cargarBicicletasDesdeBD();
-                tablaBicicletas.setItems(bicicletas);
-            }
-        });
+        NavigationService.getInstance().setRoot(root);
+
+        // cargar bicicletas como antes
+        ObservableList<Bicicleta> bicicletas = homeService.cargarBicicletasDesdeBD();
+        if (tablaBicicletas != null) {
+            tablaBicicletas.setItems(bicicletas);
+        }
+
     }
-
 
     public void validarCredenciales() throws IOException {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getText().isEmpty()) {
             ErrorLogin.setText("Por favor, complete todos los campos.");
             ErrorLogin.setStyle("-fx-text-fill: red;");
         } else {
-            // Simulación de validación
             if (loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText())) {
                 ErrorLogin.setText("Inicio de sesión exitoso.");
                 ErrorLogin.setStyle("-fx-text-fill: green;");
                 limpiarCamposLogin();
-                // Lógica para abrir la siguiente ventana o funcionalidad
 
-                //Cargamos la nueva ventana
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
                 Stage stage = new Stage();
@@ -124,10 +143,25 @@ public class Controller {
         }
     }
 
+
+    @FXML
+    private void guardarCliente(ActionEvent event){
+        addService.añadirCliente(
+                new Cliente(
+                        txtDni.getText(),
+                        txtNombre.getText(),
+                        txtApellidos.getText(),
+                        txtTelefono.getText(),
+                        txtDireccion.getText()
+                )
+        );
+
+        NavigationService.getInstance().goBack();
+    }
+
     @FXML
     private void onRegisterButtonClick(ActionEvent event) {
         try {
-            //Cargamos la nueva ventana
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/register-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 500, 500);
             Stage stage = new Stage();
@@ -144,14 +178,13 @@ public class Controller {
     }
 
     @FXML
-    private void onClose(ActionEvent event) {
+    private void cerrarPrograma(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
     @FXML
     private void registrarUsuario(ActionEvent event) {
-        // Lógica para registrar un nuevo usuario
         loginService.añadirMecanico(new Mecanico(
                 pfContrasenia.getText(),
                 tfNombre.getText(),
@@ -160,11 +193,9 @@ public class Controller {
                 tfTelefono.getText(),
                 tfDireccion.getText(),
                 tfUsuario.getText()
-
         ));
         lblMensajeRegistro.setText("Registro exitoso.");
         lblMensajeRegistro.setStyle("-fx-text-fill: green;");
-
         limpiarCamposRegistro();
     }
     private void limpiarCamposRegistro() {
@@ -182,31 +213,45 @@ public class Controller {
         txtContrasenia.clear();
     }
 
+
+
+    // abrir añadir bicicleta usando NavigationService
+
+
     @FXML
-    private void volverLogin(ActionEvent event){
+    private void añadirCliente(ActionEvent event){
         try{
-            onClose(event);
-        } catch (Exception e) {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirCliente.fxml"));
+            Parent contenido = fxmlLoader.load();
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
     }
 
-    @FXML
-    private void añadirBicicleta(ActionEvent event){
+    // Abre el formulario de añadir cliente en la misma escena y prefill DNI
+    private void openAddClienteWithDni(String dni) {
         try {
-            //Cargamos la nueva ventana
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirBicicleta-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 500);
-            Stage stage = new Stage();
-            stage.setTitle("Hello!");
-            stage.setScene(scene);
-            stage.show();
-
-            stage.centerOnScreen();
-            stage.setResizable(false);
-
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirCliente.fxml"));
+            Parent contenido = loader.load();
+            Controller ctrl = loader.getController();
+            ctrl.setPrefilledDni(dni);
+            NavigationService.getInstance().openInCenter(contenido);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setPrefilledDni(String dni) {
+        if (txtDni != null) {
+            txtDni.setText(dni);
+        }
+    }
+
+
+    // método de cancelar/volver genérico para cualquier vista
+    @FXML
+    private void volverPaginaPrincipal(ActionEvent event){
+        NavigationService.getInstance().goBack();
     }
 }

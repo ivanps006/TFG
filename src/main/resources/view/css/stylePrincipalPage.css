@@ -1,160 +1,225 @@
+/* =========================================================
+   THEME: "Aero Clean" (azules + acentos, moderno y limpio)
+   - Mantiene tus clases y añade algunas opcionales.
+   - Si no usas .table-card/.footer-sep/.hint no pasa nada.
+   ========================================================= */
+
 /* ===============================
    FONDO GENERAL
    =============================== */
+.root {
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
 BorderPane {
-    -fx-background-color: linear-gradient(
-            to bottom right,
-            #000000,
-            #141414,
-            #1f1f1f
-    );
+    /* Fondo suave con “luz” en la parte superior */
+    -fx-background-color:
+            radial-gradient(focus-angle 35deg, focus-distance 0%,
+            center 30% 0%, radius 120%,
+            rgba(79,172,254,0.20), transparent 55%),
+            linear-gradient(to bottom right, #f4f7fb, #eef3f9, #e8eff8);
 }
 
 /* ===============================
    CABECERA
    =============================== */
 .header {
-    -fx-background-color: #0f0f0f;
-    -fx-padding: 15 20 15 20;
-    -fx-border-color: #1f1f1f;
-    -fx-border-width: 0 0 1 0;
+    /* Degradado más “premium” */
+    -fx-background-color: linear-gradient(to right, #2563eb, #06b6d4);
+    -fx-padding: 16 22 14 22;
+    -fx-background-radius: 0 0 14 14;
+
+    /* sombra sutil para separar del contenido */
+    -fx-effect: dropshadow(gaussian, rgba(2,6,23,0.25), 18, 0.12, 0, 6);
 }
 
 .title {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Segoe UI", "Arial";
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+}
+
+.subtitleHeader {
+    -fx-text-fill: rgba(255,255,255,0.82);
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 600;
 }
 
 /* ===============================
    TEXTOS
    =============================== */
 Label {
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #0f172a;
     -fx-font-size: 13px;
-    -fx-font-family: "Segoe UI", "Arial";
 }
 
 .subtitle {
     -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-padding: 0 0 10 0;
+    -fx-font-weight: 800;
+    -fx-padding: 0 0 6 0;
+}
+
+.hint {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 11.5px;
+}
+
+/* ===============================
+   CONTENEDORES (opcional)
+   =============================== */
+.table-container,
+.table-card {
+    -fx-background-color: rgba(255,255,255,0.85);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(148,163,184,0.35);
+
+    -fx-effect: dropshadow(gaussian, rgba(2,6,23,0.10), 24, 0.15, 0, 8);
 }
 
 /* ===============================
    TABLA
    =============================== */
 TableView {
-    -fx-background-color: #141414;
-    -fx-border-color: #2a2a2a;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 6;
 }
 
-/* Forzar texto blanco en todas las celdas de la tabla (incluyendo selección y foco) */
-.table-view .table-cell,
-.table-view .table-row-cell {
-    -fx-text-fill: #ffffff;
-}
-
-/* Asegurar que cuando una fila o celda está seleccionada o en foco siga siendo blanca */
-.table-view .table-row-cell:selected,
-.table-view .table-cell:selected,
-.table-view .table-row-cell:focused,
-.table-view .table-cell:focused,
-.table-view .table-row-cell:filled:selected,
-.table-view .table-cell:filled:selected {
-    -fx-text-fill: #ffffff;
-}
-
-/* Si usas celdas con gráficos o labels internos */
-.table-view .table-cell .label,
-.table-view .table-cell .text {
-    -fx-text-fill: #ffffff;
-}
-
-/* Cabecera de la tabla */
+/* Cabecera de tabla */
 .table-view .column-header-background {
-    -fx-background-color: #0f0f0f;
+    -fx-background-color: linear-gradient(to bottom, #f8fafc, #eef2f7);
+    -fx-background-radius: 12 12 0 0;
+    -fx-padding: 6 6 6 6;
 }
 
 .table-view .column-header,
 .table-view .filler {
-    -fx-background-color: #0f0f0f;
-    -fx-border-color: #1f1f1f;
+    -fx-background-color: transparent;
+    -fx-border-color: rgba(148,163,184,0.35);
+    -fx-border-width: 0 0 1 0;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: #ffffff;
-    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+    -fx-font-weight: 800;
 }
 
 /* Filas */
 .table-row-cell {
-    -fx-background-color: #141414;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: rgba(255,255,255,0.92);
+    -fx-border-color: rgba(148,163,184,0.18);
+    -fx-border-width: 0 0 1 0;
 }
 
 .table-row-cell:odd {
-    -fx-background-color: #1b1b1b;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: rgba(248,250,252,0.95);
 }
 
-/* Fila seleccionada */
+/* Hover fila */
+.table-row-cell:hover {
+    -fx-background-color: rgba(59,130,246,0.10);
+}
+
+/* Selección */
 .table-row-cell:selected {
-    -fx-background-color: rgba(229, 9, 20, 0.3);
+    -fx-background-color: linear-gradient(to right, #2563eb, #06b6d4);
+}
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
 }
 
+/* Texto de celdas */
+.table-view .table-cell {
+    -fx-text-fill: #0f172a;
+    -fx-padding: 10 8 10 8;
+}
 
+/* Placeholder */
+.table-view .placeholder .label {
+    -fx-text-fill: #64748b;
+    -fx-font-weight: 600;
+}
+
+/* ===============================
+   FOOTER / ZONA BOTONES (opcional)
+   =============================== */
+.footer {
+    -fx-background-color: transparent;
+    -fx-padding: 12 22 16 22;
+}
+
+.footer-sep {
+    -fx-opacity: 0.45;
+}
 
 /* ===============================
    BOTONES GENERALES
    =============================== */
 Button {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Segoe UI", "Arial";
-    -fx-background-radius: 20;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
     -fx-cursor: hand;
-    -fx-padding: 8 18 8 18;
+    -fx-padding: 9 14 9 14;
+
+    /* transiciones “suaves” (JavaFX no anima como CSS web, pero esto ayuda visualmente) */
+    -fx-effect: null;
+}
+
+/* Estados comunes */
+Button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(2,6,23,0.18), 14, 0.15, 0, 4);
+}
+
+Button:pressed {
+    -fx-translate-y: 1;
+    -fx-effect: dropshadow(gaussian, rgba(2,6,23,0.16), 10, 0.12, 0, 2);
 }
 
 /* ===============================
-   BOTÓN PRINCIPAL
+   BOTÓN PRINCIPAL (Añadir)
+   (Te dejo tu clase original y una alternativa más estándar)
    =============================== */
-.btn-Añadir {
-    -fx-background-color: #e50914;
-    -fx-text-fill: #ffffff;
-    -fx-border-color: transparent;
+.btn-Añadir,
+.btn-primary {
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to right, #2563eb, #06b6d4);
 }
 
-.btn-Añadir:hover {
-    -fx-background-color: #f6121d;
-    -fx-effect: dropshadow(gaussian, rgba(229, 9, 20, 0.6), 12, 0.3, 0, 2);
+.btn-Añadir:hover,
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to right, #1d4ed8, #0891b2);
 }
 
 /* ===============================
-   BOTÓN SECUNDARIO
+   BOTÓN SECUNDARIO (Reparada)
    =============================== */
-.btn-MarcarArreglada {
-    -fx-background-color: transparent;
-    -fx-text-fill: #e50914;
-    -fx-border-color: #e50914;
-    -fx-border-width: 2;
+.btn-MarcarArreglada,
+.btn-success {
+    -fx-background-color: rgba(255,255,255,0.65);
+    -fx-text-fill: #16a34a;
+    -fx-border-color: rgba(22,163,74,0.55);
+    -fx-border-width: 1.5;
 }
 
-.btn-MarcarArreglada:hover {
-    -fx-background-color: rgba(229, 9, 20, 0.1);
-    -fx-effect: dropshadow(gaussian, rgba(229, 9, 20, 0.5), 10, 0.3, 0, 2);
+.btn-MarcarArreglada:hover,
+.btn-success:hover {
+    -fx-background-color: rgba(22,163,74,0.10);
+    -fx-border-color: rgba(22,163,74,0.75);
 }
 
 /* ===============================
    BOTÓN DE SALIR
    =============================== */
+.btn-salir,
+.btn-danger {
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to right, #ef4444, #b91c1c);
+}
 
-.btn-salir {
-    -fx-background-color: #333333;
-    -fx-text-fill: #ffffff;
-    -fx-border-color: transparent;
+.btn-salir:hover,
+.btn-danger:hover {
+    -fx-background-color: linear-gradient(to right, #dc2626, #991b1b);
 }

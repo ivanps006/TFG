@@ -15,7 +15,7 @@
     <TextField promptText="Teléfono" fx:id="tfTelefono" prefWidth="300" minWidth="300" maxWidth="300"/>
     <TextField promptText="Direccion" fx:id="tfDireccion" prefWidth="300" minWidth="300" maxWidth="300"/>
     <Button fx:id="btnConfirmar" text="Confirmar" onAction="#registrarUsuario" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <Button fx:id="btnCerrar" text="Cerrar" onAction="#onClose" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <Button fx:id="btnCerrar" text="Cerrar" onAction="#cerrarPrograma" prefWidth="300" minWidth="300" maxWidth="300"/>
     <Label fx:id="lblMensajeRegistro"/>
 </VBox>
 

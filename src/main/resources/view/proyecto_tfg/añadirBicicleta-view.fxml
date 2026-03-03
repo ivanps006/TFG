@@ -7,17 +7,19 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<!-- xml -->
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            fx:controller="org.example.proyecto_tfg.controller.AñadirBicicletaController"
             prefWidth="600"
             prefHeight="500"
             stylesheets="@../css/stylePrincipalPage.css">
 
+
     <!-- ===== CABECERA ===== -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
-            <Label text="➕ Añadir Bicicleta" styleClass="title"/>
+            <Label text=" Añadir Bicicleta" styleClass="title"/>
         </HBox>
     </top>
 
@@ -48,18 +50,47 @@
                     <TextField fx:id="txtModelo" promptText="Ej: X-Caliber 8"/>
                 </VBox>
             </HBox>
+            <!--Suspensiones-->
+            <HBox spacing="15">
+                <VBox>
+                    <Label text="Suspension Delantera"/>
+                    <TextField fx:id="txtSuspDel" promptText="Ej: Fox 34 Kashima 120mm"/>
+                </VBox>
+                <VBox>
+                    <Label text="Suspension Trasera"/>
+                    <TextField fx:id="txtSuspTras" promptText="Ej: RockShox Sid 100mm"/>
+                </VBox>
+            </HBox>
+            <!--Frenos y Transmision-->
+            <HBox spacing="15">
+                <VBox>
+                    <Label text="Frenos"/>
+                    <TextField fx:id="txtFrenos" promptText="Ej: Shimano Deore XT"/>
+                </VBox>
+                <VBox>
+                    <Label text="Transmision"/>
+                    <TextField fx:id="txtTransmision" promptText="Ej: SRAM GX Eagle 12v"/>
+                </VBox>
+            </HBox>
+            <!-- Ruedas y Cliente -->
+           <HBox spacing="15">
+               <VBox >
+                   <Label text="Ruedas"/>
+                   <TextField fx:id="txtRuedas" promptText="Ej: Bontrager Line Comp 29"/>
+               </VBox>
 
-            <!-- Cliente -->
-            <VBox spacing="5">
-                <Label text="Cliente"/>
-                <TextField fx:id="txtCliente" promptText="Nombre del cliente"/>
-            </VBox>
+               <VBox>
+                   <Label text="Cliente (DNI)"/>
+                   <TextField fx:id="txtClienteDni" promptText="Ej: 12345678A"/>
+                   <Button text="AñadirCliente" fx:id="btnAñadirCliente" styleClass="btn-secondary" />
+               </VBox>
+           </HBox>
 
             <!-- Estado -->
-            <VBox spacing="5">
-                <Label text="Estado"/>
-                <ComboBox fx:id="cmbEstado" promptText="Selecciona estado"/>
-            </VBox>
+<!--            <VBox spacing="5">-->
+<!--                <Label text="Estado"/>-->
+<!--                <ComboBox fx:id="cmbEstado" promptText="Selecciona estado"/>-->
+<!--            </VBox>-->
         </VBox>
     </center>
 
@@ -72,11 +103,13 @@
 
             <Button text="Cancelar"
                     fx:id="btnCancelar"
-                    styleClass="btn-secondary"/>
+                    styleClass="btn-secondary"
+                    onAction="#volverPaginaPrincipal"/>
 
             <Button text="Guardar Bicicleta"
                     fx:id="btnGuardar"
-                    styleClass="btn-primary"/>
+                    styleClass="btn-primary"
+                    onAction="#guardarBicicleta"/>
         </HBox>
     </bottom>
 

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.proyecto_tfg.controller.Controller"
+      prefHeight="450.0"
+      prefWidth="650.0"
+      spacing="15"
+      stylesheets="@../css/styleAñadirCliente.css">
+
+    <padding>
+        <Insets top="20" right="30" bottom="20" left="30"/>
+    </padding>
+
+    <!-- ===== CABECERA ===== -->
+    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+        <Label text="Añadir Cliente" styleClass="title"/>
+    </HBox>
+
+    <!-- ===== FORMULARIO ===== -->
+
+    <!-- DNI -->
+    <VBox spacing="5">
+        <Label text="DNI"/>
+        <TextField fx:id="txtDni" promptText="Ej: 12345678A"/>
+    </VBox>
+
+    <!-- Nombre y Apellidos -->
+    <HBox spacing="20">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Nombre"/>
+            <TextField fx:id="txtNombre" promptText="Iván"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Apellidos"/>
+            <TextField fx:id="txtApellidos" promptText="Padilla Saldaña"/>
+        </VBox>
+    </HBox>
+
+    <!-- Teléfono y Dirección -->
+    <HBox spacing="20">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Teléfono"/>
+            <TextField fx:id="txtTelefono" promptText="Ej: 123456789"/>
+        </VBox>
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Dirección"/>
+            <TextField fx:id="txtDireccion" promptText="Calle Ejemplo, 123"/>
+        </VBox>
+    </HBox>
+
+    <!-- ===== BOTONES ===== -->
+    <HBox spacing="15" alignment="CENTER_RIGHT">
+        <padding>
+            <Insets top="20"/>
+        </padding>
+
+        <Button text="Cancelar"
+                fx:id="btnCancelar"
+                styleClass="btn-secondary"
+                onAction="#onClose"/>
+
+        <Button text="Guardar Cliente"
+                fx:id="btnGuardar"
+                styleClass="btn-primary"
+                onAction="#guardarCliente"/>
+    </HBox>
+
+</VBox>
