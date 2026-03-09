@@ -9,6 +9,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -57,6 +59,16 @@ public class Controller {
     @FXML private TextField txtRuedas;
     @FXML private TextField txtClienteDni;
 
+
+    @FXML private TableColumn<Bicicleta, String> colFrenosBici;
+    @FXML private TableColumn<Bicicleta, String> colSuspDel;
+    @FXML private TableColumn<Bicicleta, String> colSuspTras;
+    @FXML private TableColumn<Bicicleta, String> colTransmision;
+    @FXML private TableColumn<Bicicleta, String> colRuedas;
+    @FXML private TextField tfBuscarBicicleta;
+    @FXML private Label lblTotalBicicletas;
+
+    //Datos Clientes
     @FXML private TextField txtDni;
     @FXML private TextField txtNombre;
     @FXML private TextField txtApellidos;
@@ -78,6 +90,7 @@ public class Controller {
     @FXML private TextField tfBuscarCliente;
     @FXML private Label lblTotalClientes;
 
+    @FXML private ImageView logoEmpresa;
 
     @FXML
     public void initialize() {
@@ -128,6 +141,46 @@ public class Controller {
             if (lblTotalClientes != null) {
                 lblTotalClientes.setText("Total: " + clientes.size() + " clientes");
             }
+        }
+
+        if (colFrenosBici != null)    colFrenosBici.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFrenos()));
+        if (colSuspDel != null)   colSuspDel.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_delantera()));
+        if (colSuspTras != null)  colSuspTras.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_trasera()));
+        if (colTransmision != null) colTransmision.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTransmision()));
+        if (colRuedas != null)    colRuedas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRuedas()));
+
+        if (colEstado != null) {
+            colEstado.setCellValueFactory(cell ->
+                    new SimpleStringProperty(cell.getValue().getEstado() != null
+                            ? cell.getValue().getEstado() : "Sin reparar"));
+
+            // Colorear la celda según el estado
+            colEstado.setCellFactory(col -> new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item);
+                        switch (item) {
+                            case "Sin reparar" -> setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
+                            case "En reparacion" -> setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
+                            case "Reparada"     -> setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold;");
+                            default             -> setStyle("");
+                        }
+                    }
+                }
+            });
+        }
+        if (lblTotalBicicletas != null && tablaBicicletas != null) {
+            lblTotalBicicletas.setText("Total: " + tablaBicicletas.getItems().size() + " bicicletas");
+        }
+
+        if (logoEmpresa != null) {
+            Image img = new Image(getClass().getResourceAsStream("/view/img/logo.png"));
+            logoEmpresa.setImage(img);
         }
     }
 
@@ -238,30 +291,15 @@ public class Controller {
     }
 
     @FXML
-    private void anadirCliente(ActionEvent event){
+    private void añadirCliente(ActionEvent event){
         try{
             Parent contenido = loadFxmlTry(
-                    "/view/proyecto_tfg/añadirCliente.fxml",
-                    "/view/proyecto_tfg/anadirCliente.fxml",
-                    "/view/proyecto_tfg/a%C3%B1adirCliente.fxml"
+                    "/view/proyecto_tfg/añadirCliente.fxml"
             );
             NavigationService.getInstance().openInCenter(contenido);
         } catch (Exception e){
             e.printStackTrace();
             showAlert("Error", "No se pudo abrir el formulario de añadir cliente.");
-        }
-    }
-
-    // compatibilidad si el FXML usa 'añadirCliente'
-    @FXML
-    private void añadirCliente(ActionEvent event){
-        anadirCliente(event);
-    }
-
-
-    public void setPrefilledDni(String dni) {
-        if (txtDni != null) {
-            txtDni.setText(dni);
         }
     }
 
@@ -350,5 +388,33 @@ public class Controller {
     private void mostrarDashboard(ActionEvent event) {
         root.setCenter(dashboardView);
     }
+
+    @FXML
+    private void mostrarBicicleta(ActionEvent event) {
+        try{
+            String texto = tfBuscarBicicleta != null ? tfBuscarBicicleta.getText().trim().toLowerCase() : "";
+            ObservableList<Bicicleta> todas = homeService.cargarBicicletasDesdeBD();
+            if (texto.isEmpty()) {
+                tablaBicicletas.setItems(todas);
+            } else {
+                ObservableList<Bicicleta> filtradas = todas.filtered(b ->
+                        b.getId_referencia().toLowerCase().contains(texto) ||
+                                b.getMarca().toLowerCase().contains(texto) ||
+                                b.getModelo().toLowerCase().contains(texto)
+                );
+                tablaBicicletas.setItems(filtradas);
+            }
+            Parent contenido = loadFxmlTry(
+                    "/view/proyecto_tfg/bicicletas.fxml"
+            );
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e){
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de bicicletas.");
+        }
+    }
+
+
+
 
 }

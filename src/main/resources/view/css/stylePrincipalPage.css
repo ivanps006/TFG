@@ -210,6 +210,55 @@ Button:pressed {
     -fx-border-color: rgba(22,163,74,0.75);
 }
 
+/* TOPBAR AZUL */
+.topbar-blue{
+
+    -fx-background-color: linear-gradient(to right,#1e3c72,#2a5298);
+
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10,0,0,3);
+}
+
+/* TITULO */
+.topbar-title{
+
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.topbar-blue{
+    -fx-background-color: linear-gradient(to right,#1e3c72,#2a5298);
+    -fx-border-color: #4aa3ff;
+    -fx-border-width: 0 0 3 0;
+}
+
+/* BUSCADOR */
+.search-bar{
+
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+
+    -fx-background-color: white;
+
+    -fx-padding: 6 12 6 12;
+
+    -fx-font-size: 13px;
+}
+
+/* ESTADO */
+.status-label{
+
+    -fx-text-fill: #d0e4ff;
+    -fx-font-size: 13px;
+}
+
+/* FECHA */
+.date-label{
+
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+}
+
 /* ===============================
    BOTÓN DE SALIR
    =============================== */

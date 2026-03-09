@@ -13,7 +13,7 @@
       prefHeight="450.0"
       prefWidth="650.0"
       spacing="15"
-      stylesheets="@../css/styleAñadirCliente.css">
+      stylesheets="@../css/stylePrincipalPage.css">
 
     <padding>
         <Insets top="20" right="30" bottom="20" left="30"/>
@@ -67,7 +67,7 @@
         <Button text="Cancelar"
                 fx:id="btnCancelar"
                 styleClass="btn-secondary"
-                onAction="#onClose"/>
+                onAction="#volverPaginaPrincipal"/>
 
         <Button text="Guardar Cliente"
                 fx:id="btnGuardar"

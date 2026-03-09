@@ -3,121 +3,224 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
 
-<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.image.Image?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
             fx:id="root"
             fx:controller="org.example.proyecto_tfg.controller.Controller"
-            prefHeight="700.0" prefWidth="1200.0"
+            prefHeight="720"
+            prefWidth="1280"
             stylesheets="@../css/stylePrincipalPage.css">
 
     <!-- ===== SIDEBAR ===== -->
     <left>
-        <VBox styleClass="sidebar" spacing="14" prefWidth="220">
+        <VBox styleClass="sidebar" spacing="18" prefWidth="230">
+
             <padding>
-                <Insets top="20" right="15" bottom="20" left="15"/>
+                <Insets top="25" right="18" bottom="25" left="18"/>
             </padding>
 
+            <!-- LOGO APP -->
             <Label text="🚲 WORKSHOP+" styleClass="sidebar-logo"/>
 
             <Separator/>
 
-            <!-- Menú — cada botón carga su vista en el center -->
-            <Button text="Dashboard" styleClass="nav-item" maxWidth="Infinity" onAction="#mostrarDashboard"/>
-            <Button text="Citas" styleClass="nav-item" maxWidth="Infinity"/>
-            <Button text="Clientes" styleClass="nav-item" maxWidth="Infinity" fx:id="btnClientes" onAction="#mostrarClientes"/>
-            <Button text="Inventario"  styleClass="nav-item"   maxWidth="Infinity"/>
-            <Button text="Facturación" styleClass="nav-item"  maxWidth="Infinity"/>
-            <Button text="Configuración" styleClass="nav-item"  maxWidth="Infinity"/>
+            <!-- MENÚ -->
+            <Button text="Dashboard"
+                    styleClass="nav-item"
+                    maxWidth="Infinity"
+                    onAction="#mostrarDashboard"/>
 
+            <Button text="Mantenimientos"
+                    styleClass="nav-item"
+                    maxWidth="Infinity"
+                    onAction="#mostrarBicicleta"/>
+
+            <Button text="Clientes"
+                    fx:id="btnClientes"
+                    styleClass="nav-item"
+                    maxWidth="Infinity"
+                    onAction="#mostrarClientes"/>
+
+            <Button text="Inventario"
+                    styleClass="nav-item"
+                    maxWidth="Infinity"/>
+
+            <Button text="Facturación"
+                    styleClass="nav-item"
+                    maxWidth="Infinity"/>
+
+            <!-- ESPACIO FLEXIBLE -->
             <Region VBox.vgrow="ALWAYS"/>
 
+            <!-- LOGO EMPRESA -->
+            <!-- LOGO EMPRESA -->
+            <VBox alignment="CENTER" spacing="10" maxWidth="Infinity">
+                <ImageView fx:id="logoEmpresa"
+                           fitHeight="160"
+                           fitWidth="210"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../img/logo.png"/>
+                    </image>
+                </ImageView>
+            </VBox>
+
+
+            <!-- VERSION -->
             <Label text="v1.0.0" styleClass="sidebar-version"/>
+
         </VBox>
     </left>
 
+
     <!-- ===== TOPBAR ===== -->
     <top>
-        <HBox styleClass="topbar" alignment="CENTER_LEFT">
+        <HBox styleClass="topbar-blue" alignment="CENTER_LEFT" spacing="15">
+
             <padding>
                 <Insets top="12" right="20" bottom="12" left="20"/>
             </padding>
 
-            <Label text="Panel de Control" styleClass="topbar-title"/>
+            <Label text="Panel de Control"
+                   styleClass="topbar-title"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Button text="🔔" styleClass="icon-btn"/>
-            <Button text="Admin" styleClass="user-btn"/>
-            <Button text="Salir" fx:id="btnSalir" styleClass="btn-danger" onAction="#volverLogin"/>
+            <TextField promptText="Buscar cliente, bicicleta..."
+                       prefWidth="260"
+                       styleClass="search-bar"/>
+
+            <Label text="Taller activo"
+                   styleClass="status-label"/>
+
+            <Label fx:id="lblFecha"
+                   text="Lunes 9 Marzo"
+                   styleClass="date-label"/>
+
         </HBox>
     </top>
 
-    <!-- ===== CONTENIDO (dashboard por defecto) ===== -->
+
+    <!-- ===== CONTENIDO ===== -->
     <center>
-        <VBox fx:id="dashboardView" spacing="20" styleClass="content">
-            <padding>
-                <Insets top="20" right="25" bottom="20" left="25"/>
-            </padding>
 
-            <!-- HERO -->
-            <VBox spacing="4">
-                <Label text="Bienvenido al sistema" styleClass="hero-small"/>
-                <Label text="Gestión de Taller" styleClass="hero-title"/>
-            </VBox>
+        <StackPane fx:id="mainContainer">
 
-            <!-- CARDS -->
-            <HBox spacing="15">
-                <VBox styleClass="card">
-                    <Label text="Reparaciones" styleClass="card-title"/>
-                    <Label text="Control total del taller" styleClass="card-text"/>
-                </VBox>
-                <VBox styleClass="card">
-                    <Label text="Clientes" styleClass="card-title"/>
-                    <Label text="Historial y datos completos" styleClass="card-text"/>
-                </VBox>
-                <VBox styleClass="card">
-                    <Label text="Estadísticas" styleClass="card-title"/>
-                    <Label text="Visualiza el rendimiento" styleClass="card-text"/>
-                </VBox>
-            </HBox>
+            <VBox fx:id="dashboardView"
+                  spacing="25"
+                  styleClass="content">
 
-            <!-- TABLA -->
-            <VBox spacing="10" VBox.vgrow="ALWAYS">
-                <HBox>
-                    <Label text="Bicicletas pendientes" styleClass="section-title"/>
-                    <Region HBox.hgrow="ALWAYS"/>
+                <padding>
+                    <Insets top="25" right="30" bottom="25" left="30"/>
+                </padding>
+
+                <!-- TITULO -->
+                <VBox spacing="5">
+                    <Label text="Bienvenido al sistema"
+                           styleClass="hero-small"/>
+                    <Label text="Gestión del Taller"
+                           styleClass="hero-title"/>
+                </VBox>
+
+                <!-- ESTADISTICAS -->
+                <HBox spacing="18">
+
+                    <VBox styleClass="stat-card">
+                        <Label text="Reparaciones Activas"
+                               styleClass="stat-title"/>
+                        <Label text="12"
+                               styleClass="stat-number"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-card">
+                        <Label text="Clientes Totales"
+                               styleClass="stat-title"/>
+                        <Label text="86"
+                               styleClass="stat-number"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-card">
+                        <Label text="Ingresos Mes"
+                               styleClass="stat-title"/>
+                        <Label text="1240€"
+                               styleClass="stat-number"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-card">
+                        <Label text="Bicis Entregadas"
+                               styleClass="stat-title"/>
+                        <Label text="45"
+                               styleClass="stat-number"/>
+                    </VBox>
+
                 </HBox>
 
-                <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
-                    <TableView fx:id="tablaBicicletas" VBox.vgrow="ALWAYS">
-                        <placeholder>
-                            <Label text="No hay datos disponibles"/>
-                        </placeholder>
-                        <columns>
-                            <TableColumn text="Ref"     fx:id="colRef"     prefWidth="90"/>
-                            <TableColumn text="Marca"   fx:id="colMarca"   prefWidth="120"/>
-                            <TableColumn text="Modelo"  fx:id="colModelo"  prefWidth="120"/>
-                            <TableColumn text="Cliente" fx:id="colCliente" prefWidth="130"/>
-                            <TableColumn text="Estado"  fx:id="colEstado"  prefWidth="100"/>
-                        </columns>
-                    </TableView>
+
+                <!-- TABLA -->
+                <VBox spacing="12" VBox.vgrow="ALWAYS">
+
+                    <HBox>
+                        <Label text="Bicicletas pendientes"
+                               styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
+
+                        <TableView fx:id="tablaBicicletas"
+                                   VBox.vgrow="ALWAYS">
+
+                            <placeholder>
+                                <Label text="No hay datos disponibles"/>
+                            </placeholder>
+
+                            <columns>
+
+                                <TableColumn text="Ref"
+                                             fx:id="colRef"
+                                             prefWidth="90"/>
+
+                                <TableColumn text="Marca"
+                                             fx:id="colMarca"
+                                             prefWidth="140"/>
+
+                                <TableColumn text="Modelo"
+                                             fx:id="colModelo"
+                                             prefWidth="140"/>
+
+                                <TableColumn text="Cliente"
+                                             fx:id="colCliente"
+                                             prefWidth="160"/>
+
+                                <TableColumn text="Estado"
+                                             fx:id="colEstado"
+                                             prefWidth="120"/>
+
+                            </columns>
+
+                        </TableView>
+
+                    </VBox>
+
+                    <!-- BOTON SALIR -->
+                    <HBox alignment="CENTER_RIGHT">
+
+                        <Button text="Cerrar sesión"
+                                fx:id="btnSalir"
+                                styleClass="btn-danger"
+                                onAction="#volverLogin"/>
+
+                    </HBox>
+
                 </VBox>
 
-                <!-- BOTONES -->
-                <HBox alignment="CENTER_RIGHT" spacing="10">
-                    <Button text="+ Añadir Bicicleta"
-                            fx:id="btnAddBicicleta"
-                            styleClass="btn-primary"
-                            onAction="#añadirBicicleta"/>
-                    <Button text="+ Añadir Cliente"
-                            styleClass="btn-primary"
-                            onAction="#añadirCliente"/>
-                    <Button text="✔ Reparada"
-                            fx:id="btnReparada"
-                            styleClass="btn-success"/>
-                </HBox>
             </VBox>
-        </VBox>
+
+        </StackPane>
+
     </center>
 
 </BorderPane>

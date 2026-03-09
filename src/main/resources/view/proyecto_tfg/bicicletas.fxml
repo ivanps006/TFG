@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefHeight="600.0" prefWidth="1000.0">
+
+    <VBox spacing="20" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <padding><Insets left="20" top="10"/></padding>
+            <Label text="🚲 Gestión de Bicicletas"/>
+        </HBox>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets left="20" right="20"/></padding>
+            <TextField fx:id="tfBuscarBicicleta"
+                       promptText="🔍 Buscar por referencia, marca, modelo..."
+                       prefWidth="350"/>
+            <Button text="Buscar" />
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="➕ Nueva Bicicleta" onAction="#añadirBicicleta"/>
+            <Button text="🗑 Eliminar" />
+        </HBox>
+
+        <TableView fx:id="tablaBicicletas" VBox.vgrow="ALWAYS">
+            <padding><Insets left="20" right="20"/></padding>
+            <columns>
+                <TableColumn fx:id="colRef"         text="Referencia"      prefWidth="120"/>
+                <TableColumn fx:id="colMarca"       text="Marca"           prefWidth="120"/>
+                <TableColumn fx:id="colModelo"      text="Modelo"          prefWidth="130"/>
+                <TableColumn fx:id="colFrenosBici"  text="Frenos"          prefWidth="100"/>
+                <TableColumn fx:id="colSuspDel"     text="Susp. Delantera" prefWidth="130"/>
+                <TableColumn fx:id="colSuspTras"    text="Susp. Trasera"   prefWidth="120"/>
+                <TableColumn fx:id="colTransmision" text="Transmisión"     prefWidth="120"/>
+                <TableColumn fx:id="colRuedas"      text="Ruedas"          prefWidth="100"/>
+                <TableColumn fx:id="colCliente"     text="Cliente (DNI)"   prefWidth="120"/>
+                <TableColumn fx:id="colEstado"      text="Estado"          prefWidth="110"/>
+            </columns>
+            <placeholder>
+                <Label text="No hay bicicletas registradas."/>
+            </placeholder>
+        </TableView>
+
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <padding><Insets left="20" right="20" bottom="15"/></padding>
+            <Label fx:id="lblTotalBicicletas" text="Total: 0 bicicletas"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

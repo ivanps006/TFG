@@ -30,7 +30,7 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Button text="➕ Nuevo Cliente"/>
+            <Button text="➕ Nuevo Cliente" onAction="#añadirCliente"/>
 
             <Button text="🗑 Eliminar"/>
         </HBox>

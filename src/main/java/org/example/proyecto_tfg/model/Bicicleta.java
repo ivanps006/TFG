@@ -26,12 +26,17 @@ public class Bicicleta {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente", referencedColumnName = "dni", nullable = true)
     private Cliente id_cliente;
+    @Column(name = "estado")
+    private String estado;
+
 
 
     public Bicicleta() {
     }
 
-    public Bicicleta(String id_referencia, String marca, String modelo, String frenos, String susp_delantera, String suspe_trasera, String transmision, String ruedas, Cliente id_cliente) {
+    public Bicicleta(String id_referencia, String marca, String modelo, String frenos,
+                     String susp_delantera, String suspe_trasera, String transmision,
+                     String ruedas, Cliente id_cliente) {
         this.id_referencia = id_referencia;
         this.marca = marca;
         this.modelo = modelo;
@@ -41,7 +46,12 @@ public class Bicicleta {
         this.transmision = transmision;
         this.ruedas = ruedas;
         this.id_cliente = id_cliente;
+        this.estado = "Sin reparar"; // ← valor por defecto
     }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
 
     public String getId_referencia() {
         return id_referencia;
