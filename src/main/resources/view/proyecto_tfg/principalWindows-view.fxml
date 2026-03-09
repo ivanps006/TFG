@@ -6,7 +6,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:id="root"
-            fx:controller="org.example.proyecto_tfg.controller.AñadirBicicletaController"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
             prefHeight="700.0" prefWidth="1200.0"
             stylesheets="@../css/stylePrincipalPage.css">
 
@@ -22,9 +22,9 @@
             <Separator/>
 
             <!-- Menú — cada botón carga su vista en el center -->
-            <Button text="Dashboard"   styleClass="nav-item"   maxWidth="Infinity"/>
-            <Button text="Citas"       styleClass="nav-item"        maxWidth="Infinity"/>
-            <Button text="Clientes"    styleClass="nav-item"    maxWidth="Infinity"/>
+            <Button text="Dashboard" styleClass="nav-item" maxWidth="Infinity" onAction="#mostrarDashboard"/>
+            <Button text="Citas" styleClass="nav-item" maxWidth="Infinity"/>
+            <Button text="Clientes" styleClass="nav-item" maxWidth="Infinity" fx:id="btnClientes" onAction="#mostrarClientes"/>
             <Button text="Inventario"  styleClass="nav-item"   maxWidth="Infinity"/>
             <Button text="Facturación" styleClass="nav-item"  maxWidth="Infinity"/>
             <Button text="Configuración" styleClass="nav-item"  maxWidth="Infinity"/>
@@ -110,8 +110,8 @@
                             styleClass="btn-primary"
                             onAction="#añadirBicicleta"/>
                     <Button text="+ Añadir Cliente"
-                            styleClass="btn-primary"/>
-<!--                            onAction="#añadirCliente"/>-->
+                            styleClass="btn-primary"
+                            onAction="#añadirCliente"/>
                     <Button text="✔ Reparada"
                             fx:id="btnReparada"
                             styleClass="btn-success"/>

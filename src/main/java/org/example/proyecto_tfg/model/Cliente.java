@@ -11,17 +11,17 @@ public class Cliente {
     @Id
     private String dni;
     private String nombre;
-    private String apellidos;
+    private String apellido;
     private String telefono;
     private String direccion;
 
     public Cliente() {
     }
 
-    public Cliente(String dni, String nombre, String apellidos, String telefono, String direccion) {
+    public Cliente(String dni, String nombre, String apellido, String telefono, String direccion) {
         this.dni = dni;
         this.nombre = nombre;
-        this.apellidos = apellidos;
+        this.apellido = apellido;
         this.telefono = telefono;
         this.direccion = direccion;
     }
@@ -51,11 +51,11 @@ public class Cliente {
     }
 
     public String getApellidos() {
-        return apellidos;
+        return apellido;
     }
 
     public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
+        this.apellido = apellidos;
     }
 
     public String getDireccion() {
@@ -71,7 +71,7 @@ public class Cliente {
         return "Cliente{" +
                 "dni='" + dni + '\'' +
                 ", nombre='" + nombre + '\'' +
-                ", apellidos='" + apellidos + '\'' +
+                ", apellidos='" + apellido + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", direccion='" + direccion + '\'' +
                 '}';

@@ -10,7 +10,7 @@
 <!-- xml -->
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.proyecto_tfg.controller.AñadirBicicletaController"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
             prefWidth="600"
             prefHeight="500"
             stylesheets="@../css/stylePrincipalPage.css">
@@ -82,7 +82,6 @@
                <VBox>
                    <Label text="Cliente (DNI)"/>
                    <TextField fx:id="txtClienteDni" promptText="Ej: 12345678A"/>
-                   <Button text="AñadirCliente" fx:id="btnAñadirCliente" styleClass="btn-secondary" />
                </VBox>
            </HBox>
 

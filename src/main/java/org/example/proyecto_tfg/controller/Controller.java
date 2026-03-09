@@ -1,8 +1,6 @@
 package org.example.proyecto_tfg.controller;
 
-
 import javafx.beans.property.SimpleStringProperty;
-
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,28 +10,29 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.proyecto_tfg.HelloApplication;
 import org.example.proyecto_tfg.model.Bicicleta;
 import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.model.Mecanico;
-import org.example.proyecto_tfg.service.AddService;
-import org.example.proyecto_tfg.service.HomeService;
-import org.example.proyecto_tfg.service.NavigationService;
-import org.example.proyecto_tfg.service.loginService;
+import org.example.proyecto_tfg.service.*;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
 
 public class Controller {
 
     private final loginService loginService = new loginService();
     private final HomeService homeService = new HomeService();
     private final AddService addService = new AddService();
+    private final ClienteService clienteService = new ClienteService();
 
-    @FXML private BorderPane root; // root principal del FXML `principalWindows-view.fxml`
-    private Node previousCenter;    // para volver a la vista anterior
-
+    @FXML private BorderPane root;
+    @FXML private VBox dashboardView;
     @FXML private Button btnAddBicicleta;
+    @FXML private Button btnClientes;
 
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtContrasenia;
@@ -68,24 +67,24 @@ public class Controller {
     @FXML private TableColumn<Bicicleta, String> colRef;
     @FXML private TableColumn<Bicicleta, String> colMarca;
     @FXML private TableColumn<Bicicleta, String> colModelo;
-    @FXML private TableColumn<Bicicleta, String> colFrenos;
-    @FXML private TableColumn<Bicicleta, String> colSuspDelantera;
-    @FXML private TableColumn<Bicicleta, String> colSuspTrasera;
-    @FXML private TableColumn<Bicicleta, String> colTransmision;
-    @FXML private TableColumn<Bicicleta, String> colRuedas;
     @FXML private TableColumn<Bicicleta, String> colCliente;
     @FXML private TableColumn<Bicicleta, String> colEstado;
 
-    private ObservableList<Bicicleta> bicicletas;
+    @FXML private TableView<Cliente> tablaClientes;
+    @FXML private TableColumn<Cliente, String> colDni;
+    @FXML private TableColumn<Cliente, String> colNombre;
+    @FXML private TableColumn<Cliente, String> colApellidos;
+    @FXML private TableColumn<Cliente, String> colTelefono;
+    @FXML private TextField tfBuscarCliente;
+    @FXML private Label lblTotalClientes;
+
 
     @FXML
     public void initialize() {
-        // Asegurar política de redimensionado
         if (tablaBicicletas != null) {
             tablaBicicletas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         }
 
-        // Configurar factories de columnas
         if (colRef != null) {
             colRef.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_referencia()));
         }
@@ -103,46 +102,61 @@ public class Controller {
             });
         }
         if (colEstado != null) {
-            colEstado.setCellValueFactory(cell -> new SimpleStringProperty("")); // ajustar si hay estado real
+            colEstado.setCellValueFactory(cell -> new SimpleStringProperty(""));
         }
 
-        NavigationService.getInstance().setRoot(root);
+        if (root != null) {
+            NavigationService.getInstance().setRoot(root);
+        }
 
-        // cargar bicicletas como antes
         ObservableList<Bicicleta> bicicletas = homeService.cargarBicicletasDesdeBD();
-        if (tablaBicicletas != null) {
+        if (tablaBicicletas != null && bicicletas != null) {
             tablaBicicletas.setItems(bicicletas);
         }
 
+        if (tablaClientes != null) {
+            tablaClientes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+            if (colDni != null)       colDni.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDni()));
+            if (colNombre != null)    colNombre.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombre()));
+            if (colApellidos != null) colApellidos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getApellidos()));
+            if (colTelefono != null)  colTelefono.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTelefono()));
+
+            ObservableList<Cliente> clientes = clienteService.cargarClientesDesdeBD();
+            tablaClientes.setItems(clientes);
+
+            if (lblTotalClientes != null) {
+                lblTotalClientes.setText("Total: " + clientes.size() + " clientes");
+            }
+        }
     }
 
     public void validarCredenciales() throws IOException {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getText().isEmpty()) {
             ErrorLogin.setText("Por favor, complete todos los campos.");
             ErrorLogin.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
+        if (loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText())) {
+            ErrorLogin.setText("Inicio de sesión exitoso.");
+            ErrorLogin.setStyle("-fx-text-fill: green;");
+            limpiarCamposLogin();
+
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
+            Stage stage = new Stage();
+            stage.setTitle("Hello!");
+            stage.setScene(scene);
+            stage.show();
+            stage.centerOnScreen();
+            stage.setResizable(false);
         } else {
-            if (loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText())) {
-                ErrorLogin.setText("Inicio de sesión exitoso.");
-                ErrorLogin.setStyle("-fx-text-fill: green;");
-                limpiarCamposLogin();
-
-                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
-                Stage stage = new Stage();
-                stage.setTitle("Hello!");
-                stage.setScene(scene);
-                stage.show();
-
-                stage.centerOnScreen();
-                stage.setResizable(false);
-            } else {
-                ErrorLogin.setText("Credenciales incorrectas. Inténtelo de nuevo.");
-                ErrorLogin.setStyle("-fx-text-fill: red;");
-                limpiarCamposLogin();
-            }
+            ErrorLogin.setText("Credenciales incorrectas. Inténtelo de nuevo.");
+            ErrorLogin.setStyle("-fx-text-fill: red;");
+            limpiarCamposLogin();
         }
     }
-
 
     @FXML
     private void guardarCliente(ActionEvent event){
@@ -155,7 +169,6 @@ public class Controller {
                         txtDireccion.getText()
                 )
         );
-
         NavigationService.getInstance().goBack();
     }
 
@@ -168,12 +181,11 @@ public class Controller {
             stage.setTitle("Hello!");
             stage.setScene(scene);
             stage.show();
-
             stage.centerOnScreen();
             stage.setResizable(false);
-
         } catch (IOException e) {
             e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de registro.");
         }
     }
 
@@ -198,6 +210,7 @@ public class Controller {
         lblMensajeRegistro.setStyle("-fx-text-fill: green;");
         limpiarCamposRegistro();
     }
+
     private void limpiarCamposRegistro() {
         tfUsuario.clear();
         pfContrasenia.clear();
@@ -213,34 +226,38 @@ public class Controller {
         txtContrasenia.clear();
     }
 
-
-
-    // abrir añadir bicicleta usando NavigationService
-
+    // Nuevo helper: intenta varias rutas (incluye la variante percent-encoded)
+    private Parent loadFxmlTry(String... paths) throws IOException {
+        for (String p : paths) {
+            URL url = HelloApplication.class.getResource(p);
+            if (url != null) {
+                return new FXMLLoader(url).load();
+            }
+        }
+        throw new IOException("No se encontró el recurso FXML entre: " + Arrays.toString(paths));
+    }
 
     @FXML
-    private void añadirCliente(ActionEvent event){
+    private void anadirCliente(ActionEvent event){
         try{
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirCliente.fxml"));
-            Parent contenido = fxmlLoader.load();
+            Parent contenido = loadFxmlTry(
+                    "/view/proyecto_tfg/añadirCliente.fxml",
+                    "/view/proyecto_tfg/anadirCliente.fxml",
+                    "/view/proyecto_tfg/a%C3%B1adirCliente.fxml"
+            );
             NavigationService.getInstance().openInCenter(contenido);
         } catch (Exception e){
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de añadir cliente.");
         }
     }
 
-    // Abre el formulario de añadir cliente en la misma escena y prefill DNI
-    private void openAddClienteWithDni(String dni) {
-        try {
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirCliente.fxml"));
-            Parent contenido = loader.load();
-            Controller ctrl = loader.getController();
-            ctrl.setPrefilledDni(dni);
-            NavigationService.getInstance().openInCenter(contenido);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // compatibilidad si el FXML usa 'añadirCliente'
+    @FXML
+    private void añadirCliente(ActionEvent event){
+        anadirCliente(event);
     }
+
 
     public void setPrefilledDni(String dni) {
         if (txtDni != null) {
@@ -248,10 +265,90 @@ public class Controller {
         }
     }
 
-
     // método de cancelar/volver genérico para cualquier vista
     @FXML
     private void volverPaginaPrincipal(ActionEvent event){
         NavigationService.getInstance().goBack();
     }
+
+    @FXML
+    private void guardarBicicleta(ActionEvent event) {
+        String ref = txtReferencia != null ? txtReferencia.getText().trim() : "";
+        String dni = txtClienteDni != null ? txtClienteDni.getText().trim() : "";
+        if (ref.isEmpty() || dni.isEmpty()) {
+            showAlert("Aviso", "Referencia y DNI del cliente son obligatorios.");
+            return;
+        }
+        Cliente cliente = addService.buscarClientePorDni(dni);
+        if (cliente == null) {
+            showAlert("Aviso", "Cliente no encontrado con DNI: " + dni);
+            return;
+        }
+        Bicicleta bici = new Bicicleta(
+                ref, getTextSafe(txtMarca), getTextSafe(txtModelo),
+                getTextSafe(txtFrenos), getTextSafe(txtSuspDel), getTextSafe(txtSuspTras),
+                getTextSafe(txtTransmision), getTextSafe(txtRuedas), cliente
+        );
+        addService.añadirBicicleta(bici);
+        NavigationService.getInstance().goBack();
+    }
+
+    private String getTextSafe(TextField tf) {
+        return tf == null ? "" : tf.getText();
+    }
+
+    @FXML
+    private void volverLogin(ActionEvent event){
+        cerrarPrograma(event);
+    }
+
+    // ASCII method for opening añadirBicicleta view (usarlo en FXML: onAction="#anadirBicicleta" si se desea)
+    @FXML
+    private void anadirBicicleta(ActionEvent event) {
+        try {
+            Parent contenido = loadFxmlTry(
+                    "/view/proyecto_tfg/añadirBicicleta-view.fxml"
+            );
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir añadir bicicleta.");
+        }
+    }
+
+    // compatibilidad si el FXML usa 'añadirBicicleta' (con ñ)
+    @FXML
+    private void añadirBicicleta(ActionEvent event) {
+        anadirBicicleta(event);
+    }
+
+    private void showAlert(String title, String message) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        } catch (Exception ignored) { }
+    }
+
+    @FXML
+    private void mostrarClientes(ActionEvent event){
+        try {
+            clienteService.cargarClientesDesdeBD();
+            Parent contenido = loadFxmlTry(
+                    "/view/proyecto_tfg/clientes.fxml"
+            );
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de clientes.");
+        }
+    }
+
+    @FXML
+    private void mostrarDashboard(ActionEvent event) {
+        root.setCenter(dashboardView);
+    }
+
 }
