@@ -46,7 +46,8 @@
 
             <Button text="Inventario"
                     styleClass="nav-item"
-                    maxWidth="Infinity"/>
+                    maxWidth="Infinity"
+                    onAction="#mostrarInventario"/>
 
             <Button text="Facturación"
                     styleClass="nav-item"

@@ -18,6 +18,7 @@ import org.example.proyecto_tfg.HelloApplication;
 import org.example.proyecto_tfg.model.Bicicleta;
 import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.model.Mecanico;
+import org.example.proyecto_tfg.model.Pieza;
 import org.example.proyecto_tfg.service.*;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class Controller {
     private final HomeService homeService = new HomeService();
     private final AddService addService = new AddService();
     private final ClienteService clienteService = new ClienteService();
+    private final InventarioService inventarioService = new InventarioService();
 
     @FXML private BorderPane root;
     @FXML private VBox dashboardView;
@@ -91,6 +93,18 @@ public class Controller {
     @FXML private Label lblTotalClientes;
 
     @FXML private ImageView logoEmpresa;
+
+    // Campos FXML para inventario
+    @FXML private TableView<Pieza> tablaPiezas;
+    @FXML private TableColumn<Pieza, String> colIdPieza;
+    @FXML private TableColumn<Pieza, String> colModeloPieza;
+    @FXML private TableColumn<Pieza, String> colMarcaPieza;
+    @FXML private TableColumn<Pieza, String> colTipoPieza;
+    @FXML private TableColumn<Pieza, String> colStockPieza;
+    @FXML private TableColumn<Pieza, String> colPrecioPieza;
+    @FXML private TextField tfBuscarPieza;
+    @FXML private Label lblTotalPiezas;
+
 
     @FXML
     public void initialize() {
@@ -182,6 +196,59 @@ public class Controller {
             Image img = new Image(getClass().getResourceAsStream("/view/img/logo.png"));
             logoEmpresa.setImage(img);
         }
+
+        if (tablaPiezas != null) {
+            tablaPiezas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+            if (colIdPieza != null)
+                colIdPieza.setCellValueFactory(cell ->
+                        new SimpleStringProperty(String.valueOf(cell.getValue().getId_pieza())));
+            if (colModeloPieza != null)
+                colModeloPieza.setCellValueFactory(cell ->
+                        new SimpleStringProperty(cell.getValue().getModelo()));
+            if (colMarcaPieza != null)
+                colMarcaPieza.setCellValueFactory(cell ->
+                        new SimpleStringProperty(cell.getValue().getMarca()));
+            if (colTipoPieza != null)
+                colTipoPieza.setCellValueFactory(cell ->
+                        new SimpleStringProperty(cell.getValue().getTipo()));
+            if (colStockPieza != null) {
+                colStockPieza.setCellValueFactory(cell ->
+                        new SimpleStringProperty(String.valueOf(cell.getValue().getStock())));
+
+                // Colorear stock bajo en rojo
+                colStockPieza.setCellFactory(col -> new TableCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null); setStyle("");
+                        } else {
+                            setText(item);
+                            int stock = Integer.parseInt(item);
+                            if (stock == 0)
+                                setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
+                            else if (stock <= 5)
+                                setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
+                            else
+                                setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold;");
+                        }
+                    }
+                });
+            }
+
+            InventarioService inventarioService = new InventarioService();
+            ObservableList<Pieza> piezas = inventarioService.cargarPiezasDesdeBD();
+            tablaPiezas.setItems(piezas);
+
+            if (lblTotalPiezas != null)
+                lblTotalPiezas.setText("Total: " + piezas.size() + " piezas");
+        }
+        if (colPrecioPieza != null)
+            colPrecioPieza.setCellValueFactory(cell ->
+                    new SimpleStringProperty(String.format("%.2f €", cell.getValue().getPrecio())));
+
+
     }
 
     public void validarCredenciales() throws IOException {
@@ -342,7 +409,7 @@ public class Controller {
 
     // ASCII method for opening añadirBicicleta view (usarlo en FXML: onAction="#anadirBicicleta" si se desea)
     @FXML
-    private void anadirBicicleta(ActionEvent event) {
+    private void añadirBicicleta(ActionEvent event) {
         try {
             Parent contenido = loadFxmlTry(
                     "/view/proyecto_tfg/añadirBicicleta-view.fxml"
@@ -354,11 +421,6 @@ public class Controller {
         }
     }
 
-    // compatibilidad si el FXML usa 'añadirBicicleta' (con ñ)
-    @FXML
-    private void añadirBicicleta(ActionEvent event) {
-        anadirBicicleta(event);
-    }
 
     private void showAlert(String title, String message) {
         try {
@@ -415,6 +477,14 @@ public class Controller {
     }
 
 
-
-
+    @FXML
+    private void mostrarInventario(ActionEvent event) {
+        try {
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/inventario.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el inventario.");
+        }
+    }
 }

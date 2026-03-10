@@ -23,17 +23,25 @@ public class Pieza {
     @Column(name = "tipo")
     private String tipo;
 
+    @Column(name = "precio", precision = 10, scale = 2)
+    private float precio;
+
+
 
     public Pieza() {
     }
 
-    public Pieza(Integer id_pieza, String modelo, String marca, int stock, String tipo) {
+    public Pieza(Integer id_pieza, String modelo, String marca, int stock, String tipo, float precio) {
         this.id_pieza = id_pieza;
         this.modelo = modelo;
         this.marca = marca;
         this.stock = stock;
         this.tipo = tipo;
+        this.precio = precio;
     }
+
+    public float getPrecio() { return precio; }
+    public void setPrecio(float precio) { this.precio = precio; }
 
     public Integer getId_pieza() {
         return id_pieza;

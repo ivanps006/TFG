@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefHeight="720.0" prefWidth="1050.0">
+
+    <VBox spacing="20"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+
+        <!-- CABECERA -->
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <VBox spacing="4">
+                <Label text="📦 Inventario" styleClass="hero-title"/>
+                <Label text="Gestión de piezas y materiales" styleClass="hero-small"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="➕ Añadir Pieza"
+                    styleClass="btn-primary"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- BARRA DE BÚSQUEDA Y STATS -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <TextField fx:id="tfBuscarPieza"
+                       promptText="Buscar por modelo, marca o tipo..."
+                       prefWidth="320"
+                       styleClass="search-bar"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblTotalPiezas"
+                   text="Total: 0 piezas"
+                   styleClass="stat-title"/>
+        </HBox>
+
+        <!-- TABLA -->
+        <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tablaPiezas" VBox.vgrow="ALWAYS">
+                <placeholder>
+                    <Label text="No hay piezas en el inventario."/>
+                </placeholder>
+                <columns>
+                    <TableColumn fx:id="colIdPieza"     text="ID"      prefWidth="60"/>
+                    <TableColumn fx:id="colModeloPieza" text="Modelo"  prefWidth="180"/>
+                    <TableColumn fx:id="colMarcaPieza"  text="Marca"   prefWidth="160"/>
+                    <TableColumn fx:id="colTipoPieza"   text="Tipo"    prefWidth="140"/>
+                    <TableColumn fx:id="colStockPieza"  text="Stock"   prefWidth="90"/>
+                    <TableColumn fx:id="colPrecioPieza" text="Precio"  prefWidth="100"/>
+                </columns>
+
+            </TableView>
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>
