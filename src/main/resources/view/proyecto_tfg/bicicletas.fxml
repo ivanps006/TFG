@@ -25,7 +25,7 @@
             <Button text="Buscar" />
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="➕ Nueva Bicicleta" onAction="#añadirBicicleta"/>
-            <Button text="🗑 Eliminar" />
+            <Button text="🗑 Eliminar" onAction="#vistaEliminarBicicleta"/>
         </HBox>
 
         <TableView fx:id="tablaBicicletas" VBox.vgrow="ALWAYS">

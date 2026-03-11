@@ -32,6 +32,8 @@ public class Controller {
     private final AddService addService = new AddService();
     private final ClienteService clienteService = new ClienteService();
     private final InventarioService inventarioService = new InventarioService();
+    private final BuscarService buscarService = new BuscarService();
+    private final DeleteService deleteService = new DeleteService();
 
     @FXML private BorderPane root;
     @FXML private VBox dashboardView;
@@ -42,6 +44,7 @@ public class Controller {
     @FXML private PasswordField txtContrasenia;
     @FXML private Label ErrorLogin;
 
+    //Campos para añadir clientes
     @FXML private TextField tfUsuario;
     @FXML private PasswordField pfContrasenia;
     @FXML private TextField tfNombre;
@@ -51,6 +54,7 @@ public class Controller {
     @FXML private TextField tfDireccion;
     @FXML private Label lblMensajeRegistro;
 
+    //Datos de la vista MAntenimiento (Cogemos los del dashboard y le añadimos estos)
     @FXML private TextField txtReferencia;
     @FXML private TextField txtMarca;
     @FXML private TextField txtModelo;
@@ -61,7 +65,7 @@ public class Controller {
     @FXML private TextField txtRuedas;
     @FXML private TextField txtClienteDni;
 
-
+    //Campos de la tabla de Mantenimiento
     @FXML private TableColumn<Bicicleta, String> colFrenosBici;
     @FXML private TableColumn<Bicicleta, String> colSuspDel;
     @FXML private TableColumn<Bicicleta, String> colSuspTras;
@@ -69,6 +73,7 @@ public class Controller {
     @FXML private TableColumn<Bicicleta, String> colRuedas;
     @FXML private TextField tfBuscarBicicleta;
     @FXML private Label lblTotalBicicletas;
+    @FXML private TextField txtBuscarRef;
 
     //Datos Clientes
     @FXML private TextField txtDni;
@@ -77,6 +82,7 @@ public class Controller {
     @FXML private TextField txtTelefono;
     @FXML private TextField txtDireccion;
 
+    //Datos del Dashboard
     @FXML private TableView<Bicicleta> tablaBicicletas;
     @FXML private TableColumn<Bicicleta, String> colRef;
     @FXML private TableColumn<Bicicleta, String> colMarca;
@@ -84,6 +90,7 @@ public class Controller {
     @FXML private TableColumn<Bicicleta, String> colCliente;
     @FXML private TableColumn<Bicicleta, String> colEstado;
 
+    //Campos datos de cliente
     @FXML private TableView<Cliente> tablaClientes;
     @FXML private TableColumn<Cliente, String> colDni;
     @FXML private TableColumn<Cliente, String> colNombre;
@@ -104,6 +111,19 @@ public class Controller {
     @FXML private TableColumn<Pieza, String> colPrecioPieza;
     @FXML private TextField tfBuscarPieza;
     @FXML private Label lblTotalPiezas;
+
+    // Labels de eliminarBicicleta
+    @FXML private Label lblRefBici;
+    @FXML private Label lblEstadoBici;
+    @FXML private Label lblMarcaBici;
+    @FXML private Label lblModeloBici;
+    @FXML private Label lblFrenosBici;
+    @FXML private Label lblTransmisionBici;
+    @FXML private Label lblSuspDelBici;
+    @FXML private Label lblSuspTrasBici;
+    @FXML private Label lblRuedasBici;
+    @FXML private Label lblClienteBici;
+
 
 
     @FXML
@@ -487,4 +507,58 @@ public class Controller {
             showAlert("Error", "No se pudo abrir el inventario.");
         }
     }
+
+    @FXML
+    private void vistaEliminarBicicleta(ActionEvent event){
+        try {
+            Parent contenido = loadFxmlTry(
+                    "/view/proyecto_tfg/eliminarBicicleta.fxml"
+            );
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    private void buscarBicicleta(ActionEvent event) {
+        if (txtBuscarRef == null || txtBuscarRef.getText().trim().isEmpty()) {
+            showAlert("Aviso", "Introduce una referencia para buscar.");
+            return;
+        }
+
+        Bicicleta bici = buscarService.buscarBicicleta(txtBuscarRef.getText().trim());
+
+        if (bici == null) {
+            showAlert("No encontrada", "No existe ninguna bicicleta con esa referencia.");
+            // Limpiar labels
+            if (lblRefBici != null)        lblRefBici.setText("—");
+            if (lblEstadoBici != null)     lblEstadoBici.setText("—");
+            if (lblMarcaBici != null)      lblMarcaBici.setText("—");
+            if (lblModeloBici != null)     lblModeloBici.setText("—");
+            if (lblFrenosBici != null)     lblFrenosBici.setText("—");
+            if (lblTransmisionBici != null) lblTransmisionBici.setText("—");
+            if (lblSuspDelBici != null)    lblSuspDelBici.setText("—");
+            if (lblSuspTrasBici != null)   lblSuspTrasBici.setText("—");
+            if (lblRuedasBici != null)     lblRuedasBici.setText("—");
+            if (lblClienteBici != null)    lblClienteBici.setText("—");
+            return;
+        }
+
+        // Rellenar labels con los datos de la bici
+        if (lblRefBici != null)        lblRefBici.setText(bici.getId_referencia());
+        if (lblEstadoBici != null)     lblEstadoBici.setText(bici.getEstado() != null ? bici.getEstado() : "Sin reparar");
+        if (lblMarcaBici != null)      lblMarcaBici.setText(bici.getMarca());
+        if (lblModeloBici != null)     lblModeloBici.setText(bici.getModelo());
+        if (lblFrenosBici != null)     lblFrenosBici.setText(bici.getFrenos());
+        if (lblTransmisionBici != null) lblTransmisionBici.setText(bici.getTransmision());
+        if (lblSuspDelBici != null)    lblSuspDelBici.setText(bici.getSuspension_delantera());
+        if (lblSuspTrasBici != null)   lblSuspTrasBici.setText(bici.getSuspension_trasera());
+        if (lblRuedasBici != null)     lblRuedasBici.setText(bici.getRuedas());
+        if (lblClienteBici != null) {
+            Cliente c = bici.getId_cliente();
+            lblClienteBici.setText(c != null ? c.getDni() : "Sin cliente");
+        }
+    }
+
 }
