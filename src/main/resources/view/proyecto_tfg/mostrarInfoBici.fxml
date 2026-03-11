@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.MostrarInfoBiciController"
+            prefWidth="800" prefHeight="480"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+            <Label fx:id="lblTitulo" text="🚲  Información de Bicicleta" styleClass="title"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="30" alignment="CENTER">
+            <padding><Insets top="25" right="40" bottom="10" left="40"/></padding>
+
+            <!-- FOTO -->
+            <VBox spacing="10" alignment="CENTER" minWidth="340">
+                <ImageView fx:id="imgBici"
+                           fitWidth="340" fitHeight="260"
+                           preserveRatio="true"
+                           style="-fx-effect: dropshadow(gaussian,rgba(2,6,23,0.18),18,0.12,0,5);"/>
+                <Label fx:id="lblFotoInfo" text="⏳ Cargando imagen..." styleClass="hint"
+                       style="-fx-font-style: italic;"/>
+            </VBox>
+
+            <Separator orientation="VERTICAL"/>
+
+            <!-- DATOS -->
+            <VBox spacing="16" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+
+                <Label fx:id="lblNombreBici" text=""
+                       style="-fx-font-size: 20px; -fx-font-weight: 800; -fx-text-fill: #0f172a;"/>
+
+                <HBox spacing="40">
+                    <VBox spacing="3">
+                        <Label text="Referencia" styleClass="hint"/>
+                        <Label fx:id="lblInfoRef" text="—"/>
+                    </VBox>
+                    <VBox spacing="3">
+                        <Label text="Estado" styleClass="hint"/>
+                        <Label fx:id="lblInfoEstado" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="40">
+                    <VBox spacing="3">
+                        <Label text="Frenos" styleClass="hint"/>
+                        <Label fx:id="lblInfoFrenos" text="—"/>
+                    </VBox>
+                    <VBox spacing="3">
+                        <Label text="Transmisión" styleClass="hint"/>
+                        <Label fx:id="lblInfoTransmision" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="40">
+                    <VBox spacing="3">
+                        <Label text="Susp. Delantera" styleClass="hint"/>
+                        <Label fx:id="lblInfoSuspDel" text="—"/>
+                    </VBox>
+                    <VBox spacing="3">
+                        <Label text="Susp. Trasera" styleClass="hint"/>
+                        <Label fx:id="lblInfoSuspTras" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="40">
+                    <VBox spacing="3">
+                        <Label text="Ruedas" styleClass="hint"/>
+                        <Label fx:id="lblInfoRuedas" text="—"/>
+                    </VBox>
+                    <VBox spacing="3">
+                        <Label text="Cliente (DNI)" styleClass="hint"/>
+                        <Label fx:id="lblInfoCliente" text="—"/>
+                    </VBox>
+                </HBox>
+
+            </VBox>
+        </HBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding><Insets top="15" right="40" bottom="20" left="40"/></padding>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="← Volver" styleClass="btn-secondary" onAction="#volver"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
