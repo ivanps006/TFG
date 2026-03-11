@@ -269,6 +269,19 @@ public class Controller {
                     new SimpleStringProperty(String.format("%.2f €", cell.getValue().getPrecio())));
 
 
+
+// Doble clic en fila → abrir info de bicicleta
+        if (tablaBicicletas != null) {
+            tablaBicicletas.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    Bicicleta seleccionada = tablaBicicletas.getSelectionModel().getSelectedItem();
+                    if (seleccionada != null) {
+                        abrirInfoBici(seleccionada);
+                    }
+                }
+            });
+        }
+
     }
 
     public void validarCredenciales() throws IOException {
@@ -560,5 +573,23 @@ public class Controller {
             lblClienteBici.setText(c != null ? c.getDni() : "Sin cliente");
         }
     }
+
+    private void abrirInfoBici(Bicicleta bici) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    HelloApplication.class.getResource("/view/proyecto_tfg/mostrarInfoBici.fxml")
+            );
+            Parent contenido = loader.load();
+
+            MostrarInfoBiciController ctrl = loader.getController();
+            ctrl.setDatos(bici);  // ← pasamos la bici al nuevo controlador
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la información de la bicicleta.");
+        }
+    }
+
 
 }
