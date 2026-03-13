@@ -1,0 +1,24 @@
+"id_ref","marca","modelo","frenos","susp_delantera","susp_trasera","transmision","ruedas","id_cliente","estado"
+"Bici001","Orbea","Oiz M10","Shimano XT","Fox 32 Kashima Factory 100mm","Fox Kashima 100mm","Shimano XT 12v","Bontrager Kovee Elite23","56789012E","En reparacion"
+"Bici002","Mondraker","F-Podium","Sram Level","Sram Sid 35 120mm","Sram Sid 100mm","Sram XXSL 12V","D-tswin 1200X","34567890C","Sin reparar"
+"Bici003","eqw","qeqe","qwewqe","qwewq","ewqe","wqewq","ewqe","56789012E","Reparada"
+"dni","nombre","apellido","telefono","direccion","apellidos"
+"12345678A","Carlos","Gómez Martín","600123456","Calle Mayor 12, Madrid",NULL
+"23456789B","Laura","Pérez Sánchez","611234567","Avenida de la Constitución 45, Sevilla",NULL
+"34567890C","Miguel","Fernández Ruiz","622345678","Calle Gran Vía 89, Valencia",NULL
+"45678901D","Ana","López Morales","633456789","Plaza España 3, Zaragoza",NULL
+"51215378T","Fernando ","Alonso Diaz","767859043","Ave del paraiso",NULL
+"56789012E","Javier","Martínez Ortega","644567890","Calle del Sol 22, Málaga",NULL
+"67890123F","María","Rodríguez Gil","655678901","Avenida Diagonal 120, Barcelona",NULL
+"78901234G","David","Sánchez Romero","666789012","Calle Alameda 7, Bilbao",NULL
+"89012345H","Elena","Torres Navarro","677890123","Paseo Marítimo 15, Alicante",NULL
+"id_factura","fecha","total","id_cliente","id_bicicleta"
+"id_factura","linea","id_pieza","descripcion","cantidad","precio_unitario"
+"id_mantenimiento","id_mecanico","id_bicicleta","fecha","descripcion","horas_trabajadas"
+"dni","nombre","apellidos","usuario","contrasena","telefono","direccion"
+"43567890Y","Yorch","Martin","yorch25","yorcj","42423423","Esta"
+"45678907T","Ivan","Padilla Saldaña","Ivanps06","ivanps","27458934","las palmeras"
+"46554354H","Olga","Fernandez Palacios","Olgafp","soyfea","54325","ytrew"
+"id_pieza","modelo","marca","stock","tipo","precio"
+"1","Kashima 32 100mm","Fox","5","Suspension Delantera","0.00"
+"id_bicicleta","id_pieza","cantidad","id_usa","id_cliente"
