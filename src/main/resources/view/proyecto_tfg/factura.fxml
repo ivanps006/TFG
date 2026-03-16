@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefWidth="1100.0"
+            prefHeight="680.0"
+            styleClass="root"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <!-- CABECERA -->
+    <top>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="topbar-blue">
+            <padding>
+                <Insets top="14" right="20" bottom="14" left="20"/>
+            </padding>
+
+            <Label text="Facturación" styleClass="topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Gestión de facturas y cobros" styleClass="status-label"/>
+        </HBox>
+    </top>
+
+    <!-- CONTENIDO -->
+    <center>
+        <VBox spacing="16" styleClass="content">
+            <padding>
+                <Insets top="18" right="20" bottom="18" left="20"/>
+            </padding>
+
+            <!-- TARJETA FORMULARIO -->
+            <VBox spacing="14" styleClass="table-card">
+                <padding>
+                    <Insets top="16" right="16" bottom="16" left="16"/>
+                </padding>
+
+                <Label text="Nueva factura" styleClass="section-title"/>
+
+                <GridPane hgap="12" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="16"/>
+                        <ColumnConstraints percentWidth="34"/>
+                        <ColumnConstraints percentWidth="16"/>
+                        <ColumnConstraints percentWidth="34"/>
+                    </columnConstraints>
+
+                    <Label text="Fecha:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="dpFechaFactura" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="DNI cliente:" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <TextField fx:id="tfDniClienteFactura" promptText="12345678A" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                    <Label text="Ref. bicicleta:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="tfRefBiciFactura" promptText="REF-001" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Total (€):" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                    <TextField fx:id="tfTotalFactura" promptText="0.00" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+                </GridPane>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="btnLimpiarFactura" text="Limpiar"/>
+                    <Button fx:id="btnCrearFactura" text="Crear factura" styleClass="btn-primary"/>
+                </HBox>
+            </VBox>
+
+            <!-- TARJETA TABLA -->
+            <VBox spacing="10" styleClass="table-card" VBox.vgrow="ALWAYS">
+                <padding>
+                    <Insets top="12" right="12" bottom="12" left="12"/>
+                </padding>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Historial de facturas" styleClass="section-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <TextField fx:id="tfBuscarFactura" promptText="Buscar por DNI o referencia..." prefWidth="280" styleClass="search-bar"/>
+                </HBox>
+
+                <TableView fx:id="tablaFacturas" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colIdFactura" text="ID" prefWidth="80"/>
+                        <TableColumn fx:id="colFechaFactura" text="Fecha" prefWidth="120"/>
+                        <TableColumn fx:id="colClienteFactura" text="Cliente (DNI)" prefWidth="160"/>
+                        <TableColumn fx:id="colBiciFactura" text="Bicicleta (Ref)" prefWidth="170"/>
+                        <TableColumn fx:id="colTotalFactura" text="Total (€)" prefWidth="120"/>
+                    </columns>
+                    <placeholder>
+                        <Label text="No hay facturas registradas"/>
+                    </placeholder>
+                </TableView>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Button fx:id="btnEliminarFactura" text="Eliminar" styleClass="btn-danger"/>
+                    <Button fx:id="btnActualizarFactura" text="Actualizar" styleClass="btn-success"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

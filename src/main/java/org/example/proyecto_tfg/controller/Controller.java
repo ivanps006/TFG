@@ -591,5 +591,17 @@ public class Controller {
         }
     }
 
+    @FXML
+    private void abrirVistaFactura(ActionEvent event){
+        try {
+            Parent contenido = loadFxmlTry(
+                    "/view/proyecto_tfg/factura.fxml"
+            );
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

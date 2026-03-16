@@ -24,7 +24,7 @@
                        prefWidth="350"/>
             <Button text="Buscar" />
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="➕ Nueva Bicicleta" onAction="#añadirBicicleta"/>
+            <Button text="+ Nueva Bicicleta" onAction="#añadirBicicleta"/>
             <Button text="🗑 Eliminar" onAction="#vistaEliminarBicicleta"/>
         </HBox>
 

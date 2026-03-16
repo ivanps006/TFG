@@ -21,7 +21,5 @@ public class ClienteService {
             e.printStackTrace();
             return javafx.collections.FXCollections.observableArrayList();
         }
-
-
     }
 }
