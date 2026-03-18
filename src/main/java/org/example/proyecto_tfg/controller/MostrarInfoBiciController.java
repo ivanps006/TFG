@@ -1,18 +1,21 @@
 package org.example.proyecto_tfg.controller;
 
-import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import org.example.proyecto_tfg.model.Bicicleta;
 import org.example.proyecto_tfg.model.Cliente;
+import org.example.proyecto_tfg.model.Mantenimiento;
+import org.example.proyecto_tfg.service.MantenimientoService;
 import org.example.proyecto_tfg.service.NavigationService;
 
 public class MostrarInfoBiciController {
 
-    @FXML
-    private Label lblTitulo;
+    private final MantenimientoService mantenimientoService = new MantenimientoService();
+
+    @FXML private Label lblTitulo;
     @FXML private Label lblNombreBici;
     @FXML private Label lblInfoRef;
     @FXML private Label lblInfoEstado;
@@ -22,11 +25,18 @@ public class MostrarInfoBiciController {
     @FXML private Label lblInfoSuspTras;
     @FXML private Label lblInfoRuedas;
     @FXML private Label lblInfoCliente;
-    @FXML private Label lblFotoInfo;
-    @FXML private ImageView imgBici;
+
+    @FXML private TableView<Mantenimiento> tablaMantenimientosBici;
+    @FXML private TableColumn<Mantenimiento, String> colIdMtto;
+    @FXML private TableColumn<Mantenimiento, String> colMecanicoMtto;
+    @FXML private TableColumn<Mantenimiento, String> colFechaMtto;
+    @FXML private TableColumn<Mantenimiento, String> colHorasMtto;
+    @FXML private TableColumn<Mantenimiento, String> colObsMtto;
+    @FXML private Label lblTotalMtto;
 
     public void setDatos(Bicicleta bici) {
-        lblTitulo.setText("🚲  " + bici.getMarca() + " " + bici.getModelo());
+        // Información básica de la bicicleta
+        lblTitulo.setText("🚲 " + bici.getMarca() + " " + bici.getModelo());
         lblNombreBici.setText(bici.getMarca() + " " + bici.getModelo());
         lblInfoRef.setText(safe(bici.getId_referencia()));
         lblInfoFrenos.setText(safe(bici.getFrenos()));
@@ -47,34 +57,48 @@ public class MostrarInfoBiciController {
             case "Reparada"      -> lblInfoEstado.setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold;");
         }
 
-        // Foto desde internet en background
-        String url = "https://loremflickr.com/500/350/bicycle,"
-                + bici.getMarca().replace(" ", ",") + ","
-                + bici.getModelo().replace(" ", ",");
-        cargarImagen(url);
+        // Configurar tabla de mantenimientos
+        configurarTablaMantenimientos();
+        cargarMantenimientosDeBicicleta(bici.getId_referencia());
     }
 
-    private void cargarImagen(String url) {
-        lblFotoInfo.setText("⏳ Cargando imagen...");
-        Image imagen = new Image(url, 500, 350, true, true, true); // true = background thread
+    private void configurarTablaMantenimientos() {
+        if (tablaMantenimientosBici == null) return;
 
-        imagen.progressProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal.doubleValue() >= 1.0) {
-                Platform.runLater(() -> {
-                    if (!imagen.isError()) {
-                        imgBici.setImage(imagen);
-                        lblFotoInfo.setText("📷 Foto referencial (internet)");
-                    } else {
-                        lblFotoInfo.setText("⚠ Sin conexión o imagen no disponible");
-                    }
-                });
-            }
-        });
+        tablaMantenimientosBici.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        imagen.errorProperty().addListener((obs, oldVal, isError) -> {
-            if (isError) Platform.runLater(() ->
-                    lblFotoInfo.setText("⚠ Sin conexión o imagen no disponible"));
-        });
+        if (colIdMtto != null)
+            colIdMtto.setCellValueFactory(cell ->
+                    new SimpleStringProperty(String.valueOf(cell.getValue().getId_mantenimiento())));
+
+        if (colMecanicoMtto != null)
+            colMecanicoMtto.setCellValueFactory(cell ->
+                    new SimpleStringProperty(cell.getValue().getId_mecanico()));
+
+        if (colFechaMtto != null)
+            colFechaMtto.setCellValueFactory(cell ->
+                    new SimpleStringProperty(cell.getValue().getFecha().toString()));
+
+        if (colHorasMtto != null)
+            colHorasMtto.setCellValueFactory(cell ->
+                    new SimpleStringProperty(String.format("%.2f h", cell.getValue().getHoras_trabajadas())));
+
+        if (colObsMtto != null)
+            colObsMtto.setCellValueFactory(cell ->
+                    new SimpleStringProperty(cell.getValue().getObservaciones() != null
+                            ? cell.getValue().getObservaciones() : "—"));
+    }
+
+    private void cargarMantenimientosDeBicicleta(String idBicicleta) {
+        var mantenimientos = mantenimientoService.cargarMantenimientosPorBicicleta(idBicicleta);
+
+        if (tablaMantenimientosBici != null) {
+            tablaMantenimientosBici.setItems(mantenimientos);
+        }
+
+        if (lblTotalMtto != null) {
+            lblTotalMtto.setText("Total: " + (mantenimientos != null ? mantenimientos.size() : 0) + " mantenimientos");
+        }
     }
 
     private String safe(String v) {

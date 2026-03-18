@@ -1,101 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.proyecto_tfg.controller.MostrarInfoBiciController"
-            prefWidth="800" prefHeight="480"
+            prefWidth="1000" prefHeight="600"
             stylesheets="@../css/stylePrincipalPage.css">
 
+    <!-- HEADER -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
-            <Label fx:id="lblTitulo" text="🚲  Información de Bicicleta" styleClass="title"/>
-        </HBox>
+        <VBox spacing="15" styleClass="card-header">
+
+            <padding>
+                <Insets top="20" right="25" bottom="20" left="25"/>
+            </padding>
+
+            <!-- TITULO -->
+            <Label fx:id="lblTitulo"
+                   text="🚲 Información de Bicicleta"
+                   styleClass="title-big"/>
+
+            <!-- DATOS PRINCIPALES -->
+            <HBox spacing="40">
+
+                <VBox styleClass="info-block">
+                    <Label text="Referencia" styleClass="info-label"/>
+                    <Label fx:id="lblInfoRef" text="—" styleClass="info-value"/>
+                </VBox>
+
+                <VBox styleClass="info-block">
+                    <Label text="Marca / Modelo" styleClass="info-label"/>
+                    <Label fx:id="lblNombreBici" text="—" styleClass="info-value"/>
+                </VBox>
+
+                <VBox styleClass="info-block">
+                    <Label text="Estado" styleClass="info-label"/>
+                    <Label fx:id="lblInfoEstado" text="—" styleClass="status-badge"/>
+                </VBox>
+
+                <VBox styleClass="info-block">
+                    <Label text="Cliente (DNI)" styleClass="info-label"/>
+                    <Label fx:id="lblInfoCliente" text="—" styleClass="info-value"/>
+                </VBox>
+
+            </HBox>
+
+            <!-- DATOS TECNICOS -->
+            <HBox spacing="30">
+
+                <VBox styleClass="tech-block">
+                    <Label text="Frenos" styleClass="info-label"/>
+                    <Label fx:id="lblInfoFrenos" text="—" styleClass="info-value"/>
+                </VBox>
+
+                <VBox styleClass="tech-block">
+                    <Label text="Transmisión" styleClass="info-label"/>
+                    <Label fx:id="lblInfoTransmision" text="—" styleClass="info-value"/>
+                </VBox>
+
+                <VBox styleClass="tech-block">
+                    <Label text="Suspensión Del." styleClass="info-label"/>
+                    <Label fx:id="lblInfoSuspDel" text="—" styleClass="info-value"/>
+                </VBox>
+
+                <VBox styleClass="tech-block">
+                    <Label text="Suspensión Tras." styleClass="info-label"/>
+                    <Label fx:id="lblInfoSuspTras" text="—" styleClass="info-value"/>
+                </VBox>
+
+                <VBox styleClass="tech-block">
+                    <Label text="Ruedas" styleClass="info-label"/>
+                    <Label fx:id="lblInfoRuedas" text="—" styleClass="info-value"/>
+                </VBox>
+
+            </HBox>
+
+        </VBox>
     </top>
 
+    <!-- CONTENIDO -->
     <center>
-        <HBox spacing="30" alignment="CENTER">
-            <padding><Insets top="25" right="40" bottom="10" left="40"/></padding>
+        <VBox spacing="15" styleClass="content">
 
-            <!-- FOTO -->
-            <VBox spacing="10" alignment="CENTER" minWidth="340">
-                <ImageView fx:id="imgBici"
-                           fitWidth="340" fitHeight="260"
-                           preserveRatio="true"
-                           style="-fx-effect: dropshadow(gaussian,rgba(2,6,23,0.18),18,0.12,0,5);"/>
-                <Label fx:id="lblFotoInfo" text="⏳ Cargando imagen..." styleClass="hint"
-                       style="-fx-font-style: italic;"/>
-            </VBox>
+            <padding>
+                <Insets top="20" right="25" bottom="20" left="25"/>
+            </padding>
 
-            <Separator orientation="VERTICAL"/>
+            <Label text="📋 Historial de mantenimientos"
+                   styleClass="section-title"/>
 
-            <!-- DATOS -->
-            <VBox spacing="16" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+            <!-- TABLA -->
+            <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
 
-                <Label fx:id="lblNombreBici" text=""
-                       style="-fx-font-size: 20px; -fx-font-weight: 800; -fx-text-fill: #0f172a;"/>
+                <TableView fx:id="tablaMantenimientosBici"
+                           VBox.vgrow="ALWAYS">
 
-                <HBox spacing="40">
-                    <VBox spacing="3">
-                        <Label text="Referencia" styleClass="hint"/>
-                        <Label fx:id="lblInfoRef" text="—"/>
-                    </VBox>
-                    <VBox spacing="3">
-                        <Label text="Estado" styleClass="hint"/>
-                        <Label fx:id="lblInfoEstado" text="—"/>
-                    </VBox>
-                </HBox>
+                    <columns>
+                        <TableColumn fx:id="colIdMtto" text="ID" prefWidth="60"/>
+                        <TableColumn fx:id="colMecanicoMtto" text="Mecánico" prefWidth="140"/>
+                        <TableColumn fx:id="colFechaMtto" text="Fecha" prefWidth="120"/>
+                        <TableColumn fx:id="colHorasMtto" text="Horas" prefWidth="90"/>
+                        <TableColumn fx:id="colObsMtto" text="Observaciones" prefWidth="450"/>
+                    </columns>
 
-                <HBox spacing="40">
-                    <VBox spacing="3">
-                        <Label text="Frenos" styleClass="hint"/>
-                        <Label fx:id="lblInfoFrenos" text="—"/>
-                    </VBox>
-                    <VBox spacing="3">
-                        <Label text="Transmisión" styleClass="hint"/>
-                        <Label fx:id="lblInfoTransmision" text="—"/>
-                    </VBox>
-                </HBox>
+                    <placeholder>
+                        <Label text="No hay mantenimientos registrados"/>
+                    </placeholder>
 
-                <HBox spacing="40">
-                    <VBox spacing="3">
-                        <Label text="Susp. Delantera" styleClass="hint"/>
-                        <Label fx:id="lblInfoSuspDel" text="—"/>
-                    </VBox>
-                    <VBox spacing="3">
-                        <Label text="Susp. Trasera" styleClass="hint"/>
-                        <Label fx:id="lblInfoSuspTras" text="—"/>
-                    </VBox>
-                </HBox>
+                </TableView>
 
-                <HBox spacing="40">
-                    <VBox spacing="3">
-                        <Label text="Ruedas" styleClass="hint"/>
-                        <Label fx:id="lblInfoRuedas" text="—"/>
-                    </VBox>
-                    <VBox spacing="3">
-                        <Label text="Cliente (DNI)" styleClass="hint"/>
-                        <Label fx:id="lblInfoCliente" text="—"/>
-                    </VBox>
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10"/>
+                    </padding>
+
+                    <Label fx:id="lblTotalMtto"
+                           text="Total: 0 mantenimientos"
+                           styleClass="subtitle-label"/>
                 </HBox>
 
             </VBox>
-        </HBox>
+
+        </VBox>
     </center>
 
+    <!-- FOOTER -->
     <bottom>
-        <HBox alignment="CENTER_RIGHT">
-            <padding><Insets top="15" right="40" bottom="20" left="40"/></padding>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="← Volver" styleClass="btn-secondary" onAction="#volver"/>
+        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="footer">
+
+            <padding>
+                <Insets top="10" right="25" bottom="20" left="25"/>
+            </padding>
+
+            <Button text="← Volver"
+                    onAction="#volver"
+                    styleClass="btn-secondary"/>
+
         </HBox>
     </bottom>
 

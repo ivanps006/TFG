@@ -1,7 +1,6 @@
 package org.example.proyecto_tfg.service;
 
 import jakarta.persistence.EntityManager;
-import javafx.collections.ObservableList;
 import org.example.proyecto_tfg.model.Factura;
 import org.example.proyecto_tfg.utils.Utils;
 
@@ -9,16 +8,61 @@ import java.util.List;
 
 public class FacturaService {
 
-    public ObservableList<Factura> cargarFacturasBD(){
+    public Factura crearFactura(Factura factura) {
         EntityManager em = Utils.em();
         try {
-            List<Factura> listaFacturas = em.createQuery("SELECT f FROM Factura f", Factura.class).getResultList();
-            System.out.println("Cargando facturas desde la base de datos");
-            System.out.println("\n" + listaFacturas);
-            return javafx.collections.FXCollections.observableArrayList(listaFacturas);
-
+            em.getTransaction().begin();
+            em.persist(factura);
+            em.getTransaction().commit();
+            return factura;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            em.getTransaction().rollback();
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    public Factura obtenerFacturaPorId(Integer id) {
+        EntityManager em = Utils.em();
+        try {
+            return em.find(Factura.class, id);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    public List<Factura> obtenerTodasFacturas() {
+        EntityManager em = Utils.em();
+        try {
+            return em.createQuery("SELECT f FROM Factura f", Factura.class).getResultList();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
+    public Factura actualizarFactura(Factura factura) {
+        EntityManager em = Utils.em();
+        try {
+            em.getTransaction().begin();
+            factura = em.merge(factura);
+            em.getTransaction().commit();
+            return factura;
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 }

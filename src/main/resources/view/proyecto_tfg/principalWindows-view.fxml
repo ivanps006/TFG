@@ -33,10 +33,15 @@
                     maxWidth="Infinity"
                     onAction="#mostrarDashboard"/>
 
-            <Button text="Mantenimientos"
+            <Button text="Bicicletas"
                     styleClass="nav-item"
                     maxWidth="Infinity"
                     onAction="#mostrarBicicleta"/>
+
+            <Button text="Mantenimientos"
+                    styleClass="nav-item"
+                    maxWidth="Infinity"
+                    onAction="#abrirVistaMantenimiento"/>
 
             <Button text="Clientes"
                     fx:id="btnClientes"
