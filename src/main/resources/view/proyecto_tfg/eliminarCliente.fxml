@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefWidth="600"
+            prefHeight="520"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <!-- ===== CABECERA ===== -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+            <Label text="🗑  Eliminar Cliente" styleClass="title"/>
+        </HBox>
+    </top>
+
+    <!-- ===== CONTENIDO ===== -->
+    <center>
+        <VBox spacing="20" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="30" right="40" bottom="10" left="40"/>
+            </padding>
+
+            <!-- Buscador por DNI -->
+            <VBox spacing="6">
+                <Label text="Buscar cliente" styleClass="subtitle"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBuscarDniCliente"
+                               promptText="Introduce el DNI (Ej: 12345678A)"
+                               HBox.hgrow="ALWAYS"
+                               maxWidth="Infinity"/>
+                    <Button text="🔍 Buscar"
+                            styleClass="btn-primary"/>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Datos del cliente encontrado -->
+            <VBox spacing="6">
+                <Label text="Datos del cliente" styleClass="subtitle"/>
+
+                <!-- Fila 1: DNI y Nombre -->
+                <HBox spacing="15">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="DNI" styleClass="hint"/>
+                        <Label fx:id="lblDniCliente" text="—"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Nombre" styleClass="hint"/>
+                        <Label fx:id="lblNombreCliente" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Fila 2: Apellido y Teléfono -->
+                <HBox spacing="15">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Apellido" styleClass="hint"/>
+                        <Label fx:id="lblApellidoCliente" text="—"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Teléfono" styleClass="hint"/>
+                        <Label fx:id="lblTelefonoCliente" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Fila 3: Dirección -->
+                <VBox spacing="4">
+                    <Label text="Dirección" styleClass="hint"/>
+                    <Label fx:id="lblDireccionCliente" text="—" wrapText="true"/>
+                </VBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Mensaje de advertencia -->
+            <HBox alignment="CENTER_LEFT" spacing="8"
+                  style="-fx-background-color: rgba(220,38,38,0.08);
+                         -fx-border-color: rgba(220,38,38,0.35);
+                         -fx-border-radius: 8;
+                         -fx-background-radius: 8;
+                         -fx-padding: 10 14 10 14;">
+                <Label text="⚠" style="-fx-font-size: 18px; -fx-text-fill: #dc2626;"/>
+                <Label text="Esta acción es irreversible. El cliente será eliminado permanentemente."
+                       style="-fx-text-fill: #dc2626; -fx-font-size: 12.5px; -fx-font-weight: 700;
+                              -fx-wrap-text: true;"
+                       wrapText="true"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+    <!-- ===== BOTONES ===== -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="15" right="40" bottom="20" left="40"/>
+            </padding>
+
+            <Button text="← Cancelar"
+                    fx:id="btnCancelarCliente"
+                    styleClass="btn-secondary"
+                    onAction="#volverPaginaPrincipal"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="🗑  Eliminar Cliente"
+                    fx:id="btnEliminarCliente"
+                    onAction="#eliminarCliente"
+                    style="-fx-background-color: linear-gradient(to right, #dc2626, #ef4444);
+                           -fx-text-fill: white;
+                           -fx-font-weight: 800;
+                           -fx-font-size: 13px;
+                           -fx-background-radius: 8;
+                           -fx-cursor: hand;
+                           -fx-effect: dropshadow(gaussian, rgba(220,38,38,0.35), 10, 0.2, 0, 3);"
+            />
+        </HBox>
+    </bottom>
+
+</BorderPane>

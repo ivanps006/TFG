@@ -32,7 +32,7 @@
 
             <Button text="➕ Nuevo Cliente" onAction="#añadirCliente"/>
 
-            <Button text="🗑 Eliminar"/>
+            <Button text="🗑 Eliminar" onAction="#abrirVistaEliminarCliente"/>
         </HBox>
 
         <!-- TABLA DE CLIENTES -->

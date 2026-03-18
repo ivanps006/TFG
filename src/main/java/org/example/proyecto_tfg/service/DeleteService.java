@@ -1,6 +1,8 @@
 package org.example.proyecto_tfg.service;
 
 import jakarta.persistence.EntityManager;
+import org.example.proyecto_tfg.model.Bicicleta;
+import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.utils.Utils;
 
 public class DeleteService {
@@ -9,7 +11,7 @@ public class DeleteService {
         EntityManager em = Utils.em();
         try {
             em.getTransaction().begin();
-            var bicicleta = em.find(org.example.proyecto_tfg.model.Bicicleta.class, idBici);
+            var bicicleta = em.find(Bicicleta.class, idBici);
             if (bicicleta != null) {
                 em.remove(bicicleta);
                 System.out.println("Bicicleta con ID " + idBici + " eliminada.");
@@ -21,6 +23,24 @@ public class DeleteService {
             e.printStackTrace();
         } finally {
             em.close();
+        }
+    }
+
+    public void eliminarCliente(String dni){
+        EntityManager em = Utils.em();
+        try{
+            em.getTransaction().begin();
+            var cliente = em.find(Cliente.class, dni);
+            if (cliente != null){
+                em.remove(cliente);
+                System.out.println("Cliente con DNI " + dni + " eliminado.");
+            }else {
+                System.out.println("No se encontró el cliente con DNI " + dni);
+            }
+            em.getTransaction().commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {            em.close();
         }
     }
 }

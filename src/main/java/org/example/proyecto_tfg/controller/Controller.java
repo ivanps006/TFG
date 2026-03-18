@@ -1,7 +1,5 @@
 package org.example.proyecto_tfg.controller;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,7 +8,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -18,11 +15,10 @@ import javafx.stage.Stage;
 import org.example.proyecto_tfg.HelloApplication;
 import org.example.proyecto_tfg.model.*;
 import org.example.proyecto_tfg.service.*;
-
+import org.example.proyecto_tfg.utils.InitializeUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 public class Controller {
 
@@ -30,20 +26,18 @@ public class Controller {
     private final HomeService homeService = new HomeService();
     private final AddService addService = new AddService();
     private final ClienteService clienteService = new ClienteService();
-    private final InventarioService inventarioService = new InventarioService();
     private final BuscarService buscarService = new BuscarService();
     private final DeleteService deleteService = new DeleteService();
-    private final FacturaService facturaService = new FacturaService();
-    private final MantenimientoService mantenimientoService = new MantenimientoService();
 
     @FXML private BorderPane root;
     @FXML private VBox dashboardView;
-    @FXML private Button btnAddBicicleta;
-    @FXML private Button btnClientes;
 
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtContrasenia;
     @FXML private Label ErrorLogin;
+
+    @FXML private Label lblFecha;
+    @FXML private Label lblNumeroBicisSinReparar;
 
     // Campos para añadir clientes
     @FXML private TextField tfUsuario;
@@ -54,6 +48,16 @@ public class Controller {
     @FXML private TextField tfTelefono;
     @FXML private TextField tfDireccion;
     @FXML private Label lblMensajeRegistro;
+
+    //Campos para eliminar Clientes
+// ========== ELIMINAR CLIENTE ==========
+    @FXML private TextField txtBuscarDniCliente;
+    @FXML private Label lblDniCliente;
+    @FXML private Label lblNombreCliente;
+    @FXML private Label lblApellidoCliente;
+    @FXML private Label lblTelefonoCliente;
+    @FXML private Label lblDireccionCliente;
+
 
     // Datos de la vista Mantenimiento (campos de bici)
     @FXML private TextField txtReferencia;
@@ -97,7 +101,6 @@ public class Controller {
     @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colApellidos;
     @FXML private TableColumn<Cliente, String> colTelefono;
-    @FXML private TextField tfBuscarCliente;
     @FXML private Label lblTotalClientes;
 
     @FXML private ImageView logoEmpresa;
@@ -110,7 +113,6 @@ public class Controller {
     @FXML private TableColumn<Pieza, String> colTipoPieza;
     @FXML private TableColumn<Pieza, String> colStockPieza;
     @FXML private TableColumn<Pieza, String> colPrecioPieza;
-    @FXML private TextField tfBuscarPieza;
     @FXML private Label lblTotalPiezas;
 
     // Labels eliminar bici
@@ -142,146 +144,16 @@ public class Controller {
     @FXML private TableColumn<Mantenimiento, String> colHoras;
     @FXML private TableColumn<Mantenimiento, String> colObservaciones;
 
-    @FXML private TextField tfIdMecanico;
-    @FXML private TextField tfIdBicicleta;
-    @FXML private DatePicker dpFechaMantenimiento;
-    @FXML private TextField tfHorasTrabajadas;
-    @FXML private TextArea taObservaciones;
-    @FXML private TextField tfBuscarMantenimiento;
     @FXML private Label lblTotalMantenimientos;
+    @FXML private Label lblNumeroBicisReparadas;
+    @FXML private Label lblNumeroBicisEnReparacion;
+    @FXML private Label lblNumeroClientes;
 
+    //Metodo Initialize
     @FXML
     public void initialize() {
-        if (tablaBicicletas != null) {
-            tablaBicicletas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        }
-
-        if (colRef != null) colRef.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_referencia()));
-        if (colMarca != null) colMarca.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getMarca()));
-        if (colModelo != null) colModelo.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getModelo()));
-
-        if (colCliente != null) {
-            colCliente.setCellValueFactory(cell -> {
-                Cliente c = cell.getValue().getId_cliente();
-                return new SimpleStringProperty(c != null ? c.getDni() : "");
-            });
-        }
-
-        if (colEstado != null) colEstado.setCellValueFactory(cell -> new SimpleStringProperty(""));
-
         if (root != null) {
             NavigationService.getInstance().setRoot(root);
-        }
-
-        ObservableList<Bicicleta> bicicletas = homeService.cargarBicicletasDesdeBD();
-        if (tablaBicicletas != null && bicicletas != null) {
-            tablaBicicletas.setItems(bicicletas);
-        }
-
-        // Clientes
-        if (tablaClientes != null) {
-            tablaClientes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-            if (colDni != null) colDni.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDni()));
-            if (colNombre != null) colNombre.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getNombre()));
-            if (colApellidos != null) colApellidos.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getApellidos()));
-            if (colTelefono != null) colTelefono.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTelefono()));
-
-            ObservableList<Cliente> clientes = clienteService.cargarClientesDesdeBD();
-            tablaClientes.setItems(clientes);
-
-            if (lblTotalClientes != null) {
-                lblTotalClientes.setText("Total: " + clientes.size() + " clientes");
-            }
-        }
-
-        // Columnas extra bici
-        if (colFrenosBici != null) colFrenosBici.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFrenos()));
-        if (colSuspDel != null) colSuspDel.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_delantera()));
-        if (colSuspTras != null) colSuspTras.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSuspension_trasera()));
-        if (colTransmision != null) colTransmision.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTransmision()));
-        if (colRuedas != null) colRuedas.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getRuedas()));
-
-        // Estado con colores
-        if (colEstado != null) {
-            colEstado.setCellValueFactory(cell ->
-                    new SimpleStringProperty(cell.getValue().getEstado() != null ? cell.getValue().getEstado() : "Sin reparar"));
-
-            colEstado.setCellFactory(col -> new TableCell<>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setText(null);
-                        setStyle("");
-                    } else {
-                        setText(item);
-                        switch (item) {
-                            case "Sin reparar" -> setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
-                            case "En reparacion" -> setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
-                            case "Reparada" -> setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold;");
-                            default -> setStyle("");
-                        }
-                    }
-                }
-            });
-        }
-
-        if (lblTotalBicicletas != null && tablaBicicletas != null) {
-            lblTotalBicicletas.setText("Total: " + tablaBicicletas.getItems().size() + " bicicletas");
-        }
-
-        // Logo
-        if (logoEmpresa != null) {
-            Image img = new Image(getClass().getResourceAsStream("/view/img/logo.png"));
-            logoEmpresa.setImage(img);
-        }
-
-        // Inventario
-        if (tablaPiezas != null) {
-            tablaPiezas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-            if (colIdPieza != null)
-                colIdPieza.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getId_pieza())));
-            if (colModeloPieza != null)
-                colModeloPieza.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getModelo()));
-            if (colMarcaPieza != null)
-                colMarcaPieza.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getMarca()));
-            if (colTipoPieza != null)
-                colTipoPieza.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTipo()));
-
-            if (colStockPieza != null) {
-                colStockPieza.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getStock())));
-
-                colStockPieza.setCellFactory(col -> new TableCell<>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setText(null);
-                            setStyle("");
-                        } else {
-                            setText(item);
-                            int stock = Integer.parseInt(item);
-                            if (stock == 0) setStyle("-fx-text-fill: #ef4444; -fx-font-weight: bold;");
-                            else if (stock <= 5) setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
-                            else setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold;");
-                        }
-                    }
-                });
-            }
-
-            ObservableList<Pieza> piezas = inventarioService.cargarPiezasDesdeBD();
-            tablaPiezas.setItems(piezas);
-
-            if (lblTotalPiezas != null) {
-                lblTotalPiezas.setText("Total: " + piezas.size() + " piezas");
-            }
-        }
-
-        if (colPrecioPieza != null) {
-            colPrecioPieza.setCellValueFactory(cell ->
-                    new SimpleStringProperty(String.format("%.2f €", cell.getValue().getPrecio())));
         }
 
         // Doble clic en bici -> info
@@ -294,74 +166,24 @@ public class Controller {
             });
         }
 
-        // Facturas
-        if (tablaFacturas != null) {
-            tablaFacturas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-            if (colIdFactura != null)
-                colIdFactura.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getId_factura())));
-
-            if (colFechaFactura != null)
-                colFechaFactura.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFecha().toString()));
-
-            if (colClienteFactura != null)
-                colClienteFactura.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_cliente().getDni()));
-
-            if (colBiciFactura != null)
-                colBiciFactura.setCellValueFactory(cell ->
-                        new SimpleStringProperty(cell.getValue().getId_bicicleta() != null
-                                ? cell.getValue().getId_bicicleta().getId_referencia()
-                                : "Sin bicicleta"));
-
-            if (colTotalFactura != null)
-                colTotalFactura.setCellValueFactory(cell -> new SimpleStringProperty(String.format("%.2f €", cell.getValue().getTotal())));
-
-            List<Factura> facturas = facturaService.obtenerTodasFacturas();
-            if (facturas != null) {
-                tablaFacturas.setItems(FXCollections.observableArrayList(facturas));
-            }
-        }
-
-        // Mantenimientos
-        configurarTablaMantenimientos();
-        cargarMantenimientosEnTabla();
+        // Una sola línea que lo inicializa TODO
+        new InitializeUtils().initializeAllViews(
+                tablaBicicletas, colRef, colMarca, colModelo, colCliente, colEstado,
+                colFrenosBici, colSuspDel, colSuspTras, colTransmision, colRuedas,
+                lblTotalBicicletas, lblFecha, lblNumeroBicisSinReparar,
+                tablaClientes, colDni, colNombre, colApellidos, colTelefono, lblTotalClientes,
+                logoEmpresa,
+                tablaPiezas, colIdPieza, colModeloPieza, colMarcaPieza, colTipoPieza,
+                colStockPieza, colPrecioPieza, lblTotalPiezas,
+                tablaFacturas, colIdFactura, colFechaFactura, colClienteFactura, colBiciFactura, colTotalFactura,
+                tablaMantenimientos, colIdMantenimiento, colIdMecanico, colIdBicicleta,
+                colFecha, colHoras, colObservaciones, lblTotalMantenimientos,
+                lblNumeroBicisEnReparacion, lblNumeroBicisReparadas, lblNumeroClientes
+        );
     }
 
-    private void configurarTablaMantenimientos() {
-        if (tablaMantenimientos == null) return;
 
-        tablaMantenimientos.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        if (colIdMantenimiento != null)
-            colIdMantenimiento.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getId_mantenimiento())));
-
-        if (colIdMecanico != null)
-            colIdMecanico.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_mecanico()));
-
-        if (colIdBicicleta != null)
-            colIdBicicleta.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getId_bicicleta()));
-
-        if (colFecha != null)
-            colFecha.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getFecha().toString()));
-
-        if (colHoras != null)
-            colHoras.setCellValueFactory(cell -> new SimpleStringProperty(String.valueOf(cell.getValue().getHoras_trabajadas())));
-
-        if (colObservaciones != null)
-            colObservaciones.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getObservaciones()));
-    }
-
-    private void cargarMantenimientosEnTabla() {
-        if (tablaMantenimientos == null) return;
-
-        ObservableList<Mantenimiento> mantenimientos = mantenimientoService.cargarMantenimientos();
-        tablaMantenimientos.setItems(mantenimientos);
-
-        if (lblTotalMantenimientos != null) {
-            lblTotalMantenimientos.setText("Total: " + (mantenimientos != null ? mantenimientos.size() : 0) + " mantenimientos");
-        }
-    }
-
+    //Metodo para validar las credenciales cuando Inicias Sesion
     public void validarCredenciales() throws IOException {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getText().isEmpty()) {
             ErrorLogin.setText("Por favor, complete todos los campos.");
@@ -389,6 +211,7 @@ public class Controller {
         }
     }
 
+    //Metodo para guardar clientes(Añadirlo a la BD)
     @FXML
     private void guardarCliente(ActionEvent event) {
         addService.añadirCliente(
@@ -403,6 +226,7 @@ public class Controller {
         NavigationService.getInstance().goBack();
     }
 
+    //Este metodo te abre la vista para registrarte
     @FXML
     private void onRegisterButtonClick(ActionEvent event) {
         try {
@@ -420,12 +244,15 @@ public class Controller {
         }
     }
 
+    //Metodo para cerrar el programa y volver al login
     @FXML
     private void cerrarPrograma(ActionEvent event) {
+        //Lo que hace es cerrar la escena actual
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
 
+    //Metodo para Registrar un nuevo usuario (mecanico) en la BD
     @FXML
     private void registrarUsuario(ActionEvent event) {
         loginService.añadirMecanico(new Mecanico(
@@ -442,6 +269,7 @@ public class Controller {
         limpiarCamposRegistro();
     }
 
+    //Metodo para limpiar los campos una vez le has dado a registrar
     private void limpiarCamposRegistro() {
         tfUsuario.clear();
         pfContrasenia.clear();
@@ -452,11 +280,19 @@ public class Controller {
         tfDireccion.clear();
     }
 
+    //Metodo para limpiar los campos del registro
     private void limpiarCamposLogin() {
         txtUsuario.clear();
         txtContrasenia.clear();
     }
 
+    /*
+        Metodo para cargar las distintas vistas dentro del mismo programa
+        Busca las distintas rutas por si se le pasa mas de una vista
+        Por ejemplo añadirClientes.fxml o anadirClientes.fxml
+        Si añadirClientes.fxml no existe intentara anadirClientes.fxml, lo que
+        nos ahorrara errores por pequeñas diferencias de letras
+     */
     private Parent loadFxmlTry(String... paths) throws IOException {
         for (String p : paths) {
             URL url = HelloApplication.class.getResource(p);
@@ -467,10 +303,13 @@ public class Controller {
         throw new IOException("No se encontró el recurso FXML entre: " + Arrays.toString(paths));
     }
 
+    //Metodo que abre la vista para añadir clientes
     @FXML
     private void añadirCliente(ActionEvent event) {
         try {
+            //Intenta cargar la vista
             Parent contenido = loadFxmlTry("/view/proyecto_tfg/añadirCliente.fxml");
+            //Usa el servicio de navegacion para cargar esta vista en el centro
             NavigationService.getInstance().openInCenter(contenido);
         } catch (Exception e) {
             e.printStackTrace();
@@ -478,11 +317,13 @@ public class Controller {
         }
     }
 
+    //Metodo para volver al Dashboard desde cualquer sitio
     @FXML
     private void volverPaginaPrincipal(ActionEvent event) {
         NavigationService.getInstance().goBack();
     }
 
+    //Metodo que guarda una bicicleta nieva en la BD
     @FXML
     private void guardarBicicleta(ActionEvent event) {
         String ref = txtReferencia != null ? txtReferencia.getText().trim() : "";
@@ -492,6 +333,8 @@ public class Controller {
             return;
         }
 
+        //Debe buscar un Cliente ya que la bicicleta esta relacionada
+        //Con un cliente
         Cliente cliente = addService.buscarClientePorDni(dni);
         if (cliente == null) {
             showAlert("Aviso", "Cliente no encontrado con DNI: " + dni);
@@ -499,23 +342,28 @@ public class Controller {
         }
 
         Bicicleta bici = new Bicicleta(
-                ref, getTextSafe(txtMarca), getTextSafe(txtModelo),
-                getTextSafe(txtFrenos), getTextSafe(txtSuspDel), getTextSafe(txtSuspTras),
-                getTextSafe(txtTransmision), getTextSafe(txtRuedas), cliente
+                ref,
+                txtMarca != null ? txtMarca.getText() : "",
+                txtModelo != null ? txtModelo.getText() : "",
+                txtFrenos != null ? txtFrenos.getText() : "",
+                txtSuspDel != null ? txtSuspDel.getText() : "",
+                txtSuspTras != null ? txtSuspTras.getText() : "",
+                txtTransmision != null ? txtTransmision.getText() : "",
+                txtRuedas != null ? txtRuedas.getText() : "",
+                cliente
         );
         addService.añadirBicicleta(bici);
         NavigationService.getInstance().goBack();
     }
 
-    private String getTextSafe(TextField tf) {
-        return tf == null ? "" : tf.getText();
-    }
 
+    //Metodo que cierra el programa desde cualquier sitio
     @FXML
     private void volverLogin(ActionEvent event) {
         cerrarPrograma(event);
     }
 
+    //Metodo para abrir la vista para añadir bicicletas
     @FXML
     private void añadirBicicleta(ActionEvent event) {
         try {
@@ -527,6 +375,7 @@ public class Controller {
         }
     }
 
+    //Metodo para mostrar alertas
     private void showAlert(String title, String message) {
         try {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -537,6 +386,7 @@ public class Controller {
         } catch (Exception ignored) { }
     }
 
+    //Metodo que muestra la vista clientes
     @FXML
     private void mostrarClientes(ActionEvent event) {
         try {
@@ -549,11 +399,14 @@ public class Controller {
         }
     }
 
+    //Metodo que vuelve a la pagina principal
     @FXML
     private void mostrarDashboard(ActionEvent event) {
         root.setCenter(dashboardView);
     }
 
+
+    //Metodo que muestra la vista de bicicletas
     @FXML
     private void mostrarBicicleta(ActionEvent event) {
         try {
@@ -579,6 +432,7 @@ public class Controller {
         }
     }
 
+    //Metodo que muestra el inventario
     @FXML
     private void mostrarInventario(ActionEvent event) {
         try {
@@ -672,5 +526,45 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @FXML
+    private void abrirVistaEliminarCliente(ActionEvent event) {
+        try {
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/eliminarCliente.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    private void eliminarBicicleta(ActionEvent event){
+        deleteService.eliminarBicicleta(txtBuscarRef.getText().trim());
+        showAlert("Éxito", "Bicicleta eliminada correctamente.");
+    }
+
+    private void limpiarDatosCliente() {
+        if (lblDniCliente != null) lblDniCliente.setText("—");
+        if (lblNombreCliente != null) lblNombreCliente.setText("—");
+        if (lblApellidoCliente != null) lblApellidoCliente.setText("—");
+        if (lblTelefonoCliente != null) lblTelefonoCliente.setText("—");
+        if (lblDireccionCliente != null) lblDireccionCliente.setText("—");
+    }
+
+    @FXML
+    private void eliminarCliente(ActionEvent event) {
+        String dni = lblDniCliente != null ? lblDniCliente.getText() : "—";
+
+        if (dni.equals("—")) {
+            showAlert("Aviso", "Primero debes buscar un cliente para eliminarlo.");
+            return;
+        }
+
+        deleteService.eliminarCliente(dni);
+        showAlert("Éxito", "Cliente eliminado correctamente.");
+        limpiarDatosCliente();
+        txtBuscarDniCliente.clear();
+        NavigationService.getInstance().goBack();
     }
 }

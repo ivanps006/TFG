@@ -95,10 +95,6 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <TextField promptText="Buscar cliente, bicicleta..."
-                       prefWidth="260"
-                       styleClass="search-bar"/>
-
             <Label text="Taller activo"
                    styleClass="status-label"/>
 
@@ -135,30 +131,35 @@
                 <HBox spacing="18">
 
                     <VBox styleClass="stat-card">
-                        <Label text="Reparaciones Activas"
+                        <Label text="Bicicletas sin Reparar"
                                styleClass="stat-title"/>
-                        <Label text="12"
+                        <Label fx:id="lblNumeroBicisSinReparar"
+                               text=""
+                               styleClass="stat-number"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-card">
+                        <Label text="Bicicletas En Reparación"
+                               styleClass="stat-title"/>
+                        <Label fx:id="lblNumeroBicisEnReparacion"
+                               text="12"
+                               styleClass="stat-number"/>
+                    </VBox>
+
+                    <VBox styleClass="stat-card">
+                        <Label text="Bicicletas Reparadas"
+                               styleClass="stat-title"/>
+                        <Label fx:id="lblNumeroBicisReparadas"
+                                text="12"
                                styleClass="stat-number"/>
                     </VBox>
 
                     <VBox styleClass="stat-card">
                         <Label text="Clientes Totales"
                                styleClass="stat-title"/>
-                        <Label text="86"
-                               styleClass="stat-number"/>
-                    </VBox>
-
-                    <VBox styleClass="stat-card">
-                        <Label text="Ingresos Mes"
-                               styleClass="stat-title"/>
-                        <Label text="1240€"
-                               styleClass="stat-number"/>
-                    </VBox>
-
-                    <VBox styleClass="stat-card">
-                        <Label text="Bicis Entregadas"
-                               styleClass="stat-title"/>
-                        <Label text="45"
+                        <Label
+                                fx:id="lblNumeroClientes"
+                                text="86"
                                styleClass="stat-number"/>
                     </VBox>
 
