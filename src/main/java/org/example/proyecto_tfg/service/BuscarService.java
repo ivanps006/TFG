@@ -1,8 +1,13 @@
 package org.example.proyecto_tfg.service;
 
 import jakarta.persistence.EntityManager;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.example.proyecto_tfg.model.Bicicleta;
+import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.utils.Utils;
+
+import java.util.List;
 
 public class BuscarService {
 
@@ -80,6 +85,32 @@ public class BuscarService {
             return 0;
         } finally {
              em.close();
+        }
+    }
+
+    /**
+     * Busca clientes por nombre, apellido o DNI
+     * @param texto Texto a buscar
+     * @return ObservableList con los clientes encontrados
+     */
+    public ObservableList<Cliente> buscarClientesPorTexto(String texto) {
+        EntityManager em = Utils.em();
+        try {
+            String queryStr = "SELECT c FROM Cliente c WHERE " +
+                    "LOWER(c.dni) LIKE LOWER(:texto) OR " +
+                    "LOWER(c.nombre) LIKE LOWER(:texto) OR " +
+                    "LOWER(c.apellido) LIKE LOWER(:texto)";
+
+            List<Cliente> clientesEncontrados = em.createQuery(queryStr, Cliente.class)
+                    .setParameter("texto", "%" + texto + "%")
+                    .getResultList();
+
+            return FXCollections.observableArrayList(clientesEncontrados);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return FXCollections.observableArrayList();
+        } finally {
+            em.close();
         }
     }
 }

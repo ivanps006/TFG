@@ -26,7 +26,7 @@
                        promptText="🔍 Buscar por nombre, DNI..."
                        prefWidth="350"/>
 
-            <Button text="Buscar"/>
+            <Button text="Buscar" onAction="#buscarClientes"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 

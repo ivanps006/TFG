@@ -38,6 +38,8 @@ public class Controller {
 
     @FXML private Label lblFecha;
     @FXML private Label lblNumeroBicisSinReparar;
+    @FXML private TextField tfCorreo;
+
 
     // Campos para añadir clientes
     @FXML private TextField tfUsuario;
@@ -184,17 +186,25 @@ public class Controller {
 
 
     //Metodo para validar las credenciales cuando Inicias Sesion
-    public void validarCredenciales() throws IOException {
+    @FXML
+    private void validarCredenciales() throws IOException {
         if (txtUsuario.getText().isEmpty() || txtContrasenia.getText().isEmpty()) {
             ErrorLogin.setText("Por favor, complete todos los campos.");
             ErrorLogin.setStyle("-fx-text-fill: red;");
             return;
         }
 
-        if (loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText())) {
+        Mecanico mecanico = loginService.consultarMecanico(txtUsuario.getText(), txtContrasenia.getText());
+
+        if (mecanico != null) {
             ErrorLogin.setText("Inicio de sesión exitoso.");
             ErrorLogin.setStyle("-fx-text-fill: green;");
             limpiarCamposLogin();
+
+            // Enviar email de bienvenida
+            if (mecanico.getCorreo() != null && !mecanico.getCorreo().isEmpty()) {
+                new EmailService().enviarEmailBienvenida(mecanico.getNombre(), mecanico.getCorreo());
+            }
 
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
@@ -210,6 +220,7 @@ public class Controller {
             limpiarCamposLogin();
         }
     }
+
 
     //Metodo para guardar clientes(Añadirlo a la BD)
     @FXML
@@ -256,18 +267,21 @@ public class Controller {
     @FXML
     private void registrarUsuario(ActionEvent event) {
         loginService.añadirMecanico(new Mecanico(
-                pfContrasenia.getText(),
-                tfNombre.getText(),
-                tfApellido.getText(),
-                tfDni.getText(),
-                tfTelefono.getText(),
-                tfDireccion.getText(),
-                tfUsuario.getText()
+                tfDni.getText(),              // dni
+                tfNombre.getText(),           // nombre
+                tfApellido.getText(),         // apellidos
+                tfCorreo.getText(),           // email ✓
+                tfUsuario.getText(),          // usuario
+                pfContrasenia.getText(),      // contrasena
+                tfTelefono.getText(),         // telefono
+                tfDireccion.getText()         // direccion
         ));
         lblMensajeRegistro.setText("Registro exitoso.");
         lblMensajeRegistro.setStyle("-fx-text-fill: green;");
         limpiarCamposRegistro();
     }
+
+
 
     //Metodo para limpiar los campos una vez le has dado a registrar
     private void limpiarCamposRegistro() {
@@ -278,7 +292,9 @@ public class Controller {
         tfDni.clear();
         tfTelefono.clear();
         tfDireccion.clear();
+        tfCorreo.clear();
     }
+
 
     //Metodo para limpiar los campos del registro
     private void limpiarCamposLogin() {
@@ -567,4 +583,189 @@ public class Controller {
         txtBuscarDniCliente.clear();
         NavigationService.getInstance().goBack();
     }
+
+    // Agregar este campo en la sección de declaración de @FXML (alrededor de la línea 79-81)
+    @FXML private ComboBox<String> cmbEstadoBici;
+
+    // Agregar este método después de otros métodos de bicicletas (alrededor de la línea 560)
+    @FXML
+    private void guardarEstadoBici(ActionEvent event) {
+        Bicicleta seleccionada = tablaBicicletas.getSelectionModel().getSelectedItem();
+
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una bicicleta primero.");
+            return;
+        }
+
+        String estadoSeleccionado = cmbEstadoBici.getValue();
+        if (estadoSeleccionado == null) {
+            showAlert("Aviso", "Selecciona un estado.");
+            return;
+        }
+
+        seleccionada.setEstado(estadoSeleccionado);
+        addService.actualizarBicicleta(seleccionada);
+        tablaBicicletas.refresh();
+
+        showAlert("Éxito", "Estado actualizado a: " + estadoSeleccionado);
+    }
+
+    @FXML
+    private void buscarBicicletaPorMarca(ActionEvent event) {
+        if (tablaBicicletas == null) {
+            showAlert("Aviso", "La tabla no está disponible.");
+            return;
+        }
+
+        String marca = tfBuscarBicicleta != null ? tfBuscarBicicleta.getText().trim() : "";
+
+        if (marca.equalsIgnoreCase("todas") || marca.isEmpty()) {
+            // Si el campo está vacío, mostrar todas las bicicletas
+            ObservableList<Bicicleta> todas = homeService.cargarBicicletasDesdeBD();
+            tablaBicicletas.setItems(todas);
+            return;
+        }
+
+        // Filtrar bicicletas por marca
+        ObservableList<Bicicleta> todas = homeService.cargarBicicletasDesdeBD();
+        ObservableList<Bicicleta> filtradas = todas.filtered(b ->
+                b.getMarca().toLowerCase().contains(marca.toLowerCase())
+        );
+
+        if (filtradas.isEmpty()) {
+            showAlert("Sin resultados", "No se encontraron bicicletas con marca: " + marca);
+            tablaBicicletas.setItems(todas); // Mostrar todas si no hay resultados
+        } else {
+            tablaBicicletas.setItems(filtradas);
+        }
+    }
+
+
+    // Campo para búsqueda de clientes
+    @FXML private TextField tfBuscarCliente;
+
+    // Método para buscar clientes
+    @FXML
+    private void buscarClientes(ActionEvent event) {
+        if (tablaClientes == null) {
+            showAlert("Aviso", "La tabla no está disponible.");
+            return;
+        }
+
+        String texto = tfBuscarCliente != null ? tfBuscarCliente.getText().trim() : "";
+
+        ObservableList<Cliente> clientesAMostrar;
+
+        if (texto.isEmpty()) {
+            // Si el campo está vacío, mostrar todos los clientes
+            clientesAMostrar = clienteService.cargarClientesDesdeBD();
+        } else {
+            // Buscar por nombre o DNI
+            clientesAMostrar = buscarService.buscarClientesPorTexto(texto);
+
+            if (clientesAMostrar.isEmpty()) {
+                showAlert("Sin resultados", "No se encontraron clientes con: " + texto);
+                clientesAMostrar = clienteService.cargarClientesDesdeBD();
+            }
+        }
+
+        tablaClientes.setItems(clientesAMostrar);
+    }
+
+    // Campo para búsqueda de mantenimientos
+    @FXML private TextField tfBuscarMantenimiento;
+
+    // Instancia del servicio
+    private final MantenimientoService mantenimientoService = new MantenimientoService();
+
+    // Método para buscar mantenimientos
+    @FXML
+    private void buscarMantenimientos(ActionEvent event) {
+        if (tablaMantenimientos == null) {
+            showAlert("Aviso", "La tabla no está disponible.");
+            return;
+        }
+
+        String texto = tfBuscarMantenimiento != null ? tfBuscarMantenimiento.getText().trim() : "";
+
+        ObservableList<Mantenimiento> mantenimientosAMostrar;
+
+        if (texto.isEmpty()) {
+            mantenimientosAMostrar = mantenimientoService.cargarMantenimientos();
+        } else {
+            mantenimientosAMostrar = mantenimientoService.buscarMantenimientosPorTexto(texto);
+
+            if (mantenimientosAMostrar.isEmpty()) {
+                showAlert("Sin resultados", "No se encontraron mantenimientos con: " + texto);
+                mantenimientosAMostrar = mantenimientoService.cargarMantenimientos();
+            }
+        }
+
+        tablaMantenimientos.setItems(mantenimientosAMostrar);
+    }
+
+    // Método para añadir mantenimiento
+    @FXML
+    private void añadirMantenimiento(ActionEvent event) {
+        try {
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/añadirMantenimiento.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de añadir mantenimiento.");
+        }
+    }
+
+    // Método para editar mantenimiento
+    @FXML
+    private void editarMantenimiento(ActionEvent event) {
+        Mantenimiento seleccionado = tablaMantenimientos.getSelectionModel().getSelectedItem();
+
+        if (seleccionado == null) {
+            showAlert("Aviso", "Selecciona un mantenimiento para editar.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirMantenimiento.fxml"));
+            Parent contenido = loader.load();
+
+            // Pasar el mantenimiento seleccionado al controller de la vista
+            // (Necesitarás agregar un método setDatos en el controller de añadirMantenimiento)
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de editar mantenimiento.");
+        }
+    }
+
+    // Método para eliminar mantenimiento
+    @FXML
+    private void eliminarMantenimiento(ActionEvent event) {
+        Mantenimiento seleccionado = tablaMantenimientos.getSelectionModel().getSelectedItem();
+
+        if (seleccionado == null) {
+            showAlert("Aviso", "Selecciona un mantenimiento para eliminar.");
+            return;
+        }
+
+        // Confirmación antes de eliminar
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Estás seguro de que deseas eliminar este mantenimiento?");
+
+        if (confirmacion.showAndWait().isPresent() && confirmacion.getResult().equals(ButtonType.OK)) {
+            mantenimientoService.eliminarMantenimiento(seleccionado.getId_mantenimiento());
+            showAlert("Éxito", "Mantenimiento eliminado correctamente.");
+
+            // Recargar la tabla
+            ObservableList<Mantenimiento> actualizados = mantenimientoService.cargarMantenimientos();
+            tablaMantenimientos.setItems(actualizados);
+        }
+    }
+
+
+
 }

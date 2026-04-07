@@ -40,4 +40,15 @@ public class AddService {
             em.close();
         }
     }
+
+    public void actualizarBicicleta(Bicicleta bicicleta) {
+        EntityManager em = Utils.em();
+        try {
+            em.getTransaction().begin();
+            em.merge(bicicleta);  // merge() actualiza un objeto existente
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
 }

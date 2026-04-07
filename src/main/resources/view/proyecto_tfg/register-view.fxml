@@ -11,6 +11,7 @@
     <PasswordField promptText="Contraseña" fx:id="pfContrasenia" prefWidth="300" minWidth="300" maxWidth="300"/>
     <TextField promptText="Nombre" fx:id="tfNombre" prefWidth="300" minWidth="300" maxWidth="300"/>
     <TextField promptText="Apellido" fx:id="tfApellido" prefWidth="300" minWidth="300" maxWidth="300"/>
+    <TextField promptText="Correo Electrónico" fx:id="tfCorreo" prefWidth="300" minWidth="300" maxWidth="300"/>
     <TextField promptText="DNI" fx:id="tfDni" prefWidth="300" minWidth="300" maxWidth="300"/>
     <TextField promptText="Teléfono" fx:id="tfTelefono" prefWidth="300" minWidth="300" maxWidth="300"/>
     <TextField promptText="Direccion" fx:id="tfDireccion" prefWidth="300" minWidth="300" maxWidth="300"/>

@@ -22,11 +22,11 @@
             <TextField fx:id="tfBuscarMantenimiento"
                        promptText="🔍 Buscar por ID mecánico, bicicleta, fecha..."
                        prefWidth="350"/>
-            <Button text="Buscar" />
+            <Button text="Buscar" onAction="#buscarMantenimientos"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="+ Nuevo Mantenimiento" />
-            <Button text="✏️ Editar" />
-            <Button text="🗑 Eliminar" />
+            <Button text="+ Nuevo Mantenimiento"  onAction="#añadirMantenimiento"/>
+            <Button text="✏️ Editar" onAction="#editarMantenimiento" />
+            <Button text="🗑 Eliminar" onAction="#eliminarMantenimiento"/>
         </HBox>
 
         <TableView fx:id="tablaMantenimientos" VBox.vgrow="ALWAYS">

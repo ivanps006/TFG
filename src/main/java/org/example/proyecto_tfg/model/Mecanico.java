@@ -4,37 +4,56 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
-import org.intellij.lang.annotations.Identifier;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Entity
 @Table(name = "mecanico")
-public class Mecanico  {
+public class Mecanico {
 
     @Id
-    private String contrasena;
-    private String nombre;
-    private String apellidos;
+    @Column(name = "dni", length = 50)
     private String dni;
-    private String telefono;
-    private String direccion;
+
+    @Column(name = "nombre", length = 150)
+    private String nombre;
+
+    @Column(name = "apellidos", length = 255)
+    private String apellidos;
+
+    @Column(name = "email", length = 255)
+    private String email;
+
+    @Column(name = "usuario", length = 100)
     private String usuario;
 
+    @Column(name = "contrasena", length = 255)
+    private String contrasena;
+
+    @Column(name = "telefono", length = 50)
+    private String telefono;
+
+    @Column(name = "direccion")
+    private String direccion;
+
+    // Constructor vacío
     public Mecanico() {
     }
 
-    public Mecanico(String contrasena, String nombre, String apellidos, String dni, String telefono, String direccion, String usuario) {
-        this.contrasena = contrasena;
+    // Constructor completo
+    public Mecanico(String dni, String nombre, String apellidos, String email, String usuario, String contrasena, String telefono, String direccion) {
+        this.dni = dni;
         this.nombre = nombre;
         this.apellidos = apellidos;
-        this.dni = dni;
+        this.email = email;
+        this.usuario = usuario;
+        this.contrasena = contrasena;
         this.telefono = telefono;
         this.direccion = direccion;
-        this.usuario = usuario;
     }
 
+
+    // Getters y Setters
     public String getContrasena() {
         return contrasena;
     }
@@ -67,20 +86,12 @@ public class Mecanico  {
         this.dni = dni;
     }
 
-    public String getDireccion() {
-        return direccion;
+    public String getEmail() {
+        return email;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsuario() {
@@ -91,6 +102,31 @@ public class Mecanico  {
         this.usuario = usuario;
     }
 
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    // Mantener getCorreo() para compatibilidad
+    public String getCorreo() {
+        return email;
+    }
+
+    public void setCorreo(String correo) {
+        this.email = correo;
+    }
+
     @Override
     public String toString() {
         return "Mecanico{" +
@@ -98,9 +134,10 @@ public class Mecanico  {
                 ", nombre='" + nombre + '\'' +
                 ", apellidos='" + apellidos + '\'' +
                 ", dni='" + dni + '\'' +
+                ", email='" + email + '\'' +
+                ", usuario='" + usuario + '\'' +
                 ", telefono='" + telefono + '\'' +
                 ", direccion='" + direccion + '\'' +
-                ", usuario='" + usuario + '\'' +
                 '}';
     }
 }

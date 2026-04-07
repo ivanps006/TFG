@@ -1,13 +1,13 @@
 package org.example.proyecto_tfg.service;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import org.example.proyecto_tfg.model.Mecanico;
 import org.example.proyecto_tfg.utils.Utils;
 
 public class loginService {
 
     public void añadirMecanico(Mecanico mecanico) {
-        // Lógica para añadirun mecánico
         EntityManager em = Utils.em();
         try {
             em.getTransaction().begin();
@@ -18,22 +18,19 @@ public class loginService {
         }
     }
 
-    public boolean consultarMecanico(String usuario, String contrasena) {
-        // Lógica para consultar un mecánico por su usuario
-
+    public Mecanico consultarMecanico(String usuario, String contrasena) {
         EntityManager em = Utils.em();
         try {
-            Mecanico mecanico = em.find(Mecanico.class, contrasena);
-            if (mecanico != null && mecanico.getUsuario().equals(usuario)) {
-                System.out.println("Mecánico encontrado: " + mecanico.getNombre());
-                return true;
-            } else {
-                System.out.println("Mecánico no encontrado.");
-                return false;
-            }
+            TypedQuery<Mecanico> query = em.createQuery(
+                    "SELECT m FROM Mecanico m WHERE m.usuario = :usuario AND m.contrasena = :contrasena",
+                    Mecanico.class
+            );
+            query.setParameter("usuario", usuario);
+            query.setParameter("contrasena", contrasena);
+
+            return query.getResultList().stream().findFirst().orElse(null);
         } finally {
             em.close();
         }
     }
-
 }

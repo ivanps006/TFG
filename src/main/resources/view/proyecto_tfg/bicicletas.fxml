@@ -3,33 +3,49 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.proyecto_tfg.controller.Controller"
             prefHeight="600.0" prefWidth="1000.0">
 
-    <VBox spacing="20" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
-          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+    <VBox spacing="20"
+          AnchorPane.topAnchor="0.0"
+          AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0">
 
+        <!-- TÍTULO -->
         <HBox alignment="CENTER_LEFT" spacing="10">
-            <padding><Insets left="20" top="10"/></padding>
+            <padding>
+                <Insets left="20" top="10"/>
+            </padding>
             <Label text="🚲 Gestión de Bicicletas"/>
         </HBox>
 
+        <!-- BUSCADOR -->
         <HBox spacing="10" alignment="CENTER_LEFT">
-            <padding><Insets left="20" right="20"/></padding>
+            <padding>
+                <Insets left="20" right="20"/>
+            </padding>
+
             <TextField fx:id="tfBuscarBicicleta"
                        promptText="🔍 Buscar por referencia, marca, modelo..."
                        prefWidth="350"/>
-            <Button text="Buscar" />
+
+            <Button text="Buscar" onAction="#buscarBicicletaPorMarca"/>
+
+
             <Region HBox.hgrow="ALWAYS"/>
+
             <Button text="+ Nueva Bicicleta" onAction="#añadirBicicleta"/>
             <Button text="🗑 Eliminar" onAction="#vistaEliminarBicicleta"/>
         </HBox>
 
+        <!-- TABLA -->
         <TableView fx:id="tablaBicicletas" VBox.vgrow="ALWAYS">
-            <padding><Insets left="20" right="20"/></padding>
             <columns>
                 <TableColumn fx:id="colRef"         text="Referencia"      prefWidth="120"/>
                 <TableColumn fx:id="colMarca"       text="Marca"           prefWidth="120"/>
@@ -42,15 +58,36 @@
                 <TableColumn fx:id="colCliente"     text="Cliente (DNI)"   prefWidth="120"/>
                 <TableColumn fx:id="colEstado"      text="Estado"          prefWidth="110"/>
             </columns>
+
             <placeholder>
                 <Label text="No hay bicicletas registradas."/>
             </placeholder>
         </TableView>
 
+        <!-- FOOTER -->
         <HBox alignment="CENTER_RIGHT" spacing="10">
-            <padding><Insets left="20" right="20" bottom="15"/></padding>
+            <padding>
+                <Insets left="20" right="20" bottom="15"/>
+            </padding>
+
             <Label fx:id="lblTotalBicicletas" text="Total: 0 bicicletas"/>
+
             <Region HBox.hgrow="ALWAYS"/>
+
+            <ComboBox fx:id="cmbEstadoBici" prefWidth="150">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Sin reparar"/>
+                        <String fx:value="En reparacion"/>
+                        <String fx:value="Reparada"/>
+                    </FXCollections>
+                </items>
+                <tooltip>
+                    <Tooltip text="Selecciona el estado"/>
+                </tooltip>
+            </ComboBox>
+
+            <Button text="Guardar Estado" onAction="#guardarEstadoBici"/>
             <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
         </HBox>
 
