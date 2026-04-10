@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefWidth="600"
+            prefHeight="520"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <!-- ===== CABECERA ===== -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+            <Label text="🔧 Añadir Mantenimiento" styleClass="title"/>
+        </HBox>
+    </top>
+
+    <!-- ===== CONTENIDO ===== -->
+    <center>
+        <VBox spacing="15" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="25" right="40" bottom="25" left="40"/>
+            </padding>
+
+            <Label text="Datos del mantenimiento" styleClass="subtitle"/>
+
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="ID Mecánico"/>
+                    <TextField fx:id="txtIdMecanicoMant" promptText="Ej: MEC-01"/>
+                </VBox>
+
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="ID Bicicleta (ref)"/>
+                    <TextField fx:id="txtIdBicicletaMant" promptText="Ej: BICI-001"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Fecha"/>
+                    <DatePicker fx:id="dpFechaMant" promptText="Selecciona fecha"/>
+                </VBox>
+
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Horas trabajadas"/>
+                    <TextField fx:id="txtHorasMant" promptText="Ej: 2.5"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="5">
+                <Label text="Observaciones"/>
+                <TextArea fx:id="taObservacionesMant"
+                          promptText="Describe el trabajo realizado..."
+                          prefRowCount="5"
+                          wrapText="true"/>
+            </VBox>
+
+        </VBox>
+    </center>
+
+    <!-- ===== BOTONES ===== -->
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="15" right="40" bottom="20" left="40"/>
+            </padding>
+
+            <Button text="Cancelar"
+                    styleClass="btn-secondary"
+                    onAction="#volverPaginaPrincipal"/>
+
+            <Button text="Guardar mantenimiento"
+                    styleClass="btn-primary"
+                    />
+        </HBox>
+    </bottom>
+
+</BorderPane>

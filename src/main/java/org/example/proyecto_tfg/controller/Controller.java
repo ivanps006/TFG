@@ -11,11 +11,15 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.example.proyecto_tfg.HelloApplication;
 import org.example.proyecto_tfg.model.*;
 import org.example.proyecto_tfg.service.*;
 import org.example.proyecto_tfg.utils.InitializeUtils;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -28,9 +32,23 @@ public class Controller {
     private final ClienteService clienteService = new ClienteService();
     private final BuscarService buscarService = new BuscarService();
     private final DeleteService deleteService = new DeleteService();
+    private final InventarioService inventarioService = new InventarioService();
+    private final ExportarService exportarService = new ExportarService();
 
     @FXML private BorderPane root;
     @FXML private VBox dashboardView;
+
+    // editarPieza.fxml
+    @FXML private Label lblPiezaId;
+    @FXML private TextField tfPiezaModelo;
+    @FXML private TextField tfPiezaMarca;
+    @FXML private TextField tfPiezaTipo;
+    @FXML private Spinner<Integer> spPiezaStock;
+    @FXML private TextField tfPiezaPrecio;
+
+    // Pieza que se está editando (no es @FXML)
+    private Pieza piezaEnEdicion;
+
 
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtContrasenia;
@@ -39,6 +57,18 @@ public class Controller {
     @FXML private Label lblFecha;
     @FXML private Label lblNumeroBicisSinReparar;
     @FXML private TextField tfCorreo;
+
+    // eliminarMantenimiento.fxml
+    @FXML private TextField txtBuscarIdMantenimientoEliminar;
+
+    @FXML private Label lblIdMantenimientoEliminar;
+    @FXML private Label lblIdMecanicoEliminar;
+    @FXML private Label lblIdBicicletaEliminar;
+    @FXML private Label lblFechaEliminar;
+    @FXML private Label lblHorasEliminar;
+    @FXML private Label lblObservacionesEliminar;
+    private Mantenimiento mantenimientoAEliminar;
+
 
 
     // Campos para añadir clientes
@@ -167,6 +197,19 @@ public class Controller {
                 }
             });
         }
+
+        if (tablaPiezas != null) {
+            tablaPiezas.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    Pieza p = tablaPiezas.getSelectionModel().getSelectedItem();
+                    if (p != null) {
+                        // Llamar a un método sin ActionEvent (creas otra sobrecarga)
+                        abrirEditarPiezaDesdeSeleccion(p);
+                    }
+                }
+            });
+        }
+
 
         // Una sola línea que lo inicializa TODO
         new InitializeUtils().initializeAllViews(
@@ -727,7 +770,7 @@ public class Controller {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirMantenimiento.fxml"));
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/editarMantenimiento.fxml"));
             Parent contenido = loader.load();
 
             // Pasar el mantenimiento seleccionado al controller de la vista
@@ -766,6 +809,230 @@ public class Controller {
         }
     }
 
+    @FXML
+    private void abrirEditarPieza(ActionEvent event) {
+        if (tablaPiezas == null) {
+            showAlert("Aviso", "La tabla de piezas no está disponible.");
+            return;
+        }
+
+        Pieza seleccionada = tablaPiezas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una pieza para editar.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/editarPieza.fxml"));
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+            ctrl.setPiezaEnEdicion(seleccionada);
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de editar pieza.");
+        }
+    }
+
+    public void setPiezaEnEdicion(Pieza pieza) {
+        this.piezaEnEdicion = pieza;
+
+        if (lblPiezaId != null) lblPiezaId.setText(String.valueOf(pieza.getId_pieza()));
+        if (tfPiezaModelo != null) tfPiezaModelo.setText(pieza.getModelo());
+        if (tfPiezaMarca != null) tfPiezaMarca.setText(pieza.getMarca());
+        if (tfPiezaTipo != null) tfPiezaTipo.setText(pieza.getTipo());
+        if (tfPiezaPrecio != null) tfPiezaPrecio.setText(String.valueOf(pieza.getPrecio()));
+
+        // Spinner stock (muy importante inicializarlo)
+        if (spPiezaStock != null) {
+            int stock = pieza.getStock();
+            spPiezaStock.setValueFactory(
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, Math.max(stock, 0))
+            );
+        }
+    }
+
+    @FXML
+    private void guardarCambiosPieza(ActionEvent event) {
+        if (piezaEnEdicion == null) {
+            showAlert("Error", "No hay ninguna pieza cargada para editar.");
+            return;
+        }
+
+        String modelo = tfPiezaModelo != null ? tfPiezaModelo.getText().trim() : "";
+        String marca  = tfPiezaMarca  != null ? tfPiezaMarca.getText().trim()  : "";
+        String tipo   = tfPiezaTipo   != null ? tfPiezaTipo.getText().trim()   : "";
+        String precioTxt = tfPiezaPrecio != null ? tfPiezaPrecio.getText().trim() : "";
+
+        if (modelo.isEmpty() || marca.isEmpty() || tipo.isEmpty() || precioTxt.isEmpty()) {
+            showAlert("Aviso", "Rellena modelo, marca, tipo y precio.");
+            return;
+        }
+
+        int stock = 0;
+        if (spPiezaStock != null && spPiezaStock.getValue() != null) {
+            stock = spPiezaStock.getValue();
+        }
+
+        float precio;
+        try {
+            // admite "19,99" o "19.99"
+            precio = Float.parseFloat(precioTxt.replace(",", "."));
+            if (precio < 0) throw new NumberFormatException();
+        } catch (Exception ex) {
+            showAlert("Aviso", "Precio no válido. Ejemplo: 19.99");
+            return;
+        }
+
+        // Actualizar entidad
+        piezaEnEdicion.setModelo(modelo);
+        piezaEnEdicion.setMarca(marca);
+        piezaEnEdicion.setTipo(tipo);
+        piezaEnEdicion.setStock(stock);
+        piezaEnEdicion.setPrecio(precio);
+
+        try {
+            inventarioService.actualizarPieza(piezaEnEdicion);
+            showAlert("OK", "Pieza actualizada correctamente.");
+
+            // Refrescar inventario si existe tabla (depende de si al volver se re-inicializa)
+            if (tablaPiezas != null) {
+                tablaPiezas.setItems(inventarioService.cargarPiezasDesdeBD());
+            }
+
+            NavigationService.getInstance().goBack();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo actualizar la pieza en la base de datos.");
+        }
+    }
+
+    private void abrirEditarPiezaDesdeSeleccion(Pieza pieza) {
+        if (pieza == null) {
+            showAlert("Aviso", "No hay pieza seleccionada.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    HelloApplication.class.getResource("/view/proyecto_tfg/editarPieza.fxml")
+            );
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+            ctrl.setPiezaEnEdicion(pieza);
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de editar pieza.");
+        }
+    }
+
+    @FXML
+    private void guardarPieza(ActionEvent event) {
+        String modelo = tfPiezaModelo != null ? tfPiezaModelo.getText().trim() : "";
+        String marca  = tfPiezaMarca  != null ? tfPiezaMarca.getText().trim()  : "";
+        String tipo   = tfPiezaTipo   != null ? tfPiezaTipo.getText().trim()   : "";
+        String precioTxt = tfPiezaPrecio != null ? tfPiezaPrecio.getText().trim() : "";
+
+        if (modelo.isEmpty() || marca.isEmpty() || tipo.isEmpty() || precioTxt.isEmpty()) {
+            showAlert("Aviso", "Rellena modelo, marca, tipo y precio.");
+            return;
+        }
+
+        int stock = 0;
+        if (spPiezaStock != null && spPiezaStock.getValue() != null) {
+            stock = spPiezaStock.getValue();
+        }
+
+        float precio;
+        try {
+            // admite "19,99" o "19.99"
+            precio = Float.parseFloat(precioTxt.replace(",", "."));
+            if (precio < 0) throw new NumberFormatException();
+        } catch (Exception ex) {
+            showAlert("Aviso", "Precio no válido. Ejemplo: 19.99");
+            return;
+        }
+
+        // id_pieza es autogenerado -> se deja null
+        Pieza nueva = new Pieza(null, modelo, marca, stock, tipo, precio);
+
+        try {
+            inventarioService.añadirPieza(nueva);
+            showAlert("OK", "Pieza añadida correctamente.");
+            NavigationService.getInstance().goBack();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo añadir la pieza en la base de datos.");
+        }
+    }
+
+    private void prepararFormularioNuevaPieza() {
+        if (spPiezaStock != null) {
+            spPiezaStock.setValueFactory(
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, 0)
+            );
+        }
+    }
+
+    @FXML
+    private void abrirAñadirPieza(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/añadirPieza.fxml"));
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+            ctrl.prepararFormularioNuevaPieza();
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de añadir pieza.");
+        }
+    }
+
+    @FXML
+    private void exportarFacturaPDF(ActionEvent event) {
+        if (tablaFacturas == null) {
+            showAlert("Aviso", "La tabla de facturas no está disponible.");
+            return;
+        }
+
+        Factura seleccionada = tablaFacturas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una factura para exportar.");
+            return;
+        }
+
+        Factura facturaCompleta =
+                new FacturaService().obtenerFacturaConDetalles(seleccionada.getId_factura());
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar factura como PDF");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf")
+        );
+        fileChooser.setInitialFileName("factura_" + facturaCompleta.getId_factura() + ".pdf");
+
+        Window ventana = tablaFacturas.getScene().getWindow();
+        File destino = fileChooser.showSaveDialog(ventana);
+
+        if (destino == null) {
+            return;
+        }
+
+        boolean ok = exportarService.generarPdfFactura(facturaCompleta, destino.getAbsolutePath());
+
+        if (ok) {
+            showAlert("Éxito", "Factura exportada correctamente en:\n" + destino.getAbsolutePath());
+        } else {
+            showAlert("Error", "No se pudo exportar la factura a PDF.");
+        }
+    }
 
 
 }

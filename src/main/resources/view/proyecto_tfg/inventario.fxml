@@ -22,8 +22,9 @@
                 <Label text="Gestión de piezas y materiales" styleClass="hero-small"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="➕ Añadir Pieza"
-                    styleClass="btn-primary"/>
+            <Button text="✏ Editar" styleClass="btn-secondary" onAction="#abrirEditarPieza"/>
+            <Button text="➕ Añadir Pieza" styleClass="btn-primary" onAction="#abrirAñadirPieza"/>
+
         </HBox>
 
         <Separator/>

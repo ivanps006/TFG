@@ -65,4 +65,23 @@ public class FacturaService {
             }
         }
     }
+
+    // en FacturaService
+    public Factura obtenerFacturaConDetalles(Integer id) {
+        EntityManager em = Utils.em();
+        try {
+            return em.createQuery(
+                            "SELECT f FROM Factura f " +
+                                    "LEFT JOIN FETCH f.id_cliente " +
+                                    "LEFT JOIN FETCH f.id_bicicleta " +
+                                    "WHERE f.id_factura = :id", Factura.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+
 }

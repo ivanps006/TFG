@@ -59,6 +59,7 @@
                     <Region HBox.hgrow="ALWAYS"/>
 
                     <Button text="Exportar"
+                            onAction="#exportarFacturaPDF"
                             styleClass="btn-secondary"/>
 
                     <Button text="Actualizar"

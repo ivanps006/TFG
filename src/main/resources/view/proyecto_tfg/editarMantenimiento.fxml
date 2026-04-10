@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefWidth="650"
+            prefHeight="560"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+            <Label text="✏️ Editar Mantenimiento" styleClass="title"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="18" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="25" right="40" bottom="15" left="40"/>
+            </padding>
+            <Separator/>
+
+            <!-- Form -->
+            <Label text="Editar datos" styleClass="subtitle"/>
+
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="ID Mecánico"/>
+                    <TextField fx:id="txtIdMecanicoMantEdit" promptText="Ej: MEC-01"/>
+                </VBox>
+
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="ID Bicicleta (ref)"/>
+                    <TextField fx:id="txtIdBicicletaMantEdit" promptText="Ej: BICI-001"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Fecha"/>
+                    <DatePicker fx:id="dpFechaMantEdit"/>
+                </VBox>
+
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Horas trabajadas"/>
+                    <TextField fx:id="txtHorasMantEdit" promptText="Ej: 3"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="5">
+                <Label text="Observaciones"/>
+                <TextArea fx:id="taObservacionesMantEdit"
+                          prefRowCount="5"
+                          wrapText="true"/>
+            </VBox>
+
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" right="40" bottom="20" left="40"/>
+            </padding>
+
+            <Button text="Cancelar"
+                    styleClass="btn-secondary"
+                    onAction="#volverPaginaPrincipal"/>
+
+            <Button text="Guardar cambios"
+                    styleClass="btn-primary"
+                    onAction="#guardarCambiosMantenimiento"/>
+
+        </HBox>
+    </bottom>
+
+</BorderPane>

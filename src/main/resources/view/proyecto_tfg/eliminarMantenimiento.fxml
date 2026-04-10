@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefWidth="650"
+            prefHeight="560"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header">
+            <Label text="🗑 Eliminar Mantenimiento" styleClass="title"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20" alignment="TOP_CENTER">
+            <padding>
+                <Insets top="30" right="40" bottom="10" left="40"/>
+            </padding>
+
+            <!-- Buscador por ID -->
+            <VBox spacing="6">
+                <Label text="Buscar mantenimiento" styleClass="subtitle"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBuscarIdMantenimientoEliminar"
+                               promptText="Introduce el ID (Ej: 10)"
+                               HBox.hgrow="ALWAYS"
+                               maxWidth="Infinity"/>
+                    <Button text="🔍 Buscar"
+                            styleClass="btn-primary"
+                            onAction="#buscarMantenimientoParaEliminar"/>
+                </HBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Datos encontrados -->
+            <VBox spacing="6">
+                <Label text="Datos del mantenimiento" styleClass="subtitle"/>
+
+                <HBox spacing="15">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="ID" styleClass="hint"/>
+                        <Label fx:id="lblIdMantenimientoEliminar" text="—"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="ID Mecánico" styleClass="hint"/>
+                        <Label fx:id="lblIdMecanicoEliminar" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="15">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="ID Bicicleta" styleClass="hint"/>
+                        <Label fx:id="lblIdBicicletaEliminar" text="—"/>
+                    </VBox>
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Fecha" styleClass="hint"/>
+                        <Label fx:id="lblFechaEliminar" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="15">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Horas trabajadas" styleClass="hint"/>
+                        <Label fx:id="lblHorasEliminar" text="—"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="4">
+                    <Label text="Observaciones" styleClass="hint"/>
+                    <Label fx:id="lblObservacionesEliminar" text="—" wrapText="true"/>
+                </VBox>
+            </VBox>
+
+            <Separator/>
+
+            <!-- Advertencia -->
+            <HBox alignment="CENTER_LEFT" spacing="8"
+                  style="-fx-background-color: rgba(220,38,38,0.08);
+                         -fx-border-color: rgba(220,38,38,0.35);
+                         -fx-border-radius: 8;
+                         -fx-background-radius: 8;
+                         -fx-padding: 10 14 10 14;">
+                <Label text="⚠" style="-fx-font-size: 18px; -fx-text-fill: #dc2626;"/>
+                <Label text="Esta acción es irreversible. El mantenimiento será eliminado permanentemente."
+                       style="-fx-text-fill: #dc2626; -fx-font-size: 12.5px; -fx-font-weight: 700;"
+                       wrapText="true"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="15" right="40" bottom="20" left="40"/>
+            </padding>
+
+            <Button text="← Cancelar"
+                    styleClass="btn-secondary"
+                    onAction="#volverPaginaPrincipal"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="🗑 Eliminar mantenimiento"
+                    onAction="#eliminarMantenimientoConfirmado"
+                    style="-fx-background-color: linear-gradient(to right, #dc2626, #ef4444);
+                           -fx-text-fill: white;
+                           -fx-font-weight: 800;
+                           -fx-font-size: 13px;
+                           -fx-background-radius: 8;
+                           -fx-cursor: hand;
+                           -fx-effect: dropshadow(gaussian, rgba(220,38,38,0.35), 10, 0.2, 0, 3);"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

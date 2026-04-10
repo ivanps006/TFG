@@ -20,4 +20,31 @@ public class InventarioService {
               return javafx.collections.FXCollections.observableArrayList();
           }
       }
+
+    public void actualizarPieza(Pieza pieza) {
+        EntityManager em = Utils.em();
+        try {
+            em.getTransaction().begin();
+            em.merge(pieza);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void añadirPieza(Pieza pieza) {
+        EntityManager em = Utils.em();
+        try {
+            em.getTransaction().begin();
+            em.persist(pieza);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
+
 }
