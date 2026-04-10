@@ -34,6 +34,7 @@ public class Controller {
     private final DeleteService deleteService = new DeleteService();
     private final InventarioService inventarioService = new InventarioService();
     private final ExportarService exportarService = new ExportarService();
+    private final EmailService emailService = new EmailService();
 
     @FXML private BorderPane root;
     @FXML private VBox dashboardView;
@@ -244,11 +245,6 @@ public class Controller {
             ErrorLogin.setStyle("-fx-text-fill: green;");
             limpiarCamposLogin();
 
-            // Enviar email de bienvenida
-            if (mecanico.getCorreo() != null && !mecanico.getCorreo().isEmpty()) {
-                new EmailService().enviarEmailBienvenida(mecanico.getNombre(), mecanico.getCorreo());
-            }
-
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
             Stage stage = new Stage();
@@ -321,6 +317,8 @@ public class Controller {
         ));
         lblMensajeRegistro.setText("Registro exitoso.");
         lblMensajeRegistro.setStyle("-fx-text-fill: green;");
+        emailService.enviarEmailBienvenida(tfNombre.getText(), tfCorreo.getText());
+        System.out.println("Email enviado correctamente");
         limpiarCamposRegistro();
     }
 

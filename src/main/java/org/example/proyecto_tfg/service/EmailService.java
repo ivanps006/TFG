@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class EmailService {
 
-    private static final String EMAIL_REMITENTE = "ipadsal809@g.educaand.es";
+    private static final String EMAIL_REMITENTE = "ipadsal0809@g.educaand.es";
     //a24pasaiv@iesgrancapitan.org
     private static final String CONTRASENA = "hsyu laqf sudf cxyv"; //
     //hsyu laqf sudf cxyv
