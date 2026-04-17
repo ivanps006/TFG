@@ -1,22 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" alignment="CENTER"
-      fx:controller="org.example.proyecto_tfg.controller.Controller"
-    stylesheets="@../css/styleRegisterPage.css" fx:id="vboxRegister" fillWidth="false">
-    <Label text="Formulario de registro"/>
-    <TextField promptText="Usuario" fx:id="tfUsuario" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <PasswordField promptText="Contraseña" fx:id="pfContrasenia" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <TextField promptText="Nombre" fx:id="tfNombre" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <TextField promptText="Apellido" fx:id="tfApellido" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <TextField promptText="Correo Electrónico" fx:id="tfCorreo" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <TextField promptText="DNI" fx:id="tfDni" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <TextField promptText="Teléfono" fx:id="tfTelefono" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <TextField promptText="Direccion" fx:id="tfDireccion" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <Button fx:id="btnConfirmar" text="Confirmar" onAction="#registrarUsuario" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <Button fx:id="btnCerrar" text="Cerrar" onAction="#cerrarPrograma" prefWidth="300" minWidth="300" maxWidth="300"/>
-    <Label fx:id="lblMensajeRegistro"/>
-</VBox>
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.proyecto_tfg.controller.Controller"
+           stylesheets="@../css/styleRegisterPage.css"
+           styleClass="register-root">
 
+    <VBox alignment="CENTER"
+          spacing="20">
+
+        <!-- Tarjeta -->
+        <VBox fx:id="vboxRegister"
+              styleClass="register-card"
+              spacing="18"
+              maxWidth="800">
+
+            <padding>
+                <Insets top="30" right="40" bottom="30" left="40"/>
+            </padding>
+
+            <!-- Título -->
+            <Label text="Registro de Mecánico"
+                   styleClass="register-title"/>
+
+            <Label text="Introduce tus datos para acceder al taller"
+                   styleClass="register-subtitle"/>
+
+            <!-- Formulario -->
+            <HBox spacing="20">
+
+                <!-- Columna izquierda -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+                    <TextField fx:id="tfNombre"
+                               promptText="Nombre"/>
+                    <Label fx:id="lblErrorNombre" text=""/>
+
+                    <TextField fx:id="tfApellido"
+                               promptText="Apellidos"/>
+                    <Label fx:id="lblErrorApellido" text=""/>
+
+                    <TextField fx:id="tfUsuario"
+                               promptText="Usuario"/>
+                    <Label fx:id="lblErrorUsuario" text=""/>
+
+                    <PasswordField fx:id="pfContrasenia"
+                                   promptText="Contraseña"/>
+                    <Label fx:id="lblErrorContarsenia" text=""/>
+
+                </VBox>
+
+                <!-- Columna derecha -->
+                <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+                    <TextField fx:id="tfCorreo"
+                               promptText="Correo electrónico"/>
+                    <Label fx:id="lblErrorCorreo" text=""/>
+
+                    <TextField fx:id="tfDni"
+                               promptText="DNI"/>
+                    <Label fx:id="lblErrorDNI" text=""/>
+
+                    <TextField fx:id="tfTelefono"
+                               promptText="Teléfono"/>
+                    <Label fx:id="lblErrorTelefono" text=""/>
+
+                    <TextField fx:id="tfDireccion"
+                               promptText="Dirección"/>
+                    <Label fx:id="lblErrorDireccion" text=""/>
+
+                </VBox>
+
+            </HBox>
+
+            <!-- Mensaje general -->
+            <Label fx:id="lblMensajeRegistro"
+                   styleClass="form-message"
+                   wrapText="true"/>
+
+            <!-- Botones -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+
+                <Button fx:id="btnIniciarSesion"
+                        text="Volver"
+                        onAction="#volverLogin"/>
+
+                <Button fx:id="btnConfirmar"
+                        text="Crear cuenta"
+                        onAction="#registrarUsuario"
+                        defaultButton="true"
+                        styleClass="btn-primary"/>
+
+            </HBox>
+
+        </VBox>
+
+    </VBox>
+
+</StackPane>

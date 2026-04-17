@@ -3,6 +3,7 @@ package org.example.proyecto_tfg.service;
 import jakarta.persistence.EntityManager;
 import org.example.proyecto_tfg.model.Bicicleta;
 import org.example.proyecto_tfg.model.Cliente;
+import org.example.proyecto_tfg.model.Factura;
 import org.example.proyecto_tfg.utils.Utils;
 
 public class DeleteService {
@@ -43,4 +44,23 @@ public class DeleteService {
         }finally {            em.close();
         }
     }
+    public void eliminarFactura(Integer idFactura){
+        EntityManager em = Utils.em();
+        try {
+            em.getTransaction().begin();
+            var factura = em.find(Factura.class, idFactura);
+            if (factura != null) {
+                em.remove(factura);
+                System.out.println("Factura con ID " + idFactura + " eliminada.");
+            } else {
+                System.out.println("No se encontró la factura con ID " + idFactura);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
+
 }

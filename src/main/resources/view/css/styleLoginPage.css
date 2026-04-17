@@ -2,7 +2,8 @@
    THEME: "Aero Clean" - Login Page
    ========================================================= */
 
-VBox {
+/* Fondo general: se aplica al StackPane raíz */
+.login-root {
     -fx-background-color:
             radial-gradient(focus-angle 35deg, focus-distance 0%,
             center 30% 0%, radius 120%,
@@ -10,6 +11,52 @@ VBox {
             linear-gradient(to bottom right, #f4f7fb, #eef3f9, #e8eff8);
 }
 
+/* Contenedor horizontal */
+.login-layout {
+    -fx-padding: 0 80 0 80;
+}
+
+/* Columna izquierda (texto grande) */
+.login-hero {
+    -fx-max-width: 600;
+}
+
+/* Logo / nombre de la app */
+.login-logo {
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e293b;
+}
+
+/* Título grande */
+.login-hero-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+}
+
+/* Subtítulo / descripción */
+.login-hero-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+}
+
+/* Tarjeta de login (formulario) */
+.login-card {
+    -fx-background-color: rgba(255,255,255,0.96);
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.18), 18, 0.2, 0, 6);
+}
+
+/* Título del formulario */
+.login-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+    -fx-padding: 0 0 8 0;
+}
+
+/* Etiquetas de campos */
 Label {
     -fx-text-fill: #0f172a;
     -fx-font-size: 13px;
@@ -17,6 +64,19 @@ Label {
     -fx-font-family: "Segoe UI", "Arial";
 }
 
+/* Textos auxiliares */
+.login-hint {
+    -fx-font-weight: normal;
+    -fx-text-fill: #64748b;
+}
+
+/* Mensaje de error login */
+.login-error {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 12px;
+}
+
+/* Botones generales */
 Button {
     -fx-font-size: 14px;
     -fx-font-weight: 800;
@@ -47,17 +107,16 @@ Button:pressed {
     -fx-background-color: linear-gradient(to right, #1d4ed8, #0891b2);
 }
 
-/* Botón secundario (Registrarse) – borde azul */
+/* Botón "Registrarse" como enlace/segundo botón */
 #btnRegistrarse {
-    -fx-background-color: rgba(255,255,255,0.65);
+    -fx-background-color: transparent;
     -fx-text-fill: #2563eb;
-    -fx-border-color: rgba(37,99,235,0.55);
-    -fx-border-width: 1.5;
+    -fx-border-color: transparent;
+    -fx-padding: 0 2 0 2;
 }
 
 #btnRegistrarse:hover {
-    -fx-background-color: rgba(37,99,235,0.10);
-    -fx-border-color: rgba(37,99,235,0.75);
+    -fx-text-fill: #1d4ed8;
 }
 
 /* Campos de texto */

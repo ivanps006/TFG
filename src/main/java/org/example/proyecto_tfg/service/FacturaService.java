@@ -1,6 +1,8 @@
 package org.example.proyecto_tfg.service;
 
 import jakarta.persistence.EntityManager;
+import javafx.collections.ObservableList;
+import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.model.Factura;
 import org.example.proyecto_tfg.utils.Utils;
 
@@ -84,4 +86,17 @@ public class FacturaService {
         }
     }
 
+    public ObservableList<Factura> cargarFacturasDesdeBD() {
+        EntityManager em = Utils.em();
+        try{
+            List<Factura> listaFactura = em.createQuery("SELECT f FROM Factura f", Factura.class)
+                    .getResultList();
+            System.out.println("Cargando clientes desde la base de datos: " + listaFactura.size() + " clientes encontrados.");
+            System.out.println("\n"+listaFactura);
+            return javafx.collections.FXCollections.observableArrayList(listaFactura);
+        }catch (Exception e){
+            e.printStackTrace();
+            return javafx.collections.FXCollections.observableArrayList();
+        }
+    }
 }

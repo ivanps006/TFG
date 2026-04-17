@@ -25,7 +25,6 @@
             <Button text="Buscar" onAction="#buscarMantenimientos"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="+ Nuevo Mantenimiento"  onAction="#añadirMantenimiento"/>
-            <Button text="✏️ Editar" onAction="#editarMantenimiento" />
             <Button text="🗑 Eliminar" onAction="#eliminarMantenimiento"/>
         </HBox>
 

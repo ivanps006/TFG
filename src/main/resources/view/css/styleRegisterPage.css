@@ -2,7 +2,8 @@
    THEME: "Aero Clean" - Register Page
    ========================================================= */
 
-VBox {
+/* Fondo general */
+.register-root {
     -fx-background-color:
             radial-gradient(focus-angle 35deg, focus-distance 0%,
             center 30% 0%, radius 120%,
@@ -10,6 +11,22 @@ VBox {
             linear-gradient(to bottom right, #f4f7fb, #eef3f9, #e8eff8);
 }
 
+/* Tarjeta principal */
+.register-card {
+    -fx-background-color: rgba(255,255,255,0.96);
+    -fx-background-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.18), 18, 0.2, 0, 6);
+}
+
+/* Título */
+.register-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+    -fx-padding: 0 0 10 0;
+}
+
+/* Etiquetas generales (errores, mensajes) */
 Label {
     -fx-text-fill: #0f172a;
     -fx-font-size: 13px;
@@ -17,6 +34,20 @@ Label {
     -fx-font-family: "Segoe UI", "Arial";
 }
 
+/* Mensaje general debajo del formulario */
+.form-message {
+    -fx-font-weight: normal;
+    -fx-text-fill: #059669;
+}
+
+/* Mensajes de error junto a cada campo */
+.field-error {
+    -fx-text-fill: #dc2626;
+    -fx-font-size: 11px;
+    -fx-font-weight: normal;
+}
+
+/* Botones generales */
 Button {
     -fx-font-size: 14px;
     -fx-font-weight: 800;
@@ -36,13 +67,15 @@ Button:pressed {
     -fx-effect: dropshadow(gaussian, rgba(2,6,23,0.16), 10, 0.12, 0, 2);
 }
 
-/* Botón principal (Registrarse) */
+/* Botón principal (Confirmar / Registrarse) */
+.btn-primary,
 #btnRegistrarse {
     -fx-background-color: linear-gradient(to right, #2563eb, #06b6d4);
     -fx-text-fill: white;
     -fx-border-color: transparent;
 }
 
+.btn-primary:hover,
 #btnRegistrarse:hover {
     -fx-background-color: linear-gradient(to right, #1d4ed8, #0891b2);
 }

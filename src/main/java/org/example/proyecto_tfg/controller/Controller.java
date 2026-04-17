@@ -4,12 +4,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -21,8 +23,12 @@ import org.example.proyecto_tfg.utils.InitializeUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -47,6 +53,9 @@ public class Controller {
     @FXML private Spinner<Integer> spPiezaStock;
     @FXML private TextField tfPiezaPrecio;
 
+    @FXML private TextField tfBicicletaRefFacturaFiltro;
+    @FXML private TextField tfClienteDniFacturaFiltro;
+
     // Pieza que se está editando (no es @FXML)
     private Pieza piezaEnEdicion;
 
@@ -57,7 +66,6 @@ public class Controller {
 
     @FXML private Label lblFecha;
     @FXML private Label lblNumeroBicisSinReparar;
-    @FXML private TextField tfCorreo;
 
     // eliminarMantenimiento.fxml
     @FXML private TextField txtBuscarIdMantenimientoEliminar;
@@ -69,18 +77,55 @@ public class Controller {
     @FXML private Label lblHorasEliminar;
     @FXML private Label lblObservacionesEliminar;
     private Mantenimiento mantenimientoAEliminar;
+    private Cliente clienteAEliminar;
+    private Bicicleta bicicletaAEliminar;
 
 
+    // Facturas - Campos para añadir
+    @FXML private TextField tfClienteDniAnadirFactura;
+    @FXML private Label lblClienteInfoFactura;
+    @FXML private TextField tfRefBicicletaAnadirFactura;
+    @FXML private Label lblBicicletaInfoFactura;
+    @FXML private DatePicker dpFechaFactura;
+    @FXML private TextField tfTotalFactura;
+    @FXML private Label lblErrorTotalFactura;
 
-    // Campos para añadir clientes
+    // Facturas - Cliente y Bicicleta en edición
+    private Cliente clienteParaFactura;
+    private Bicicleta bicicletaParaFactura;
+
+    // Facturas - Campos para eliminar
+    @FXML private Label lblIdFacturaEliminar;
+    @FXML private Label lblFechaFacturaEliminar;
+    @FXML private Label lblClienteFacturaEliminar;
+    @FXML private Label lblBicicletaFacturaEliminar;
+    @FXML private Label lblTotalFacturaEliminar;
+
+    // Factura siendo eliminada
+    private Factura facturaAEliminar;
+
+    // Instancia del servicio
+    private final FacturaService facturaService = new FacturaService();
+
+
+    // Campos para registrar mecanicos
     @FXML private TextField tfUsuario;
     @FXML private PasswordField pfContrasenia;
     @FXML private TextField tfNombre;
     @FXML private TextField tfApellido;
+    @FXML private TextField tfCorreo;
     @FXML private TextField tfDni;
     @FXML private TextField tfTelefono;
     @FXML private TextField tfDireccion;
     @FXML private Label lblMensajeRegistro;
+    @FXML private Label lblErrorNombre;
+    @FXML private Label lblErrorApellido;
+    @FXML private Label lblErrorUsuario;
+    @FXML private Label lblErrorContarsenia;
+    @FXML private Label lblErrorCorreo;
+    @FXML private Label lblErrorDNI;
+    @FXML private Label lblErrorTelefono;
+    @FXML private Label lblErrorDireccion;
 
     //Campos para eliminar Clientes
 // ========== ELIMINAR CLIENTE ==========
@@ -148,6 +193,12 @@ public class Controller {
     @FXML private TableColumn<Pieza, String> colPrecioPieza;
     @FXML private Label lblTotalPiezas;
 
+    // FILTRO DE PIEZAS
+    @FXML private TextField tfBuscarPieza;
+    private String tipoFiltroActual = null;  // Almacena el tipo seleccionado
+
+
+
     // Labels eliminar bici
     @FXML private Label lblRefBici;
     @FXML private Label lblEstadoBici;
@@ -182,7 +233,6 @@ public class Controller {
     @FXML private Label lblNumeroBicisEnReparacion;
     @FXML private Label lblNumeroClientes;
 
-    //Metodo Initialize
     @FXML
     public void initialize() {
         if (root != null) {
@@ -204,13 +254,23 @@ public class Controller {
                 if (event.getClickCount() == 2) {
                     Pieza p = tablaPiezas.getSelectionModel().getSelectedItem();
                     if (p != null) {
-                        // Llamar a un método sin ActionEvent (creas otra sobrecarga)
                         abrirEditarPiezaDesdeSeleccion(p);
                     }
                 }
             });
         }
 
+        // Doble clic en factura -> eliminar
+        if (tablaFacturas != null) {
+            tablaFacturas.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    Factura seleccionada = tablaFacturas.getSelectionModel().getSelectedItem();
+                    if (seleccionada != null) {
+                        abrirEliminarFacturaDirecto(seleccionada);
+                    }
+                }
+            });
+        }
 
         // Una sola línea que lo inicializa TODO
         new InitializeUtils().initializeAllViews(
@@ -229,6 +289,7 @@ public class Controller {
     }
 
 
+
     //Metodo para validar las credenciales cuando Inicias Sesion
     @FXML
     private void validarCredenciales() throws IOException {
@@ -245,20 +306,26 @@ public class Controller {
             ErrorLogin.setStyle("-fx-text-fill: green;");
             limpiarCamposLogin();
 
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 1300, 700);
-            Stage stage = new Stage();
-            stage.setTitle("Hello!");
-            stage.setScene(scene);
-            stage.show();
-            stage.centerOnScreen();
-            stage.setResizable(false);
+            // En lugar de abrir una nueva ventana, cargamos la vista principal
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/principalWindows-view.fxml"));
+                Parent mainView = fxmlLoader.load();
+
+                // Reemplazamos la escena actual con la vista principal
+                StackPane stackPrincipal = (StackPane) HelloApplication.mainStage.getScene().getRoot();
+                stackPrincipal.getChildren().clear();
+                stackPrincipal.getChildren().add(mainView);
+            } catch (IOException e) {
+                e.printStackTrace();
+                showAlert("Error", "No se pudo cargar la ventana principal.");
+            }
         } else {
             ErrorLogin.setText("Credenciales incorrectas. Inténtelo de nuevo.");
             ErrorLogin.setStyle("-fx-text-fill: red;");
             limpiarCamposLogin();
         }
     }
+
 
 
     //Metodo para guardar clientes(Añadirlo a la BD)
@@ -280,23 +347,17 @@ public class Controller {
     @FXML
     private void onRegisterButtonClick(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/register-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 500);
-            Stage stage = new Stage();
-            stage.setTitle("Hello!");
-            stage.setScene(scene);
-            stage.show();
-            stage.centerOnScreen();
-            stage.setResizable(false);
+            HelloApplication.cargarVistaRegister();
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "No se pudo abrir el formulario de registro.");
         }
     }
 
+
     //Metodo para cerrar el programa y volver al login
     @FXML
-    private void cerrarPrograma(ActionEvent event) {
+    private void cerrarRegistro(ActionEvent event) {
         //Lo que hace es cerrar la escena actual
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
@@ -305,6 +366,7 @@ public class Controller {
     //Metodo para Registrar un nuevo usuario (mecanico) en la BD
     @FXML
     private void registrarUsuario(ActionEvent event) {
+        if (!validarRegistro()) return;
         loginService.añadirMecanico(new Mecanico(
                 tfDni.getText(),              // dni
                 tfNombre.getText(),           // nombre
@@ -322,6 +384,59 @@ public class Controller {
         limpiarCamposRegistro();
     }
 
+    private boolean validarRegistro() {
+        boolean ok = true;
+
+        // Limpia errores previos
+        lblErrorDNI.setText("");
+        lblErrorUsuario.setText("");
+        lblErrorContarsenia.setText("");
+        lblErrorNombre.setText("");
+
+        String dni = tfDni.getText() == null ? "" : tfDni.getText().trim();
+        String usuario = tfUsuario.getText() == null ? "" : tfUsuario.getText().trim();
+        String pass = pfContrasenia.getText() == null ? "" : pfContrasenia.getText().trim();
+        String nombre = tfNombre.getText() == null ? "" : tfNombre.getText().trim();
+
+        if (dni.isEmpty()) {
+            lblErrorDNI.setText("Debes poner tu DNI");
+            lblErrorDNI.setStyle("-fx-text-fill: red;");
+            ok = false;
+        }
+        if (usuario.isEmpty()) {
+            lblErrorUsuario.setText("Debes poner un usuario");
+            lblErrorUsuario.setStyle("-fx-text-fill: red;");
+            ok = false;
+        }
+        if (pass.isEmpty()) {
+            lblErrorContarsenia.setText("Debes poner una contraseña");
+            lblErrorContarsenia.setStyle("-fx-text-fill: red;");
+            ok = false;
+        }
+        if (nombre.isEmpty()) {
+            lblErrorNombre.setText("Debes poner tu nombre");
+            lblErrorNombre.setStyle("-fx-text-fill: red;");
+            ok = false;
+        }
+
+        if (!pass.matches("^[a-zA-Z0-9]{8,15}$")){
+            lblErrorContarsenia.setText("Contraseña no válida (8-15 caracteres, solo letras y números)");
+            lblErrorContarsenia.setStyle("-fx-text-fill: red;");
+            ok = false;
+        }
+
+        if (tfCorreo.getText().isEmpty()) {
+            lblErrorCorreo.setText("Debes poner un correo");
+            lblErrorCorreo.setStyle("-fx-text-fill: red;");
+            ok = false;
+        } else if (!tfCorreo.getText().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            lblErrorCorreo.setText("Correo no válido");
+            lblErrorCorreo.setStyle("-fx-text-fill: red;");
+            ok = false;
+        }
+
+        return ok;
+    }
 
 
     //Metodo para limpiar los campos una vez le has dado a registrar
@@ -374,12 +489,6 @@ public class Controller {
         }
     }
 
-    //Metodo para volver al Dashboard desde cualquer sitio
-    @FXML
-    private void volverPaginaPrincipal(ActionEvent event) {
-        NavigationService.getInstance().goBack();
-    }
-
     //Metodo que guarda una bicicleta nieva en la BD
     @FXML
     private void guardarBicicleta(ActionEvent event) {
@@ -417,8 +526,19 @@ public class Controller {
     //Metodo que cierra el programa desde cualquier sitio
     @FXML
     private void volverLogin(ActionEvent event) {
-        cerrarPrograma(event);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/hello-view.fxml"));
+            Parent loginView = fxmlLoader.load();
+
+            StackPane stackPrincipal = (StackPane) HelloApplication.mainStage.getScene().getRoot();
+            stackPrincipal.getChildren().clear();
+            stackPrincipal.getChildren().add(loginView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo cargar la vista de login.");
+        }
     }
+
 
     //Metodo para abrir la vista para añadir bicicletas
     @FXML
@@ -462,6 +582,17 @@ public class Controller {
         root.setCenter(dashboardView);
     }
 
+    //Metodo para volver a la pagina principal
+    @FXML
+    private void volverPaginaPrincipal(ActionEvent event) {
+        if (root != null && dashboardView != null) {
+            root.setCenter(dashboardView);
+        } else {
+            NavigationService.getInstance().goBack();
+        }
+    }
+
+
 
     //Metodo que muestra la vista de bicicletas
     @FXML
@@ -489,7 +620,6 @@ public class Controller {
         }
     }
 
-    //Metodo que muestra el inventario
     @FXML
     private void mostrarInventario(ActionEvent event) {
         try {
@@ -501,15 +631,29 @@ public class Controller {
         }
     }
 
+
     @FXML
     private void vistaEliminarBicicleta(ActionEvent event) {
+        Bicicleta seleccionada = tablaBicicletas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una bicicleta en la tabla.");
+            return;
+        }
+
         try {
-            Parent contenido = loadFxmlTry("/view/proyecto_tfg/eliminarBicicleta.fxml");
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/eliminarBicicleta.fxml"));
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+            ctrl.setBicicletaAEliminar(seleccionada);
+
             NavigationService.getInstance().openInCenter(contenido);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de eliminar bicicleta.");
         }
     }
+
 
     @FXML
     private void buscarBicicleta(ActionEvent event) {
@@ -570,6 +714,7 @@ public class Controller {
         try {
             Parent contenido = loadFxmlTry("/view/proyecto_tfg/factura.fxml");
             NavigationService.getInstance().openInCenter(contenido);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -587,19 +732,47 @@ public class Controller {
 
     @FXML
     private void abrirVistaEliminarCliente(ActionEvent event) {
+        Cliente seleccionado = tablaClientes.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            showAlert("Aviso", "Selecciona un cliente en la tabla.");
+            return;
+        }
+
         try {
-            Parent contenido = loadFxmlTry("/view/proyecto_tfg/eliminarCliente.fxml");
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/eliminarCliente.fxml"));
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+            ctrl.setClienteAEliminar(seleccionado);
+
             NavigationService.getInstance().openInCenter(contenido);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de eliminar cliente.");
         }
     }
 
+
     @FXML
-    private void eliminarBicicleta(ActionEvent event){
-        deleteService.eliminarBicicleta(txtBuscarRef.getText().trim());
-        showAlert("Éxito", "Bicicleta eliminada correctamente.");
+    private void eliminarBicicleta(ActionEvent event) {
+        if (bicicletaAEliminar == null) {
+            showAlert("Aviso", "No hay bicicleta seleccionada para eliminar.");
+            return;
+        }
+
+        // Confirmación antes de eliminar
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Estás seguro de que deseas eliminar esta bicicleta? Esta acción no se puede deshacer.");
+
+        if (confirmacion.showAndWait().isPresent() && confirmacion.getResult().equals(ButtonType.OK)) {
+            deleteService.eliminarBicicleta(bicicletaAEliminar.getId_referencia());
+            showAlert("Éxito", "Bicicleta eliminada correctamente.");
+            NavigationService.getInstance().goBack();
+        }
     }
+
 
     private void limpiarDatosCliente() {
         if (lblDniCliente != null) lblDniCliente.setText("—");
@@ -611,19 +784,15 @@ public class Controller {
 
     @FXML
     private void eliminarCliente(ActionEvent event) {
-        String dni = lblDniCliente != null ? lblDniCliente.getText() : "—";
-
-        if (dni.equals("—")) {
-            showAlert("Aviso", "Primero debes buscar un cliente para eliminarlo.");
+        if (clienteAEliminar == null) {
+            showAlert("Aviso", "No hay cliente seleccionado para eliminar.");
             return;
         }
-
-        deleteService.eliminarCliente(dni);
+        deleteService.eliminarCliente(clienteAEliminar.getDni());
         showAlert("Éxito", "Cliente eliminado correctamente.");
-        limpiarDatosCliente();
-        txtBuscarDniCliente.clear();
         NavigationService.getInstance().goBack();
     }
+
 
     // Agregar este campo en la sección de declaración de @FXML (alrededor de la línea 79-81)
     @FXML private ComboBox<String> cmbEstadoBici;
@@ -757,29 +926,32 @@ public class Controller {
         }
     }
 
-    // Método para editar mantenimiento
-    @FXML
-    private void editarMantenimiento(ActionEvent event) {
-        Mantenimiento seleccionado = tablaMantenimientos.getSelectionModel().getSelectedItem();
+//    // Método para editar mantenimiento
+//    // Método para editar mantenimiento (ACTUALIZADO)
+//    @FXML
+//    private void editarMantenimiento(ActionEvent event) {
+//        Mantenimiento seleccionado = tablaMantenimientos.getSelectionModel().getSelectedItem();
+//
+//        if (seleccionado == null) {
+//            showAlert("Aviso", "Selecciona un mantenimiento para editar.");
+//            return;
+//        }
+//
+//        try {
+//            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/editarMantenimiento.fxml"));
+//            Parent contenido = loader.load();
+//
+//            // Pasar el mantenimiento seleccionado al controller
+//            Controller ctrl = loader.getController();
+//            ctrl.setMantenimientoEnEdicion(seleccionado);
+//
+//            NavigationService.getInstance().openInCenter(contenido);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            showAlert("Error", "No se pudo abrir el formulario de editar mantenimiento.");
+//        }
+//    }
 
-        if (seleccionado == null) {
-            showAlert("Aviso", "Selecciona un mantenimiento para editar.");
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/editarMantenimiento.fxml"));
-            Parent contenido = loader.load();
-
-            // Pasar el mantenimiento seleccionado al controller de la vista
-            // (Necesitarás agregar un método setDatos en el controller de añadirMantenimiento)
-
-            NavigationService.getInstance().openInCenter(contenido);
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Error", "No se pudo abrir el formulario de editar mantenimiento.");
-        }
-    }
 
     // Método para eliminar mantenimiento
     @FXML
@@ -1031,6 +1203,396 @@ public class Controller {
             showAlert("Error", "No se pudo exportar la factura a PDF.");
         }
     }
+
+    public void setClienteAEliminar(Cliente c) {
+        this.clienteAEliminar = c;
+
+        if (lblDniCliente != null) lblDniCliente.setText(c.getDni());
+        if (lblNombreCliente != null) lblNombreCliente.setText(c.getNombre());
+        if (lblApellidoCliente != null) lblApellidoCliente.setText(c.getApellidos());
+        if (lblTelefonoCliente != null) lblTelefonoCliente.setText(c.getTelefono());
+        if (lblDireccionCliente != null) lblDireccionCliente.setText(c.getDireccion());
+
+        // opcional: rellenar el buscador también
+        if (txtBuscarDniCliente != null) txtBuscarDniCliente.setText(c.getDni());
+    }
+
+    public void setBicicletaAEliminar(Bicicleta b) {
+        this.bicicletaAEliminar = b;
+
+        if (lblRefBici != null) lblRefBici.setText(b.getId_referencia());
+        if (lblEstadoBici != null) lblEstadoBici.setText(b.getEstado() != null ? b.getEstado() : "Sin reparar");
+        if (lblMarcaBici != null) lblMarcaBici.setText(b.getMarca());
+        if (lblModeloBici != null) lblModeloBici.setText(b.getModelo());
+        if (lblFrenosBici != null) lblFrenosBici.setText(b.getFrenos());
+        if (lblTransmisionBici != null) lblTransmisionBici.setText(b.getTransmision());
+        if (lblSuspDelBici != null) lblSuspDelBici.setText(b.getSuspension_delantera());
+        if (lblSuspTrasBici != null) lblSuspTrasBici.setText(b.getSuspension_trasera());
+        if (lblRuedasBici != null) lblRuedasBici.setText(b.getRuedas());
+
+        if (lblClienteBici != null) {
+            Cliente c = b.getId_cliente();
+            lblClienteBici.setText(c != null ? c.getDni() : "Sin cliente");
+        }
+
+        // opcional
+        if (txtBuscarRef != null) txtBuscarRef.setText(b.getId_referencia());
+    }
+
+    /**
+     * Abre un menú con los tipos de piezas disponibles para filtrar
+     */
+    @FXML
+    private void abrirFiltroTipo(ActionEvent event) {
+        // Obtener todos los tipos únicos de la BD
+        ObservableList<Pieza> todasLasPiezas = inventarioService.cargarPiezasDesdeBD();
+
+        // Extraer tipos únicos
+        Set<String> tiposUnicos = todasLasPiezas.stream()
+                .map(Pieza::getTipo)
+                .filter(tipo -> tipo != null && !tipo.trim().isEmpty())
+                .collect(Collectors.toSet());
+
+        // Crear un menú contextual
+        ContextMenu menu = new ContextMenu();
+
+        // Opción para "Todos los tipos"
+        MenuItem todosItem = new MenuItem("Todos");
+        todosItem.setOnAction(e -> {
+            tipoFiltroActual = null;
+            aplicarFiltrosPiezas();
+        });
+        menu.getItems().add(todosItem);
+        menu.getItems().add(new SeparatorMenuItem());
+
+        // Añadir cada tipo como opción
+        tiposUnicos.stream().sorted().forEach(tipo -> {
+            MenuItem item = new MenuItem(tipo);
+            item.setOnAction(e -> {
+                tipoFiltroActual = tipo;
+                aplicarFiltrosPiezas();
+            });
+            menu.getItems().add(item);
+        });
+
+        // Mostrar el menú donde está el botón
+        Button btnFiltro = (Button) event.getSource();
+        menu.show(btnFiltro, Side.BOTTOM, 0, 0);
+    }
+
+    /**
+     * Aplica los filtros de búsqueda de texto + tipo a la tabla de piezas
+     */
+    @FXML
+    private void aplicarFiltrosPiezas() {
+        if (tablaPiezas == null) {
+            showAlert("Aviso", "La tabla de piezas no está disponible.");
+            return;
+        }
+
+        // Obtener todas las piezas de la BD
+        ObservableList<Pieza> todasLasPiezas = inventarioService.cargarPiezasDesdeBD();
+
+        // Obtener valor de búsqueda
+        String textosBusqueda = tfBuscarPieza != null ? tfBuscarPieza.getText().trim().toLowerCase() : "";
+
+        // Aplicar filtros
+        ObservableList<Pieza> piezasFiltradas = todasLasPiezas.filtered(pieza -> {
+            // Filtro por tipo
+            boolean cumpleTipo = tipoFiltroActual == null ||
+                    (pieza.getTipo() != null && pieza.getTipo().equalsIgnoreCase(tipoFiltroActual));
+
+            // Filtro por búsqueda de texto
+            boolean cumpleTexto = textosBusqueda.isEmpty() ||
+                    (pieza.getModelo() != null && pieza.getModelo().toLowerCase().contains(textosBusqueda)) ||
+                    (pieza.getMarca() != null && pieza.getMarca().toLowerCase().contains(textosBusqueda)) ||
+                    (pieza.getTipo() != null && pieza.getTipo().toLowerCase().contains(textosBusqueda));
+
+            return cumpleTipo && cumpleTexto;
+        });
+
+        tablaPiezas.setItems(piezasFiltradas);
+    }
+
+    /**
+     * Busca piezas por el texto ingresado en el campo de búsqueda
+     */
+    @FXML
+    private void buscarPiezas(ActionEvent event) {
+        aplicarFiltrosPiezas();
+    }
+
+    /**
+     * Limpia todos los filtros y muestra todas las piezas
+     */
+    @FXML
+    private void limpiarFiltrosPiezas(ActionEvent event) {
+        if (tfBuscarPieza != null) tfBuscarPieza.clear();
+        tipoFiltroActual = null;
+        aplicarFiltrosPiezas();
+    }
+
+// ==================== AÑADIR FACTURA ====================
+
+    @FXML
+    private void abrirAnadirFactura(ActionEvent event) {
+        try {
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/añadirFactura.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
+
+            // Inicializar fecha con la de hoy
+            if (dpFechaFactura != null) {
+                dpFechaFactura.setValue(LocalDate.now());
+            }
+
+            // Limpiar campos
+            clienteParaFactura = null;
+            bicicletaParaFactura = null;
+            if (tfClienteDniAnadirFactura != null) tfClienteDniAnadirFactura.clear();
+            if (tfRefBicicletaAnadirFactura != null) tfRefBicicletaAnadirFactura.clear();
+            if (tfTotalFactura != null) tfTotalFactura.clear();
+            if (lblErrorTotalFactura != null) lblErrorTotalFactura.setText("");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de añadir factura.");
+        }
+    }
+
+    @FXML
+    private void buscarClienteParaFactura(ActionEvent event) {
+        String dni = tfClienteDniAnadirFactura != null ? tfClienteDniAnadirFactura.getText().trim() : "";
+
+        if (dni.isEmpty()) {
+            showAlert("Aviso", "Introduce un DNI de cliente.");
+            return;
+        }
+
+        Cliente cliente = addService.buscarClientePorDni(dni);
+
+        if (cliente == null) {
+            showAlert("No encontrado", "No existe cliente con DNI: " + dni);
+            clienteParaFactura = null;
+            if (lblClienteInfoFactura != null) lblClienteInfoFactura.setText("—");
+        } else {
+            clienteParaFactura = cliente;
+            if (lblClienteInfoFactura != null) {
+                lblClienteInfoFactura.setText(cliente.getNombre() + " " + cliente.getApellidos());
+            }
+        }
+    }
+
+    @FXML
+    private void buscarBicicletaParaFactura(ActionEvent event) {
+        String ref = tfRefBicicletaAnadirFactura != null ? tfRefBicicletaAnadirFactura.getText().trim() : "";
+
+        if (ref.isEmpty()) {
+            // Permitir sin bicicleta
+            bicicletaParaFactura = null;
+            if (lblBicicletaInfoFactura != null) lblBicicletaInfoFactura.setText("—");
+            return;
+        }
+
+        Bicicleta bici = buscarService.buscarBicicleta(ref);
+
+        if (bici == null) {
+            showAlert("No encontrada", "No existe bicicleta con referencia: " + ref);
+            bicicletaParaFactura = null;
+            if (lblBicicletaInfoFactura != null) lblBicicletaInfoFactura.setText("—");
+        } else {
+            bicicletaParaFactura = bici;
+            if (lblBicicletaInfoFactura != null) {
+                lblBicicletaInfoFactura.setText(bici.getMarca() + " " + bici.getModelo());
+            }
+        }
+    }
+
+    @FXML
+    private void guardarFactura(ActionEvent event) {
+        // Validar cliente
+        if (clienteParaFactura == null) {
+            showAlert("Aviso", "Debes buscar y seleccionar un cliente.");
+            return;
+        }
+
+        // Validar fecha
+        LocalDate fecha = dpFechaFactura != null ? dpFechaFactura.getValue() : null;
+        if (fecha == null) {
+            showAlert("Aviso", "Selecciona una fecha.");
+            return;
+        }
+
+        // Validar total
+        String totalTxt = tfTotalFactura != null ? tfTotalFactura.getText().trim() : "";
+        if (totalTxt.isEmpty()) {
+            if (lblErrorTotalFactura != null) {
+                lblErrorTotalFactura.setText("Debes introducir un total");
+                lblErrorTotalFactura.setStyle("-fx-text-fill: red;");
+            }
+            return;
+        }
+
+        BigDecimal total;
+        try {
+            total = new BigDecimal(totalTxt.replace(",", "."));
+            if (total.compareTo(BigDecimal.ZERO) < 0) throw new NumberFormatException();
+            if (lblErrorTotalFactura != null) lblErrorTotalFactura.setText("");
+        } catch (Exception ex) {
+            if (lblErrorTotalFactura != null) {
+                lblErrorTotalFactura.setText("Total no válido. Ejemplo: 150.50");
+                lblErrorTotalFactura.setStyle("-fx-text-fill: red;");
+            }
+            return;
+        }
+
+        // Crear factura
+        Factura nueva = new Factura(fecha, total, clienteParaFactura, bicicletaParaFactura);
+
+        try {
+            Factura guardada = facturaService.crearFactura(nueva);
+            if (guardada != null) {
+                showAlert("Éxito", "Factura creada correctamente con ID: " + guardada.getId_factura());
+                NavigationService.getInstance().goBack();
+            } else {
+                showAlert("Error", "No se pudo guardar la factura.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Error al guardar la factura: " + e.getMessage());
+        }
+    }
+
+// ==================== ELIMINAR FACTURA ====================
+
+    public void setFacturaAEliminar(Factura f) {
+        this.facturaAEliminar = f;
+
+        // Cargar datos completos de la factura
+        Factura facturaCompleta = facturaService.obtenerFacturaConDetalles(f.getId_factura());
+
+        if (lblIdFacturaEliminar != null) lblIdFacturaEliminar.setText(String.valueOf(facturaCompleta.getId_factura()));
+        if (lblFechaFacturaEliminar != null) lblFechaFacturaEliminar.setText(facturaCompleta.getFecha().toString());
+        if (lblTotalFacturaEliminar != null) lblTotalFacturaEliminar.setText(facturaCompleta.getTotal().toString() + " €");
+
+        if (lblClienteFacturaEliminar != null) {
+            Cliente cliente = facturaCompleta.getId_cliente();
+            lblClienteFacturaEliminar.setText(cliente != null ? cliente.getDni() : "—");
+        }
+
+        if (lblBicicletaFacturaEliminar != null) {
+            Bicicleta bici = facturaCompleta.getId_bicicleta();
+            lblBicicletaFacturaEliminar.setText(bici != null ? bici.getId_referencia() : "—");
+        }
+    }
+
+    @FXML
+    private void eliminarFacturaConfirmada(ActionEvent event) {
+        if (facturaAEliminar == null) {
+            showAlert("Aviso", "No hay factura seleccionada para eliminar.");
+            return;
+        }
+
+        // Confirmación
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Estás seguro de que deseas eliminar esta factura? Esta acción no se puede deshacer.");
+
+        if (confirmacion.showAndWait().isPresent() && confirmacion.getResult().equals(ButtonType.OK)) {
+            try {
+                // Usar el DeleteService para eliminar
+                deleteService.eliminarFactura(facturaAEliminar.getId_factura());
+                showAlert("Éxito", "Factura eliminada correctamente.");
+                NavigationService.getInstance().goBack();
+            } catch (Exception e) {
+                e.printStackTrace();
+                showAlert("Error", "No se pudo eliminar la factura.");
+            }
+        }
+    }
+
+    /**
+     * Abre directamente la vista de eliminar con los datos precargados
+     */
+    @FXML
+    private void abrirEliminarFactura(ActionEvent event) {
+        Factura seleccionada = tablaFacturas.getSelectionModel().getSelectedItem();
+
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una factura para eliminar.");
+            return;
+        }
+
+        abrirEliminarFacturaDirecto(seleccionada);
+    }
+
+    /**
+     * Abre directamente la vista de eliminar con los datos precargados
+     */
+    private void abrirEliminarFacturaDirecto(Factura factura) {
+        try {
+            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/eliminarFactura.fxml"));
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+            ctrl.setFacturaAEliminar(factura);
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir la vista de eliminar factura.");
+        }
+    }
+
+// ==================== FILTRO DE FACTURAS POR FECHA ====================
+
+    @FXML private DatePicker dpFechaFacturaFiltro;
+    @FXML private TextField tfBuscarFactura;
+
+    @FXML
+    private void filtrarFacturasPorClienteYBicicleta(ActionEvent event) {
+        if (tablaFacturas == null) return;
+
+        String texto = tfBuscarFactura != null ? tfBuscarFactura.getText().trim().toUpperCase() : "";
+        ObservableList<Factura> todas = facturaService.cargarFacturasDesdeBD();
+
+        if (texto.isEmpty()) {
+            tablaFacturas.setItems(todas);
+            return;
+        }
+
+        ObservableList<Factura> filtradas = todas.filtered(f ->
+                (f.getId_cliente() != null && f.getId_cliente().getDni().toUpperCase().contains(texto)) ||
+                        (f.getId_bicicleta() != null && f.getId_bicicleta().getId_referencia().toUpperCase().contains(texto))
+        );
+
+        tablaFacturas.setItems(filtradas);
+    }
+
+
+
+// ==================== FILTROS AVANZADOS DE FACTURAS ====================
+
+    @FXML
+    private void filtrarFacturasPorFecha(ActionEvent event) {
+        if (tablaFacturas == null) {
+            showAlert("Aviso", "La tabla de facturas no está disponible.");
+            return;
+        }
+
+        LocalDate fecha = dpFechaFacturaFiltro != null ? dpFechaFacturaFiltro.getValue() : null;
+        ObservableList<Factura> todas = facturaService.cargarFacturasDesdeBD();
+
+        if (fecha == null) {
+            tablaFacturas.setItems(todas);
+            return;
+        }
+
+        ObservableList<Factura> filtradas = todas.filtered(f -> f.getFecha().isEqual(fecha));
+        tablaFacturas.setItems(filtradas);
+    }
+
+
 
 
 }

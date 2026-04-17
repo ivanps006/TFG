@@ -23,7 +23,7 @@
             </padding>
 
             <!-- LOGO APP -->
-            <Label text="🚲 WORKSHOP+" styleClass="sidebar-logo"/>
+            <Label text="🚲 Bienvenido a tu Taller" styleClass="sidebar-logo"/>
 
             <Separator/>
 
@@ -150,7 +150,7 @@
                         <Label text="Bicicletas Reparadas"
                                styleClass="stat-title"/>
                         <Label fx:id="lblNumeroBicisReparadas"
-                                text="12"
+                               text="12"
                                styleClass="stat-number"/>
                     </VBox>
 
@@ -160,7 +160,7 @@
                         <Label
                                 fx:id="lblNumeroClientes"
                                 text="86"
-                               styleClass="stat-number"/>
+                                styleClass="stat-number"/>
                     </VBox>
 
                 </HBox>

@@ -33,13 +33,17 @@
         <HBox spacing="15" alignment="CENTER_LEFT">
             <TextField fx:id="tfBuscarPieza"
                        promptText="Buscar por modelo, marca o tipo..."
-                       prefWidth="320"
+                       prefWidth="250"
                        styleClass="search-bar"/>
+
+            <Button text="Buscar" onAction="#buscarPiezas"/>
+
             <Region HBox.hgrow="ALWAYS"/>
             <Label fx:id="lblTotalPiezas"
                    text="Total: 0 piezas"
                    styleClass="stat-title"/>
         </HBox>
+
 
         <!-- TABLA -->
         <VBox styleClass="table-card" VBox.vgrow="ALWAYS">

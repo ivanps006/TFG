@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.proyecto_tfg.controller.Controller"
+            prefHeight="720.0" prefWidth="1050.0"
+            styleClass="root"
+            stylesheets="@../css/stylePrincipalPage.css">
+
+    <VBox spacing="20"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <padding><Insets top="30" right="40" bottom="30" left="40"/></padding>
+
+        <!-- CABECERA -->
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <VBox spacing="4">
+                <Label text="📝 Nueva Factura" styleClass="hero-title"/>
+                <Label text="Crear una nueva factura de venta" styleClass="hero-small"/>
+            </VBox>
+        </HBox>
+
+        <Separator/>
+
+        <!-- FORMULARIO -->
+        <VBox spacing="18" styleClass="form-card">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+            <!-- CLIENTE -->
+            <VBox spacing="6">
+                <Label text="Cliente *" styleClass="form-label"/>
+                <HBox spacing="10">
+                    <TextField fx:id="tfClienteDniAnadirFactura"
+                               promptText="DNI del cliente"
+                               prefWidth="250"
+                               styleClass="form-input"/>
+                    <Button text="Buscar Cliente"
+                            onAction="#buscarClienteParaFactura"
+                            styleClass="btn-secondary"/>
+                </HBox>
+                <Label fx:id="lblClienteInfoFactura"
+                       text="—"
+                       styleClass="info-label"/>
+            </VBox>
+
+            <!-- BICICLETA -->
+            <VBox spacing="6">
+                <Label text="Bicicleta (Opcional)" styleClass="form-label"/>
+                <HBox spacing="10">
+                    <TextField fx:id="tfRefBicicletaAnadirFactura"
+                               promptText="Referencia de la bicicleta"
+                               prefWidth="250"
+                               styleClass="form-input"/>
+                    <Button text="Buscar Bicicleta"
+                            onAction="#buscarBicicletaParaFactura"
+                            styleClass="btn-secondary"/>
+                </HBox>
+                <Label fx:id="lblBicicletaInfoFactura"
+                       text="—"
+                       styleClass="info-label"/>
+            </VBox>
+
+            <!-- FECHA -->
+            <VBox spacing="6">
+                <Label text="Fecha *" styleClass="form-label"/>
+                <DatePicker fx:id="dpFechaFactura"
+                            styleClass="form-input"/>
+            </VBox>
+
+            <!-- TOTAL -->
+            <VBox spacing="6">
+                <Label text="Total (€) *" styleClass="form-label"/>
+                <TextField fx:id="tfTotalFactura"
+                           promptText="Ej: 150.50"
+                           styleClass="form-input"/>
+                <Label fx:id="lblErrorTotalFactura"
+                       text=""
+                       styleClass="error-label"/>
+            </VBox>
+
+            <!-- BOTONES -->
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Cancelar"
+                        onAction="#volverPaginaPrincipal"
+                        styleClass="btn-secondary"/>
+                <Button text="Guardar Factura"
+                        onAction="#guardarFactura"
+                        styleClass="btn-primary"/>
+            </HBox>
+
+        </VBox>
+
+    </VBox>
+
+</AnchorPane>

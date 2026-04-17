@@ -47,4 +47,10 @@ public class NavigationService {
         if (root == null) return;
         root.setCenter(content);
     }
+
+    // NUEVO: Método para resetear el servicio cuando vuelves al login
+    public void reset() {
+        this.root = null;
+        this.history.clear();
+    }
 }

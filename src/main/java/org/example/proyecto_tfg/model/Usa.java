@@ -14,8 +14,8 @@ public class Usa {
     @Column(name = "id_usa")
     private Integer id_usa;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_pieza", referencedColumnName = "id_pieza", nullable = false)
+    @ManyToOne
+    @JoinColumn(name="id_pieza", referencedColumnName="id_pieza", nullable=false)
     private Pieza id_pieza;
 
     @ManyToOne(fetch = FetchType.LAZY)

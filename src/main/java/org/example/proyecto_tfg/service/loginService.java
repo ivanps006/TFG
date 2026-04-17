@@ -33,4 +33,21 @@ public class loginService {
             em.close();
         }
     }
+
+    public boolean existeUsuario(String usuario) {
+        EntityManager em = Utils.em();
+        try {
+            TypedQuery<Mecanico> query = em.createQuery(
+                    "SELECT m FROM Mecanico m WHERE m.usuario = :usuario",
+                    Mecanico.class
+            );
+            query.setParameter("usuario", usuario);
+            query.setMaxResults(1); // Solo necesitamos saber si existe uno
+
+            return !query.getResultList().isEmpty();
+        } finally {
+            em.close();
+        }
+    }
+
 }
