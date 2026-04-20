@@ -55,8 +55,8 @@
             <Label fx:id="lblTotalClientes"
                    text="Total: 0 clientes"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="← Volver"/>
-<!--                    onAction="#onVolverClientes"-->
+            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
+
         </HBox>
 
     </VBox>

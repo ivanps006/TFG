@@ -75,6 +75,7 @@
 
             <Button text="Guardar mantenimiento"
                     styleClass="btn-primary"
+                    onAction="#añadirMantenimiento"
                     />
         </HBox>
     </bottom>

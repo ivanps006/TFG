@@ -24,7 +24,7 @@
                        prefWidth="350"/>
             <Button text="Buscar" onAction="#buscarMantenimientos"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="+ Nuevo Mantenimiento"  onAction="#añadirMantenimiento"/>
+            <Button text="+ Nuevo Mantenimiento"  onAction="#abrirAñadirMantenimiento"/>
             <Button text="🗑 Eliminar" onAction="#eliminarMantenimiento"/>
         </HBox>
 

@@ -62,7 +62,6 @@
             <Region VBox.vgrow="ALWAYS"/>
 
             <!-- LOGO EMPRESA -->
-            <!-- LOGO EMPRESA -->
             <VBox alignment="CENTER" spacing="10" maxWidth="Infinity">
                 <ImageView fx:id="logoEmpresa"
                            fitHeight="160"
@@ -131,7 +130,7 @@
                 <HBox spacing="18">
 
                     <VBox styleClass="stat-card">
-                        <Label text="Bicicletas sin Reparar"
+                        <Label text="🛠️ Bicicletas sin Reparar"
                                styleClass="stat-title"/>
                         <Label fx:id="lblNumeroBicisSinReparar"
                                text=""
@@ -139,7 +138,7 @@
                     </VBox>
 
                     <VBox styleClass="stat-card">
-                        <Label text="Bicicletas En Reparación"
+                        <Label text="🔧 Bicicletas En Reparación"
                                styleClass="stat-title"/>
                         <Label fx:id="lblNumeroBicisEnReparacion"
                                text="12"
@@ -147,7 +146,7 @@
                     </VBox>
 
                     <VBox styleClass="stat-card">
-                        <Label text="Bicicletas Reparadas"
+                        <Label text="✅ Bicicletas Reparadas"
                                styleClass="stat-title"/>
                         <Label fx:id="lblNumeroBicisReparadas"
                                text="12"
@@ -155,7 +154,7 @@
                     </VBox>
 
                     <VBox styleClass="stat-card">
-                        <Label text="Clientes Totales"
+                        <Label text="👥 Clientes Totales"
                                styleClass="stat-title"/>
                         <Label
                                 fx:id="lblNumeroClientes"

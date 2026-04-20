@@ -20,7 +20,7 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(root, 1300, 700);
 
         mainStage = stage;
-        stage.setTitle("WORKSHOP+");
+        stage.setTitle("BMS - Bike Maintenance System");
         stage.setScene(scene);
         stage.show();
         stage.setResizable(false);

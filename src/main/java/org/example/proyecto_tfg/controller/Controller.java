@@ -108,6 +108,15 @@ public class Controller {
     private final FacturaService facturaService = new FacturaService();
 
 
+    @FXML private TextField txtIdMecanicoMant;
+    @FXML private TextField txtIdBicicletaMant;
+    @FXML private DatePicker dpFechaMant;
+    @FXML private TextField txtHorasMant;
+    @FXML private TextArea taObservacionesMant;
+
+
+
+
     // Campos para registrar mecanicos
     @FXML private TextField tfUsuario;
     @FXML private PasswordField pfContrasenia;
@@ -330,7 +339,7 @@ public class Controller {
 
     //Metodo para guardar clientes(Añadirlo a la BD)
     @FXML
-    private void guardarCliente(ActionEvent event) {
+    private void guardarCliente(ActionEvent event) throws IOException {
         addService.añadirCliente(
                 new Cliente(
                         txtDni.getText(),
@@ -340,7 +349,7 @@ public class Controller {
                         txtDireccion.getText()
                 )
         );
-        NavigationService.getInstance().goBack();
+
     }
 
     //Este metodo te abre la vista para registrarte
@@ -491,7 +500,7 @@ public class Controller {
 
     //Metodo que guarda una bicicleta nieva en la BD
     @FXML
-    private void guardarBicicleta(ActionEvent event) {
+    private void guardarBicicleta(ActionEvent event) throws IOException {
         String ref = txtReferencia != null ? txtReferencia.getText().trim() : "";
         String dni = txtClienteDni != null ? txtClienteDni.getText().trim() : "";
         if (ref.isEmpty() || dni.isEmpty()) {
@@ -519,7 +528,13 @@ public class Controller {
                 cliente
         );
         addService.añadirBicicleta(bici);
-        NavigationService.getInstance().goBack();
+        Alert biciAñadida = new Alert(Alert.AlertType.INFORMATION);
+        biciAñadida.setTitle("Bicicleta registrada");
+        biciAñadida.setHeaderText(null);
+        biciAñadida.setContentText("La Bicicleta se ha registrado correctamente.");
+        biciAñadida.showAndWait();
+        Parent contenido = loadFxmlTry("/view/proyecto_tfg/bicicletas.fxml");
+        NavigationService.getInstance().openInCenter(contenido);
     }
 
 
@@ -754,7 +769,7 @@ public class Controller {
 
 
     @FXML
-    private void eliminarBicicleta(ActionEvent event) {
+    private void eliminarBicicleta(ActionEvent event) throws IOException {
         if (bicicletaAEliminar == null) {
             showAlert("Aviso", "No hay bicicleta seleccionada para eliminar.");
             return;
@@ -769,7 +784,8 @@ public class Controller {
         if (confirmacion.showAndWait().isPresent() && confirmacion.getResult().equals(ButtonType.OK)) {
             deleteService.eliminarBicicleta(bicicletaAEliminar.getId_referencia());
             showAlert("Éxito", "Bicicleta eliminada correctamente.");
-            NavigationService.getInstance().goBack();
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/bicicletas.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
         }
     }
 
@@ -783,14 +799,15 @@ public class Controller {
     }
 
     @FXML
-    private void eliminarCliente(ActionEvent event) {
+    private void eliminarCliente(ActionEvent event) throws IOException {
         if (clienteAEliminar == null) {
             showAlert("Aviso", "No hay cliente seleccionado para eliminar.");
             return;
         }
         deleteService.eliminarCliente(clienteAEliminar.getDni());
         showAlert("Éxito", "Cliente eliminado correctamente.");
-        NavigationService.getInstance().goBack();
+        Parent contenido = loadFxmlTry("/view/proyecto_tfg/clientes.fxml");
+        NavigationService.getInstance().openInCenter(contenido);
     }
 
 
@@ -916,7 +933,7 @@ public class Controller {
 
     // Método para añadir mantenimiento
     @FXML
-    private void añadirMantenimiento(ActionEvent event) {
+    private void abrirAñadirMantenimiento(ActionEvent event) {
         try {
             Parent contenido = loadFxmlTry("/view/proyecto_tfg/añadirMantenimiento.fxml");
             NavigationService.getInstance().openInCenter(contenido);
@@ -926,36 +943,10 @@ public class Controller {
         }
     }
 
-//    // Método para editar mantenimiento
-//    // Método para editar mantenimiento (ACTUALIZADO)
-//    @FXML
-//    private void editarMantenimiento(ActionEvent event) {
-//        Mantenimiento seleccionado = tablaMantenimientos.getSelectionModel().getSelectedItem();
-//
-//        if (seleccionado == null) {
-//            showAlert("Aviso", "Selecciona un mantenimiento para editar.");
-//            return;
-//        }
-//
-//        try {
-//            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/view/proyecto_tfg/editarMantenimiento.fxml"));
-//            Parent contenido = loader.load();
-//
-//            // Pasar el mantenimiento seleccionado al controller
-//            Controller ctrl = loader.getController();
-//            ctrl.setMantenimientoEnEdicion(seleccionado);
-//
-//            NavigationService.getInstance().openInCenter(contenido);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            showAlert("Error", "No se pudo abrir el formulario de editar mantenimiento.");
-//        }
-//    }
-
 
     // Método para eliminar mantenimiento
     @FXML
-    private void eliminarMantenimiento(ActionEvent event) {
+    private void eliminarMantenimiento(ActionEvent event) throws IOException {
         Mantenimiento seleccionado = tablaMantenimientos.getSelectionModel().getSelectedItem();
 
         if (seleccionado == null) {
@@ -973,9 +964,8 @@ public class Controller {
             mantenimientoService.eliminarMantenimiento(seleccionado.getId_mantenimiento());
             showAlert("Éxito", "Mantenimiento eliminado correctamente.");
 
-            // Recargar la tabla
-            ObservableList<Mantenimiento> actualizados = mantenimientoService.cargarMantenimientos();
-            tablaMantenimientos.setItems(actualizados);
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/mantenimiento.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
         }
     }
 
@@ -1072,7 +1062,8 @@ public class Controller {
                 tablaPiezas.setItems(inventarioService.cargarPiezasDesdeBD());
             }
 
-            NavigationService.getInstance().goBack();
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/inventario.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "No se pudo actualizar la pieza en la base de datos.");
@@ -1134,7 +1125,8 @@ public class Controller {
         try {
             inventarioService.añadirPieza(nueva);
             showAlert("OK", "Pieza añadida correctamente.");
-            NavigationService.getInstance().goBack();
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/inventario.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "No se pudo añadir la pieza en la base de datos.");
@@ -1237,47 +1229,6 @@ public class Controller {
 
         // opcional
         if (txtBuscarRef != null) txtBuscarRef.setText(b.getId_referencia());
-    }
-
-    /**
-     * Abre un menú con los tipos de piezas disponibles para filtrar
-     */
-    @FXML
-    private void abrirFiltroTipo(ActionEvent event) {
-        // Obtener todos los tipos únicos de la BD
-        ObservableList<Pieza> todasLasPiezas = inventarioService.cargarPiezasDesdeBD();
-
-        // Extraer tipos únicos
-        Set<String> tiposUnicos = todasLasPiezas.stream()
-                .map(Pieza::getTipo)
-                .filter(tipo -> tipo != null && !tipo.trim().isEmpty())
-                .collect(Collectors.toSet());
-
-        // Crear un menú contextual
-        ContextMenu menu = new ContextMenu();
-
-        // Opción para "Todos los tipos"
-        MenuItem todosItem = new MenuItem("Todos");
-        todosItem.setOnAction(e -> {
-            tipoFiltroActual = null;
-            aplicarFiltrosPiezas();
-        });
-        menu.getItems().add(todosItem);
-        menu.getItems().add(new SeparatorMenuItem());
-
-        // Añadir cada tipo como opción
-        tiposUnicos.stream().sorted().forEach(tipo -> {
-            MenuItem item = new MenuItem(tipo);
-            item.setOnAction(e -> {
-                tipoFiltroActual = tipo;
-                aplicarFiltrosPiezas();
-            });
-            menu.getItems().add(item);
-        });
-
-        // Mostrar el menú donde está el botón
-        Button btnFiltro = (Button) event.getSource();
-        menu.show(btnFiltro, Side.BOTTOM, 0, 0);
     }
 
     /**
@@ -1452,7 +1403,8 @@ public class Controller {
             Factura guardada = facturaService.crearFactura(nueva);
             if (guardada != null) {
                 showAlert("Éxito", "Factura creada correctamente con ID: " + guardada.getId_factura());
-                NavigationService.getInstance().goBack();
+                Parent contenido = loadFxmlTry("/view/proyecto_tfg/factura.fxml");
+                NavigationService.getInstance().openInCenter(contenido);
             } else {
                 showAlert("Error", "No se pudo guardar la factura.");
             }
@@ -1503,7 +1455,9 @@ public class Controller {
                 // Usar el DeleteService para eliminar
                 deleteService.eliminarFactura(facturaAEliminar.getId_factura());
                 showAlert("Éxito", "Factura eliminada correctamente.");
-                NavigationService.getInstance().goBack();
+                Parent contenido = loadFxmlTry("/view/proyecto_tfg/factura.fxml");
+                NavigationService.getInstance().openInCenter(contenido);
+
             } catch (Exception e) {
                 e.printStackTrace();
                 showAlert("Error", "No se pudo eliminar la factura.");
@@ -1592,7 +1546,68 @@ public class Controller {
         tablaFacturas.setItems(filtradas);
     }
 
+    @FXML
+    private void añadirMantenimiento(ActionEvent event) throws IOException {
+        addService.añadirMantenimiento(new Mantenimiento(
+                txtIdMecanicoMant.getText(),
+                txtIdBicicletaMant.getText(),
+                dpFechaMant.getValue(),
+                taObservacionesMant.getText(),
+                txtHorasMant.getText().isEmpty() ? 0 : Double.parseDouble(txtHorasMant.getText())
+        ));
 
+        Alert mantenimientoAñadido = new Alert(Alert.AlertType.INFORMATION);
+        mantenimientoAñadido.setTitle("Mantenimiento registrado");
+        mantenimientoAñadido.setHeaderText(null);
+        mantenimientoAñadido.setContentText("El mantenimiento se ha registrado correctamente.");
+        mantenimientoAñadido.showAndWait();
+
+        Parent contenido = loadFxmlTry("/view/proyecto_tfg/inventario.fxml");
+        NavigationService.getInstance().openInCenter(contenido);
+
+    }
+
+
+    @FXML
+    private void abrirFacturaDeBici(ActionEvent event) {
+        if (tablaBicicletas == null) {
+            showAlert("Aviso", "La tabla no está disponible.");
+            return;
+        }
+
+        Bicicleta seleccionada = tablaBicicletas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una bicicleta.");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    HelloApplication.class.getResource("/view/proyecto_tfg/añadirFactura.fxml")
+            );
+            Parent contenido = loader.load();
+
+            Controller ctrl = loader.getController();
+
+            // Precargar referencia de bici
+            if (ctrl.tfRefBicicletaAnadirFactura != null) {
+                ctrl.tfRefBicicletaAnadirFactura.setText(seleccionada.getId_referencia());
+            }
+            ctrl.buscarBicicletaParaFactura(null);
+
+            // Precargar cliente si existe
+            Cliente cliente = seleccionada.getId_cliente();
+            if (cliente != null && ctrl.tfClienteDniAnadirFactura != null) {
+                ctrl.tfClienteDniAnadirFactura.setText(cliente.getDni());
+                ctrl.buscarClienteParaFactura(null);
+            }
+
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de factura.");
+        }
+    }
 
 
 }

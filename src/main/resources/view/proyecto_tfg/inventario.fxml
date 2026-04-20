@@ -63,6 +63,17 @@
             </TableView>
         </VBox>
 
+        <!-- FOOTER -->
+        <HBox alignment="CENTER_RIGHT" spacing="10">
+            <padding>
+                <Insets left="20" right="20" bottom="15"/>
+            </padding>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
+        </HBox>
+
     </VBox>
 
 </AnchorPane>

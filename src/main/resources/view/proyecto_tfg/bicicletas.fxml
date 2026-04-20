@@ -32,7 +32,7 @@
             </padding>
 
             <TextField fx:id="tfBuscarBicicleta"
-                       promptText="🔍 Buscar por referencia, marca, modelo..."
+                       promptText="🔍 Buscar por marca"
                        prefWidth="350"/>
 
             <Button text="Buscar" onAction="#buscarBicicletaPorMarca"/>
@@ -42,6 +42,7 @@
 
             <Button text="+ Nueva Bicicleta" onAction="#añadirBicicleta"/>
             <Button text="🗑 Eliminar" onAction="#vistaEliminarBicicleta"/>
+            <Button text="+ Hacer factura" onAction="#abrirFacturaDeBici"/>
         </HBox>
 
         <!-- TABLA -->
