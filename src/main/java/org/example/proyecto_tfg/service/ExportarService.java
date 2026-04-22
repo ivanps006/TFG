@@ -4,6 +4,9 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.example.proyecto_tfg.model.Factura;
 import org.example.proyecto_tfg.model.Cliente;
 import org.example.proyecto_tfg.model.Bicicleta;
+import org.example.proyecto_tfg.model.Mantenimiento;
+import org.example.proyecto_tfg.utils.Utils;
+import jakarta.persistence.EntityManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,34 +15,27 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ExportarService {
 
-    // Ruta dentro de src/main/resources
     private static final String FACTURA_TEMPLATE_PATH = "/templates/factura.html";
+    private static final BigDecimal PRECIO_HORA = new BigDecimal("5.00");
 
-    /**
-     * Genera un PDF de la factura y lo guarda en la ruta especificada
-     * @param factura La factura a exportar
-     * @param rutaDestino La ruta donde se guardará el PDF (ej: "C:/descargas/factura_1.pdf")
-     * @return true si se genera correctamente, false en caso contrario
-     */
     public boolean generarPdfFactura(Factura factura, String rutaDestino) {
         try {
             String html = generarHtmlFactura(factura);
 
-            // Crear directorio si no existe (comprobar null por si no hay directorio padre)
             File archivo = new File(rutaDestino);
             File parent = archivo.getParentFile();
             if (parent != null) {
                 parent.mkdirs();
             }
 
-            // Convertir HTML a PDF usando OpenHTMLtoPDF
             try (OutputStream os = new FileOutputStream(archivo)) {
                 PdfRendererBuilder builder = new PdfRendererBuilder();
-                builder.useFastMode(); // opcional
-                builder.withHtmlContent(html, null); // baseURL = null
+                builder.useFastMode();
+                builder.withHtmlContent(html, null);
                 builder.toStream(os);
                 builder.run();
 
@@ -53,9 +49,6 @@ public class ExportarService {
         }
     }
 
-    /**
-     * Lee el fichero de plantilla HTML de recursos y lo devuelve como String
-     */
     private String cargarTemplateFactura() throws Exception {
         try (InputStream is = getClass().getResourceAsStream(FACTURA_TEMPLATE_PATH)) {
             if (is == null) {
@@ -66,9 +59,6 @@ public class ExportarService {
         }
     }
 
-    /**
-     * Genera el HTML de la factura a partir de la plantilla y los datos
-     */
     private String generarHtmlFactura(Factura factura) throws Exception {
         String template = cargarTemplateFactura();
 
@@ -92,17 +82,47 @@ public class ExportarService {
         String biciMarca = (bicicleta != null) ? bicicleta.getMarca() : "N/A";
         String biciModelo = (bicicleta != null) ? bicicleta.getModelo() : "N/A";
 
-        BigDecimal totalBD = factura.getTotal() != null ? factura.getTotal() : BigDecimal.ZERO;
-        String total = String.format("%.2f", totalBD);
+        // Obtener mantenimientos de la bicicleta
+        String filasMantenimientos = "";
+        double totalHoras = 0;
 
-        // IVA y total con IVA (opcional; ajusta si quieres otra lógica)
-        BigDecimal ivaBD = totalBD.multiply(BigDecimal.valueOf(0.21));
-        BigDecimal totalConIvaBD = totalBD.add(ivaBD);
+        if (bicicleta != null) {
+            List<Mantenimiento> mantenimientos = obtenerMantenimientosDeBicicleta(bicicleta.getId_referencia());
 
-        String iva = String.format("%.2f", ivaBD);
-        String totalConIva = String.format("%.2f", totalConIvaBD);
+            for (Mantenimiento m : mantenimientos) {
+                double horas = m.getHoras_trabajadas();
+                totalHoras += horas;
+                String fecha_mant = m.getFecha() != null ? m.getFecha().format(formatter) : "N/A";
+                filasMantenimientos += String.format(
+                        "<tr><td>Mantenimiento</td><td>%s - %s horas</td><td>%.2f EUR</td></tr>",
+                        fecha_mant,
+                        horas,
+                        horas * 5.0
+                );
+            }
+        }
 
-        // Reemplazar placeholders en la plantilla
+        // Mano de obra = horas * 5€
+        BigDecimal manoObraTotal = BigDecimal.valueOf(totalHoras).multiply(PRECIO_HORA);
+
+// Precio inicial = lo que ya tiene la factura guardado en BD
+        BigDecimal precioInicial = (factura.getTotal() != null) ? factura.getTotal() : BigDecimal.ZERO;
+
+// Subtotal = precio inicial + mano de obra
+        BigDecimal subtotal = precioInicial.add(manoObraTotal);
+
+// IVA y total final
+        BigDecimal ivaBD = subtotal.multiply(BigDecimal.valueOf(0.21));
+        BigDecimal totalConIvaBD = subtotal.add(ivaBD);
+
+// Strings formateados
+        String precioInicialStr = String.format("%.2f", precioInicial);
+        String manoObraStr = String.format("%.2f", manoObraTotal);
+        String subtotalStr = String.format("%.2f", subtotal);
+        String ivaStr = String.format("%.2f", ivaBD);
+        String totalConIvaStr = String.format("%.2f", totalConIvaBD);
+
+
         return template
                 .replace("{{FACTURA_ID}}", String.valueOf(factura.getId_factura()))
                 .replace("{{FECHA}}", fecha)
@@ -113,8 +133,33 @@ public class ExportarService {
                 .replace("{{BICI_REF}}", biciRef)
                 .replace("{{BICI_MARCA}}", biciMarca)
                 .replace("{{BICI_MODELO}}", biciModelo)
-                .replace("{{TOTAL}}", total)
-                .replace("{{IVA}}", iva)
-                .replace("{{TOTAL_CON_IVA}}", totalConIva);
+                .replace("{{FILAS_MANTENIMIENTOS}}", filasMantenimientos)
+                .replace("{{TOTAL_HORAS}}", String.format("%.2f", totalHoras))
+                .replace("{{MANO_OBRA}}", manoObraStr)
+                .replace("{{PRECIO_INICIAL}}", precioInicialStr)
+                .replace("{{MANO_OBRA}}", manoObraStr)
+                .replace("{{SUBTOTAL}}", subtotalStr)
+                .replace("{{IVA}}", ivaStr)
+                .replace("{{TOTAL_CON_IVA}}", totalConIvaStr);
+
+    }
+
+    private List<Mantenimiento> obtenerMantenimientosDeBicicleta(String idBicicleta) {
+        EntityManager em = Utils.em();
+        try {
+            return em.createQuery(
+                            "SELECT m FROM Mantenimiento m WHERE m.id_bicicleta = :id ORDER BY m.fecha DESC",
+                            Mantenimiento.class
+                    )
+                    .setParameter("id", idBicicleta)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
     }
 }

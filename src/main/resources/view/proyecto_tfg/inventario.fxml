@@ -70,8 +70,6 @@
             </padding>
 
             <Region HBox.hgrow="ALWAYS"/>
-
-            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
         </HBox>
 
     </VBox>

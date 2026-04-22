@@ -75,21 +75,6 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <ComboBox fx:id="cmbEstadoBici" prefWidth="150">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Sin reparar"/>
-                        <String fx:value="En reparacion"/>
-                        <String fx:value="Reparada"/>
-                    </FXCollections>
-                </items>
-                <tooltip>
-                    <Tooltip text="Selecciona el estado"/>
-                </tooltip>
-            </ComboBox>
-
-            <Button text="Guardar Estado" onAction="#guardarEstadoBici"/>
-            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
         </HBox>
 
     </VBox>

@@ -41,6 +41,8 @@
 
                 <Button text="+ Nueva Factura" onAction="#abrirAnadirFactura"/>
                 <Button text="Exportar" onAction="#exportarFacturaPDF"/>
+                <Button text="🗑 Eliminar" onAction="#abrirEliminarFactura"/>
+
             </HBox>
 
             <!-- Segunda fila: Filtro por fecha -->
@@ -94,8 +96,6 @@
 
             <Region HBox.hgrow="ALWAYS"/>
 
-            <Button text="🗑 Eliminar" onAction="#abrirEliminarFactura"/>
-            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
         </HBox>
 
     </VBox>

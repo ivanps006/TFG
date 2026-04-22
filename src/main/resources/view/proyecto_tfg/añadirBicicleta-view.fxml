@@ -100,6 +100,11 @@
                 <Insets top="20" right="40" bottom="20" left="40"/>
             </padding>
 
+            <Button text="Añadir Cliente"
+                    fx:id="btnAñadirCliente"
+                    styleClass="btn-secondary"
+                    onAction="#abrirAñadirCliente"/>
+
             <Button text="Cancelar"
                     fx:id="btnCancelar"
                     styleClass="btn-secondary"

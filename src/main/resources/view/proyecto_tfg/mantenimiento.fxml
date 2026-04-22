@@ -47,7 +47,7 @@
             <padding><Insets left="20" right="20" bottom="15"/></padding>
             <Label fx:id="lblTotalMantenimientos" text="Total: 0 registros"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="← Volver" onAction="#volverPaginaPrincipal"/>
+
         </HBox>
 
     </VBox>

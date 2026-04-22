@@ -295,8 +295,32 @@ public class Controller {
                 colFecha, colHoras, colObservaciones, lblTotalMantenimientos,
                 lblNumeroBicisEnReparacion, lblNumeroBicisReparadas, lblNumeroClientes
         );
+
+        if (tablaBicicletas != null) {
+            MenuItem mSin = new MenuItem("Sin reparar");
+            MenuItem mRep = new MenuItem("En reparacion");
+            MenuItem mOk  = new MenuItem("Reparada");
+
+            ContextMenu menu = new ContextMenu(mSin, mRep, mOk);
+
+            mSin.setOnAction(e -> cambiarEstadoSeleccionado("Sin reparar"));
+            mRep.setOnAction(e -> cambiarEstadoSeleccionado("En reparacion"));
+            mOk.setOnAction(e -> cambiarEstadoSeleccionado("Reparada"));
+
+            tablaBicicletas.setContextMenu(menu);
+        }
     }
 
+    private void cambiarEstadoSeleccionado(String estado) {
+        Bicicleta seleccionada = tablaBicicletas.getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            showAlert("Aviso", "Selecciona una bicicleta primero.");
+            return;
+        }
+        seleccionada.setEstado(estado);
+        addService.actualizarBicicleta(seleccionada);
+        tablaBicicletas.refresh();
+    }
 
 
     //Metodo para validar las credenciales cuando Inicias Sesion
@@ -340,17 +364,38 @@ public class Controller {
     //Metodo para guardar clientes(Añadirlo a la BD)
     @FXML
     private void guardarCliente(ActionEvent event) throws IOException {
-        addService.añadirCliente(
-                new Cliente(
-                        txtDni.getText(),
-                        txtNombre.getText(),
-                        txtApellidos.getText(),
-                        txtTelefono.getText(),
-                        txtDireccion.getText()
-                )
-        );
+        String dni = txtDni != null ? txtDni.getText().trim() : "";
+        String nombre = txtNombre != null ? txtNombre.getText().trim() : "";
+        String telefono = txtTelefono != null ? txtTelefono.getText().trim() : "";
 
+        // DNI: 8 números + 1 letra
+        if (!dni.matches("^\\d{8}[A-Za-z]$")) {
+            showAlert("Aviso", "El DNI debe tener 8 números y una letra (ej: 12345678A).");
+            return;
+        }
+
+        // Nombre obligatorio
+        if (nombre.isEmpty()) {
+            showAlert("Aviso", "El nombre es obligatorio.");
+            return;
+        }
+
+        if (telefono.matches("^[0-9]{9}$")){
+            showAlert("Aviso", "El teléfono debe tener 9 dígitos numéricos.");
+            return;
+        }
+
+        addService.añadirCliente(new Cliente(
+                dni,
+                nombre,
+                txtApellidos.getText(),
+                txtTelefono.getText(),
+                txtDireccion.getText()
+        ));
+
+        showAlert("Éxito", "Cliente registrado correctamente.");
     }
+
 
     //Este metodo te abre la vista para registrarte
     @FXML
@@ -361,15 +406,6 @@ public class Controller {
             e.printStackTrace();
             showAlert("Error", "No se pudo abrir el formulario de registro.");
         }
-    }
-
-
-    //Metodo para cerrar el programa y volver al login
-    @FXML
-    private void cerrarRegistro(ActionEvent event) {
-        //Lo que hace es cerrar la escena actual
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.close();
     }
 
     //Metodo para Registrar un nuevo usuario (mecanico) en la BD
@@ -808,33 +844,6 @@ public class Controller {
         showAlert("Éxito", "Cliente eliminado correctamente.");
         Parent contenido = loadFxmlTry("/view/proyecto_tfg/clientes.fxml");
         NavigationService.getInstance().openInCenter(contenido);
-    }
-
-
-    // Agregar este campo en la sección de declaración de @FXML (alrededor de la línea 79-81)
-    @FXML private ComboBox<String> cmbEstadoBici;
-
-    // Agregar este método después de otros métodos de bicicletas (alrededor de la línea 560)
-    @FXML
-    private void guardarEstadoBici(ActionEvent event) {
-        Bicicleta seleccionada = tablaBicicletas.getSelectionModel().getSelectedItem();
-
-        if (seleccionada == null) {
-            showAlert("Aviso", "Selecciona una bicicleta primero.");
-            return;
-        }
-
-        String estadoSeleccionado = cmbEstadoBici.getValue();
-        if (estadoSeleccionado == null) {
-            showAlert("Aviso", "Selecciona un estado.");
-            return;
-        }
-
-        seleccionada.setEstado(estadoSeleccionado);
-        addService.actualizarBicicleta(seleccionada);
-        tablaBicicletas.refresh();
-
-        showAlert("Éxito", "Estado actualizado a: " + estadoSeleccionado);
     }
 
     @FXML
@@ -1562,7 +1571,7 @@ public class Controller {
         mantenimientoAñadido.setContentText("El mantenimiento se ha registrado correctamente.");
         mantenimientoAñadido.showAndWait();
 
-        Parent contenido = loadFxmlTry("/view/proyecto_tfg/inventario.fxml");
+        Parent contenido = loadFxmlTry("/view/proyecto_tfg/mantenimiento.fxml");
         NavigationService.getInstance().openInCenter(contenido);
 
     }
@@ -1606,6 +1615,17 @@ public class Controller {
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "No se pudo abrir el formulario de factura.");
+        }
+    }
+
+    @FXML
+    private void abrirAñadirCliente(ActionEvent event) {
+        try {
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/añadirCliente.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "No se pudo abrir el formulario de añadir cliente.");
         }
     }
 

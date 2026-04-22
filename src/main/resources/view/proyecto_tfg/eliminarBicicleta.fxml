@@ -30,23 +30,6 @@
                 <Insets top="30" right="40" bottom="10" left="40"/>
             </padding>
 
-            <!-- Buscador por referencia -->
-            <VBox spacing="6">
-                <Label text="Buscar bicicleta" styleClass="subtitle"/>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtBuscarRef"
-                               promptText="Introduce la referencia (Ej: BICI-001)"
-                               HBox.hgrow="ALWAYS"
-                               maxWidth="Infinity"/>
-                    <Button text="🔍 Buscar"
-                            styleClass="btn-primary"
-                            onAction="#buscarBicicleta"/>
-
-                </HBox>
-            </VBox>
-
-            <Separator/>
-
             <!-- Datos de la bicicleta encontrada -->
             <VBox spacing="6">
                 <Label text="Datos de la bicicleta" styleClass="subtitle"/>

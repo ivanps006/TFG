@@ -1,232 +1,309 @@
 <!DOCTYPE html>
-<html lang="es" xmlns="http://www.w3.org/1999/html">
+<html lang="es">
 <head>
     <meta charset="UTF-8"/>
     <title>Factura #{{FACTURA_ID}}</title>
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-light: #eff6ff;
-            --text: #1f2937;
-            --muted: #6b7280;
-            --border: #e5e7eb;
-            --bg: #f3f4f6;
+        @page {
+            size: A4 portrait;
+            margin: 12mm;
         }
 
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            padding: 30px;
-            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            background: #ffffff;
+            color: #1f2937;
         }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        .page-wrapper {
+            width: 100%;
+            height: 100%;
+            display: table;
         }
 
-        /* HEADER */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+        .content-area {
+            display: table-row;
+            height: 100%;
         }
 
-        .header h1 { color: #2563eb; }
-
-
-        .header-info {
-            text-align: right;
-            font-size: 14px;
-            color: var(--muted);
-        }
-
-        /* INFO */
-        .factura-info {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .info-block {
-            flex: 1;
-            background: var(--primary-light);
-            padding: 20px;
+        .main-content {
+            display: table-cell;
+            vertical-align: top;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
             border-radius: 12px;
         }
 
-        .info-block h3 {
-            margin-bottom: 10px;
-            color: var(--primary);
+        .spacer {
+            height: 20px;
+        }
+
+        .title {
+            color: #2563eb;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .header-row {
+            display: table;
+            width: 100%;
+            margin-bottom: 18px;
+        }
+
+        .header-left {
+            display: table-cell;
+            width: 50%;
+        }
+
+        .header-right {
+            display: table-cell;
+            width: 50%;
+            text-align: right;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .divider {
+            border-top: 2px solid #e5e7eb;
+            margin: 18px 0 28px 0;
+        }
+
+        .info-section {
+            display: table;
+            width: 100%;
+            margin-bottom: 28px;
+        }
+
+        .info-col {
+            display: table-cell;
+            width: 50%;
+            padding: 0 12px;
+        }
+
+        .info-col:first-child {
+            padding-left: 0;
+        }
+
+        .info-col:last-child {
+            padding-right: 0;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            padding: 18px;
+            min-height: 140px;
+        }
+
+        .info-title {
+            color: #2563eb;
             font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        .info-block p {
-            font-size: 13px;
-            margin-bottom: 6px;
+        .info-text {
+            font-size: 12px;
+            margin: 7px 0;
+            line-height: 1.5;
         }
 
-        /* TABLE */
-        table {
+        table.data {
             width: 100%;
             border-collapse: collapse;
-            margin: 30px 0;
-            overflow: hidden;
-            border-radius: 12px;
+            margin: 28px 0;
         }
 
-        thead {
-            background: var(--primary);
-            color: white;
-        }
-
-        th, td {
-            padding: 12px 15px;
+        table.data th {
+            background: #2563eb;
+            color: #ffffff;
             text-align: left;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--border);
-        }
-
-        tbody tr:nth-child(even) {
-            background: #f9fafb;
-        }
-
-        /* TOTALS */
-        .totales {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
-        }
-
-        .totales-row {
-            display: flex;
-            justify-content: space-between;
-            width: 300px;
-            font-size: 14px;
-        }
-
-        .total-final {
-            margin-top: 10px;
-            background: var(--primary);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            width: 300px;
-            display: flex;
-            justify-content: space-between;
+            padding: 14px 16px;
+            font-size: 13px;
             font-weight: bold;
         }
 
-        /* FOOTER */
-        .footer {
-            margin-top: 40px;
-            text-align: center;
+        table.data td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 14px 16px;
             font-size: 12px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .factura-info {
-                flex-direction: column;
-            }
-
-            .totales-row, .total-final {
-                width: 100%;
-            }
+        .totals-section {
+            margin: 32px 0;
         }
+
+        table.totals {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.totals tr {
+            display: table;
+            width: 100%;
+        }
+
+        table.totals td {
+            padding: 10px 0;
+            font-size: 12px;
+        }
+
+        table.totals td:last-child {
+            text-align: right;
+        }
+
+        .total-final {
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-top: 10px;
+            display: table;
+            width: 100%;
+        }
+
+        .total-final-inner {
+            display: table-row;
+        }
+
+        .total-final-inner td {
+            display: table-cell;
+            padding: 0;
+            color: #ffffff;
+        }
+
+        .total-final-inner td:last-child {
+            text-align: right;
+        }
+
+        .footer {
+            display: table-cell;
+            vertical-align: bottom;
+            text-align: center;
+            font-size: 11px;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 18px;
+            padding: 24px 24px 18px 24px;
+            line-height: 1.6;
+        }
+
     </style>
 </head>
 <body>
-<div class="container">
 
-    <!-- HEADER -->
-    <div class="header">
-        <h1>Factura</h1>
-        <div class="header-info">
-            <p><strong>#{{FACTURA_ID}}</strong></p>
-            <p>{{FECHA}}</p>
-        </div>
-    </div>
+<table class="page-wrapper" cellpadding="0" cellspacing="0">
+    <tr class="content-area">
+        <td class="main-content">
 
-    <!-- INFO -->
-    <div class="factura-info">
-        <div class="info-block">
-            <h3>👤 Cliente</h3>
-            <p><strong>Nombre:</strong> {{CLIENTE_NOMBRE}}</p>
-            <p><strong>DNI:</strong> {{CLIENTE_DNI}}</p>
-            <p><strong>Teléfono:</strong> {{CLIENTE_TELEFONO}}</p>
-            <p><strong>Dirección:</strong> {{CLIENTE_DIRECCION}}</p>
-        </div>
+            <!-- TITLE -->
+            <div class="header-row">
+                <div class="header-left">
+                    <div class="title">Factura</div>
+                </div>
+                <div class="header-right">
+                    <div><strong>#{{FACTURA_ID}}</strong></div>
+                    <div>{{FECHA}}</div>
+                </div>
+            </div>
 
-        <div class="info-block">
-            <h3>🚲 Bicicleta</h3>
-            <p><strong>Referencia:</strong> {{BICI_REF}}</p>
-            <p><strong>Marca:</strong> {{BICI_MARCA}}</p>
-            <p><strong>Modelo:</strong> {{BICI_MODELO}}</p>
-            <p><strong>Fecha:</strong> {{FECHA}}</p>
-        </div>
-    </div>
+            <div class="divider"></div>
 
-    <!-- TABLE -->
-    <table>
-        <thead>
-        <tr>
-            <th>Concepto</th>
-            <th>Descripción</th>
-            <th>Importe</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Reparación</td>
-            <td>{{BICI_MARCA}} {{BICI_MODELO}}</td>
-            <td>{{TOTAL}} €</td>
-        </tr>
-        </tbody>
-    </table>
+            <!-- INFO BOXES -->
+            <div class="info-section">
+                <div class="info-col">
+                    <div class="info-box">
+                        <div class="info-title">Cliente</div>
+                        <div class="info-text"><strong>Nombre:</strong> {{CLIENTE_NOMBRE}}</div>
+                        <div class="info-text"><strong>DNI:</strong> {{CLIENTE_DNI}}</div>
+                        <div class="info-text"><strong>Teléfono:</strong> {{CLIENTE_TELEFONO}}</div>
+                        <div class="info-text"><strong>Dirección:</strong> {{CLIENTE_DIRECCION}}</div>
+                    </div>
+                </div>
+                <div class="info-col">
+                    <div class="info-box">
+                        <div class="info-title">Bicicleta</div>
+                        <div class="info-text"><strong>Referencia:</strong> {{BICI_REF}}</div>
+                        <div class="info-text"><strong>Marca:</strong> {{BICI_MARCA}}</div>
+                        <div class="info-text"><strong>Modelo:</strong> {{BICI_MODELO}}</div>
+                        <div class="info-text"><strong>Fecha:</strong> {{FECHA}}</div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- TOTALS -->
-    <div class="totales">
-        <div class="totales-row">
-            <span>Subtotal:</span>
-            <span>{{TOTAL}} €</span>
-        </div>
-        <div class="totales-row">
-            <span>IVA (21%):</span>
-            <span>{{IVA}} €</span>
-        </div>
-        <div class="total-final">
-            <span>Total:</span>
-            <span>{{TOTAL_CON_IVA}} €</span>
-        </div>
-    </div>
+            <!-- DATA TABLE -->
+            <!-- DATA TABLE - MANTENIMIENTOS -->
+            <table class="data">
+                <thead>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Descripción</th>
+                    <th>Importe</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{FILAS_MANTENIMIENTOS}}
+                <tr>
+                    <td colspan="2" style="text-align:right; padding-right:16px;"><strong>Mano de obra ({{TOTAL_HORAS}} horas × 5,00 EUR/h):</strong></td>
+                    <td><strong>{{MANO_OBRA}} EUR</strong></td>
+                </tr>
+                </tbody>
+            </table>
 
-    <!-- FOOTER -->
-    <div class="footer">
-        <p>Gracias por su confianza.</p>
-        <p>Contacto: soporte@tuempresa.com</p>
-    </div>
 
-</div>
+            <!-- TOTALS -->
+            <div class="totals-section">
+                <table class="totals">
+                    <tr>
+                        <td>Precio inicial:</td>
+                        <td>{{PRECIO_INICIAL}} EUR</td>
+                    </tr>
+                    <tr>
+                        <td>Mano de obra ({{TOTAL_HORAS}} h × 5,00 EUR/h):</td>
+                        <td>{{MANO_OBRA}} EUR</td>
+                    </tr>
+                    <tr style="border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; font-weight: bold;">
+                        <td>Subtotal (inicial + mano de obra):</td>
+                        <td>{{SUBTOTAL}} EUR</td>
+                    </tr>
+                    <tr>
+                        <td>IVA (21%):</td>
+                        <td>{{IVA}} EUR</td>
+                    </tr>
+                </table>
+
+                <div class="total-final">
+                    <table cellpadding="0" cellspacing="0" width="100%">
+                        <tr class="total-final-inner">
+                            <td><strong>Total:</strong></td>
+                            <td><strong>{{TOTAL_CON_IVA}} EUR</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </td>
+    </tr>
+    <tr>
+        <td class="footer">
+            <div>Gracias por su confianza.</div>
+            <div>Contacto: soporte@tuempresa.com</div>
+        </td>
+    </tr>
+</table>
+
 </body>
 </html>
