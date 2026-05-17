@@ -1,0 +1,357 @@
+public class Controller {
+
+    // =========================================================
+    // 1) SERVICIOS / ESTADO GLOBAL
+    // =========================================================
+    private final loginService loginService = new loginService();
+    private final HomeService homeService = new HomeService();
+    private final AddService addService = new AddService();
+    private final ClienteService clienteService = new ClienteService();
+    private final BuscarService buscarService = new BuscarService();
+    private final DeleteService deleteService = new DeleteService();
+    private final InventarioService inventarioService = new InventarioService();
+    private final ExportarService exportarService = new ExportarService();
+    private final EmailService emailService = new EmailService();
+
+    private final FacturaService facturaService = new FacturaService();
+    private final MantenimientoService mantenimientoService = new MantenimientoService();
+
+    // Estado “en edición / a eliminar”
+    private Pieza piezaEnEdicion;
+    private Mantenimiento mantenimientoAEliminar;
+    private Cliente clienteAEliminar;
+    private Bicicleta bicicletaAEliminar;
+    private Factura facturaAEliminar;
+
+    // Facturas - estado auxiliar
+    private Cliente clienteParaFactura;
+    private Bicicleta bicicletaParaFactura;
+
+    // Inventario - filtro
+    private String tipoFiltroActual = null;
+
+
+    // =========================================================
+    // 2) @FXML COMUNES (principalWindows-view.fxml)
+    // =========================================================
+    @FXML private BorderPane root;
+    @FXML private VBox dashboardView;
+
+    @FXML private ImageView logoEmpresa;
+
+    // Dashboard labels
+    @FXML private Label lblFecha;
+    @FXML private Label lblNumeroBicisSinReparar;
+    @FXML private Label lblNumeroBicisReparadas;
+    @FXML private Label lblNumeroBicisEnReparacion;
+    @FXML private Label lblNumeroClientes;
+
+
+    // =========================================================
+    // 3) @FXML LOGIN (hello-view.fxml)
+    // =========================================================
+    @FXML private TextField txtUsuario;
+    @FXML private PasswordField txtContrasenia;
+    @FXML private Label ErrorLogin;
+
+
+    // =========================================================
+    // 4) @FXML REGISTER (register-view.fxml)
+    // =========================================================
+    @FXML private TextField tfUsuario;
+    @FXML private PasswordField pfContrasenia;
+    @FXML private TextField tfNombre;
+    @FXML private TextField tfApellido;
+    @FXML private TextField tfCorreo;
+    @FXML private TextField tfDni;
+    @FXML private TextField tfTelefono;
+    @FXML private TextField tfDireccion;
+
+    @FXML private Label lblMensajeRegistro;
+    @FXML private Label lblErrorNombre;
+    @FXML private Label lblErrorApellido;
+    @FXML private Label lblErrorUsuario;
+    @FXML private Label lblErrorContarsenia;
+    @FXML private Label lblErrorCorreo;
+    @FXML private Label lblErrorDNI;
+    @FXML private Label lblErrorTelefono;
+    @FXML private Label lblErrorDireccion;
+
+
+    // =========================================================
+    // 5) @FXML BICICLETAS (bicicletas.fxml / añadir / eliminar / info)
+    // =========================================================
+    @FXML private TableView<Bicicleta> tablaBicicletas;
+    @FXML private TableColumn<Bicicleta, String> colRef;
+    @FXML private TableColumn<Bicicleta, String> colMarca;
+    @FXML private TableColumn<Bicicleta, String> colModelo;
+    @FXML private TableColumn<Bicicleta, String> colCliente;
+    @FXML private TableColumn<Bicicleta, String> colEstado;
+
+    // extra bicis
+    @FXML private TableColumn<Bicicleta, String> colFrenosBici;
+    @FXML private TableColumn<Bicicleta, String> colSuspDel;
+    @FXML private TableColumn<Bicicleta, String> colSuspTras;
+    @FXML private TableColumn<Bicicleta, String> colTransmision;
+    @FXML private TableColumn<Bicicleta, String> colRuedas;
+
+    // filtros / labels
+    @FXML private TextField tfBuscarBicicleta;
+    @FXML private TextField txtBuscarRef;
+    @FXML private Label lblTotalBicicletas;
+
+    // añadirBicicleta-view.fxml (campos)
+    @FXML private TextField txtReferencia;
+    @FXML private TextField txtMarca;
+    @FXML private TextField txtModelo;
+    @FXML private TextField txtFrenos;
+    @FXML private TextField txtSuspDel;
+    @FXML private TextField txtSuspTras;
+    @FXML private TextField txtTransmision;
+    @FXML private TextField txtRuedas;
+    @FXML private TextField txtClienteDni;
+
+    // eliminarBicicleta.fxml (labels)
+    @FXML private Label lblRefBici;
+    @FXML private Label lblEstadoBici;
+    @FXML private Label lblMarcaBici;
+    @FXML private Label lblModeloBici;
+    @FXML private Label lblFrenosBici;
+    @FXML private Label lblTransmisionBici;
+    @FXML private Label lblSuspDelBici;
+    @FXML private Label lblSuspTrasBici;
+    @FXML private Label lblRuedasBici;
+    @FXML private Label lblClienteBici;
+
+
+    // =========================================================
+    // 6) @FXML CLIENTES (clientes.fxml / añadirCliente.fxml / eliminarCliente.fxml)
+    // =========================================================
+    @FXML private TableView<Cliente> tablaClientes;
+    @FXML private TableColumn<Cliente, String> colDni;
+    @FXML private TableColumn<Cliente, String> colNombre;
+    @FXML private TableColumn<Cliente, String> colApellidos;
+    @FXML private TableColumn<Cliente, String> colTelefono;
+    @FXML private Label lblTotalClientes;
+
+    // añadirCliente.fxml
+    @FXML private TextField txtDni;
+    @FXML private TextField txtNombre;
+    @FXML private TextField txtApellidos;
+    @FXML private TextField txtTelefono;
+    @FXML private TextField txtDireccion;
+
+    // filtro clientes
+    @FXML private TextField tfBuscarCliente;
+
+    // eliminarCliente.fxml
+    @FXML private TextField txtBuscarDniCliente;
+    @FXML private Label lblDniCliente;
+    @FXML private Label lblNombreCliente;
+    @FXML private Label lblApellidoCliente;
+    @FXML private Label lblTelefonoCliente;
+    @FXML private Label lblDireccionCliente;
+
+
+    // =========================================================
+    // 7) @FXML INVENTARIO / PIEZAS (inventario.fxml / añadirPieza.fxml / editarPieza.fxml)
+    // =========================================================
+    @FXML private TableView<Pieza> tablaPiezas;
+    @FXML private TableColumn<Pieza, String> colIdPieza;
+    @FXML private TableColumn<Pieza, String> colModeloPieza;
+    @FXML private TableColumn<Pieza, String> colMarcaPieza;
+    @FXML private TableColumn<Pieza, String> colTipoPieza;
+    @FXML private TableColumn<Pieza, String> colStockPieza;
+    @FXML private TableColumn<Pieza, String> colPrecioPieza;
+    @FXML private Label lblTotalPiezas;
+
+    // filtro piezas
+    @FXML private TextField tfBuscarPieza;
+
+    // editarPieza.fxml / añadirPieza.fxml (campos comunes)
+    @FXML private Label lblPiezaId;
+    @FXML private TextField tfPiezaModelo;
+    @FXML private TextField tfPiezaMarca;
+    @FXML private TextField tfPiezaTipo;
+    @FXML private Spinner<Integer> spPiezaStock;
+    @FXML private TextField tfPiezaPrecio;
+
+
+    // =========================================================
+    // 8) @FXML MANTENIMIENTOS (mantenimiento.fxml / añadirMantenimiento.fxml)
+    // =========================================================
+    @FXML private TableView<Mantenimiento> tablaMantenimientos;
+    @FXML private TableColumn<Mantenimiento, String> colIdMantenimiento;
+    @FXML private TableColumn<Mantenimiento, String> colIdMecanico;
+    @FXML private TableColumn<Mantenimiento, String> colIdBicicleta;
+    @FXML private TableColumn<Mantenimiento, String> colFecha;
+    @FXML private TableColumn<Mantenimiento, String> colHoras;
+    @FXML private TableColumn<Mantenimiento, String> colObservaciones;
+    @FXML private Label lblTotalMantenimientos;
+
+    // añadirMantenimiento.fxml
+    @FXML private TextField txtIdMecanicoMant;
+    @FXML private TextField txtIdBicicletaMant;
+    @FXML private DatePicker dpFechaMant;
+    @FXML private TextField txtHorasMant;
+    @FXML private TextArea taObservacionesMant;
+
+    // filtro mantenimientos
+    @FXML private TextField tfBuscarMantenimiento;
+
+    // eliminarMantenimiento.fxml (si lo usas)
+    @FXML private TextField txtBuscarIdMantenimientoEliminar;
+    @FXML private Label lblIdMantenimientoEliminar;
+    @FXML private Label lblIdMecanicoEliminar;
+    @FXML private Label lblIdBicicletaEliminar;
+    @FXML private Label lblFechaEliminar;
+    @FXML private Label lblHorasEliminar;
+    @FXML private Label lblObservacionesEliminar;
+
+
+    // =========================================================
+    // 9) @FXML FACTURAS (factura.fxml / añadirFactura.fxml / eliminarFactura.fxml)
+    // =========================================================
+    @FXML private TableView<Factura> tablaFacturas;
+    @FXML private TableColumn<Factura, String> colIdFactura;
+    @FXML private TableColumn<Factura, String> colFechaFactura;
+    @FXML private TableColumn<Factura, String> colClienteFactura;
+    @FXML private TableColumn<Factura, String> colBiciFactura;
+    @FXML private TableColumn<Factura, String> colTotalFactura;
+
+    // filtros factura
+    @FXML private DatePicker dpFechaFacturaFiltro;
+    @FXML private TextField tfBuscarFactura;
+    @FXML private TextField tfBicicletaRefFacturaFiltro;
+    @FXML private TextField tfClienteDniFacturaFiltro;
+
+    // añadirFactura.fxml
+    @FXML private TextField tfClienteDniAnadirFactura;
+    @FXML private Label lblClienteInfoFactura;
+    @FXML private TextField tfRefBicicletaAnadirFactura;
+    @FXML private Label lblBicicletaInfoFactura;
+    @FXML private DatePicker dpFechaFactura;
+    @FXML private TextField tfTotalFactura;
+    @FXML private Label lblErrorTotalFactura;
+
+    // eliminarFactura.fxml
+    @FXML private Label lblIdFacturaEliminar;
+    @FXML private Label lblFechaFacturaEliminar;
+    @FXML private Label lblClienteFacturaEliminar;
+    @FXML private Label lblBicicletaFacturaEliminar;
+    @FXML private Label lblTotalFacturaEliminar;
+
+
+    // =========================================================
+    // 10) INITIALIZE
+    // =========================================================
+    @FXML
+    public void initialize() {
+        // (pega aquí tu initialize EXACTO)
+    }
+
+
+    // =========================================================
+    // 11) UTILIDADES (alertas, loadFxmlTry, limpiar)
+    // =========================================================
+    private void showAlert(String title, String message) { /* igual */ }
+    private Parent loadFxmlTry(String... paths) throws IOException { /* igual */ }
+    private void limpiarCamposLogin() { /* igual */ }
+    private void limpiarCamposRegistro() { /* igual */ }
+    private void limpiarDatosCliente() { /* igual */ }
+
+
+    // =========================================================
+    // 12) NAVEGACIÓN (abrir vistas / volver / dashboard)
+    // =========================================================
+    @FXML private void mostrarDashboard(ActionEvent event) { /* igual */ }
+    @FXML private void volverPaginaPrincipal(ActionEvent event) { /* igual */ }
+    @FXML private void volverLogin(ActionEvent event) { /* igual */ }
+
+
+    // =========================================================
+    // 13) LOGIN / REGISTER
+    // =========================================================
+    @FXML private void validarCredenciales() throws IOException { /* igual */ }
+    @FXML private void onRegisterButtonClick(ActionEvent event) { /* igual */ }
+    @FXML private void registrarUsuario(ActionEvent event) { /* igual */ }
+    private boolean validarRegistro() { /* igual */ }
+
+
+    // =========================================================
+    // 14) CLIENTES
+    // =========================================================
+    @FXML private void mostrarClientes(ActionEvent event) { /* igual */ }
+    @FXML private void guardarCliente(ActionEvent event) throws IOException { /* igual */ }
+    @FXML private void buscarClientes(ActionEvent event) { /* igual */ }
+    @FXML private void abrirVistaEliminarCliente(ActionEvent event) { /* igual */ }
+    @FXML private void eliminarCliente(ActionEvent event) throws IOException { /* igual */ }
+    public void setClienteAEliminar(Cliente c) { /* igual */ }
+
+
+    // =========================================================
+    // 15) BICICLETAS
+    // =========================================================
+    @FXML private void mostrarBicicleta(ActionEvent event) { /* igual */ }
+    @FXML private void añadirBicicleta(ActionEvent event) { /* igual */ }
+    @FXML private void guardarBicicleta(ActionEvent event) throws IOException { /* igual */ }
+    @FXML private void buscarBicicleta(ActionEvent event) { /* igual */ }
+    @FXML private void buscarBicicletaPorMarca(ActionEvent event) { /* igual */ }
+    @FXML private void vistaEliminarBicicleta(ActionEvent event) { /* igual */ }
+    @FXML private void eliminarBicicleta(ActionEvent event) throws IOException { /* igual */ }
+    public void setBicicletaAEliminar(Bicicleta b) { /* igual */ }
+    private void abrirInfoBici(Bicicleta bici) { /* igual */ }
+    private void cambiarEstadoSeleccionado(String estado) { /* igual */ }
+
+
+    // =========================================================
+    // 16) INVENTARIO / PIEZAS
+    // =========================================================
+    @FXML private void mostrarInventario(ActionEvent event) { /* igual */ }
+    @FXML private void abrirAñadirPieza(ActionEvent event) { /* igual */ }
+    @FXML private void guardarPieza(ActionEvent event) { /* igual */ }
+    @FXML private void abrirEditarPieza(ActionEvent event) { /* igual */ }
+    @FXML private void guardarCambiosPieza(ActionEvent event) { /* igual */ }
+    private void abrirEditarPiezaDesdeSeleccion(Pieza pieza) { /* igual */ }
+    public void setPiezaEnEdicion(Pieza pieza) { /* igual */ }
+    private void prepararFormularioNuevaPieza() { /* igual */ }
+    @FXML private void buscarPiezas(ActionEvent event) { /* igual */ }
+    @FXML private void limpiarFiltrosPiezas(ActionEvent event) { /* igual */ }
+    @FXML private void aplicarFiltrosPiezas() { /* igual */ }
+
+
+    // =========================================================
+    // 17) MANTENIMIENTOS
+    // =========================================================
+    @FXML private void abrirVistaMantenimiento(ActionEvent event) { /* igual */ }
+    @FXML private void buscarMantenimientos(ActionEvent event) { /* igual */ }
+    @FXML private void abrirAñadirMantenimiento(ActionEvent event) { /* igual */ }
+    @FXML private void añadirMantenimiento(ActionEvent event) throws IOException { /* igual */ }
+    @FXML private void eliminarMantenimiento(ActionEvent event) throws IOException { /* igual */ }
+
+
+    // =========================================================
+    // 18) FACTURAS
+    // =========================================================
+    @FXML private void abrirVistaFactura(ActionEvent event) { /* igual */ }
+    @FXML private void exportarFacturaPDF(ActionEvent event) { /* igual */ }
+    @FXML private void abrirAnadirFactura(ActionEvent event) { /* igual */ }
+    @FXML private void buscarClienteParaFactura(ActionEvent event) { /* igual */ }
+    @FXML private void buscarBicicletaParaFactura(ActionEvent event) { /* igual */ }
+    @FXML private void guardarFactura(ActionEvent event) { /* igual */ }
+
+    public void setFacturaAEliminar(Factura f) { /* igual */ }
+    @FXML private void abrirEliminarFactura(ActionEvent event) { /* igual */ }
+    private void abrirEliminarFacturaDirecto(Factura factura) { /* igual */ }
+    @FXML private void eliminarFacturaConfirmada(ActionEvent event) { /* igual */ }
+
+    @FXML private void filtrarFacturasPorFecha(ActionEvent event) { /* igual */ }
+    @FXML private void filtrarFacturasPorClienteYBicicleta(ActionEvent event) { /* igual */ }
+
+
+    // =========================================================
+    // 19) EXTRA (factura desde bici, etc.)
+    // =========================================================
+    @FXML private void abrirFacturaDeBici(ActionEvent event) { /* igual */ }
+    @FXML private void abrirAñadirCliente(ActionEvent event) { /* igual */ }
+}

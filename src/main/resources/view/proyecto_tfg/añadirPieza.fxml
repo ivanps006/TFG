@@ -22,8 +22,6 @@
                 <Label text="Crea una nueva pieza para el inventario" styleClass="hero-small"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="↩ Volver" styleClass="btn-secondary"
-                    onAction="#volverPaginaPrincipal"/>
         </HBox>
 
         <Separator/>

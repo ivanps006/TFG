@@ -92,11 +92,23 @@ public class ExportarService {
             for (Mantenimiento m : mantenimientos) {
                 double horas = m.getHoras_trabajadas();
                 totalHoras += horas;
-                String fecha_mant = m.getFecha() != null ? m.getFecha().format(formatter) : "N/A";
+
+                String fecha_mant = (m.getFecha() != null) ? m.getFecha().format(formatter) : "N/A";
+
+                String obs = (m.getObservaciones() != null && !m.getObservaciones().isBlank())
+                        ? escapeHtml(m.getObservaciones())
+                        : "Sin observaciones";
+
                 filasMantenimientos += String.format(
-                        "<tr><td>Mantenimiento</td><td>%s - %s horas</td><td>%.2f EUR</td></tr>",
+                        "<tr>" +
+                                "<td>Mantenimiento</td>" +
+                                "<td>%s - %.2f horas<br/>" +
+                                "<span style='color:#6b7280; font-size:11px;'>Obs: %s</span></td>" +
+                                "<td>%.2f EUR</td>" +
+                                "</tr>",
                         fecha_mant,
                         horas,
+                        obs,
                         horas * 5.0
                 );
             }
@@ -161,5 +173,14 @@ public class ExportarService {
                 em.close();
             }
         }
+    }
+
+    private String escapeHtml(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }

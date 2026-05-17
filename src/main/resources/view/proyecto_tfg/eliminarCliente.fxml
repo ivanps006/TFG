@@ -30,19 +30,6 @@
                 <Insets top="30" right="40" bottom="10" left="40"/>
             </padding>
 
-            <!-- Buscador por DNI -->
-            <VBox spacing="6">
-                <Label text="Buscar cliente" styleClass="subtitle"/>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtBuscarDniCliente"
-                               promptText="Introduce el DNI (Ej: 12345678A)"
-                               HBox.hgrow="ALWAYS"
-                               maxWidth="Infinity"/>
-                    <Button text="🔍 Buscar"
-                            styleClass="btn-primary"/>
-                </HBox>
-            </VBox>
-
             <Separator/>
 
             <!-- Datos del cliente encontrado -->

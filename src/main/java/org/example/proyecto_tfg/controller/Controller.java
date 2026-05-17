@@ -840,10 +840,19 @@ public class Controller {
             showAlert("Aviso", "No hay cliente seleccionado para eliminar.");
             return;
         }
-        deleteService.eliminarCliente(clienteAEliminar.getDni());
-        showAlert("Éxito", "Cliente eliminado correctamente.");
-        Parent contenido = loadFxmlTry("/view/proyecto_tfg/clientes.fxml");
-        NavigationService.getInstance().openInCenter(contenido);
+
+        // Confirmación antes de eliminar
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Estás seguro de que deseas eliminar este cliente? Esta acción no se puede deshacer.");
+
+        if (confirmacion.showAndWait().isPresent() && confirmacion.getResult().equals(ButtonType.OK)) {
+            deleteService.eliminarCliente(clienteAEliminar.getDni());
+            showAlert("Éxito", "Cliente eliminado correctamente.");
+            Parent contenido = loadFxmlTry("/view/proyecto_tfg/clientes.fxml");
+            NavigationService.getInstance().openInCenter(contenido);
+        }
     }
 
     @FXML
